@@ -47,6 +47,7 @@ public class AdamsArsPlus {
 
     private void setup(final FMLCommonSetupEvent event) {
         ArsNouveauRegistry.registerSounds();
+        ArsNouveauRegistry.addAugments();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

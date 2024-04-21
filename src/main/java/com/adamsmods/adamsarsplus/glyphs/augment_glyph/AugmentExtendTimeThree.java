@@ -1,7 +1,7 @@
 package com.adamsmods.adamsarsplus.glyphs.augment_glyph;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.hollingsworth.arsnouveau.api.spell.AbstractAugment;
+import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
@@ -29,5 +29,10 @@ public class AugmentExtendTimeThree extends AbstractAugment {
     @Override
     public String getBookDescription() {
         return "Immensely extends the time that spells last.";
+    }
+
+    @Override
+    public SpellTier defaultTier() {
+        return SpellTier.THREE;
     }
 }

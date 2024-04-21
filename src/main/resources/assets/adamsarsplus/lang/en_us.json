@@ -1,19 +1,18 @@
 {
 	"_commenteffect": "text for the effect group.",
-	"ars_trinkets.glyph_name.glyph_aoe_three": 			"AOE III",
-	"ars_trinkets.glyph_desc.glyph_aoe_three": 			"Spells will affect a gargantuan area around a targeted block.",
-	"ars_trinkets.glyph_name.glyph_aoe_two": 			"AOE II",
-	"ars_trinkets.glyph_desc.glyph_aoe_two": 			"Spells will affect a huge area around a targeted block.",
+	"adamsarsplus.glyph_name.glyph_aoe_three": 			"AOE III",
+	"adamsarsplus.glyph_desc.glyph_aoe_three": 			"Spells will affect a gargantuan area around a targeted block.",
+	"adamsarsplus.glyph_name.glyph_aoe_two": 			"AOE II",
+	"adamsarsplus.glyph_desc.glyph_aoe_two": 			"Spells will affect a huge area around a targeted block.",
 
-	"ars_trinkets.glyph_name.glyph_accelerate_three": 	"Accelerate III",
-	"ars_trinkets.glyph_desc.glyph_accelerate_three": 	"Immensely increases the speed of projectile spells.",
-	"ars_trinkets.glyph_name.glyph_accelerate_two": 	"Accelerate II",
-	"ars_trinkets.glyph_desc.glyph_accelerate_two": 	"Greatly increases the speed of projectile spells.",
+	"adamsarsplus.glyph_name.glyph_accelerate_three": 	"Accelerate III",
+	"adamsarsplus.glyph_desc.glyph_accelerate_three": 	"Immensely increases the speed of projectile spells.",
+	"adamsarsplus.glyph_name.glyph_accelerate_two": 	"Accelerate II",
+	"adamsarsplus.glyph_desc.glyph_accelerate_two": 	"Greatly increases the speed of projectile spells.",
 
-	"ars_trinkets.glyph_name.glyph_extendtime_three": 	"Extend Time III",
-	"ars_trinkets.glyph_desc.glyph_extendtime_three": 	"Immensely extends the time that spells last.",
-	"ars_trinkets.glyph_name.glyph_extendtime_two": 	"Extend Time II",
-	"ars_trinkets.glyph_desc.glyph_extendtime_two": 	"Greatly extends the time that spells last."
-
+	"adamsarsplus.glyph_name.glyph_extendtime_three": 	"Extend Time III",
+	"adamsarsplus.glyph_desc.glyph_extendtime_three": 	"Immensely extends the time that spells last.",
+	"adamsarsplus.glyph_name.glyph_extendtime_two": 	"Extend Time II",
+	"adamsarsplus.glyph_desc.glyph_extendtime_two": 	"Greatly extends the time that spells last."
 
 }

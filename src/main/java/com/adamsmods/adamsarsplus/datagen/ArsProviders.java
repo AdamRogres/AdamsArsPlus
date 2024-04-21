@@ -89,12 +89,12 @@ public class ArsProviders {
 
             Path output = this.generator.getPackOutput().getOutputFolder();
 
-            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem(), 4).withItem(Items.NETHERITE_INGOT, 4).withItem(Items.NETHERITE_BLOCK, 1));
-            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem(), 4).withItem(Items.DIAMOND, 4).withItem(Items.DIAMOND_BLOCK, 1));
-            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem(), 4).withItem(Items.NETHERITE_INGOT, 4).withItem(Items.NETHERITE_BLOCK, 1));
-            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem(), 4).withItem(Items.DIAMOND, 4).withItem(Items.DIAMOND_BLOCK, 1));
-            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem(), 4).withItem(Items.NETHERITE_INGOT, 4).withItem(Items.NETHERITE_BLOCK, 1));
-            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem(), 4).withItem(Items.DIAMOND, 4).withItem(Items.DIAMOND_BLOCK, 1));
+            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem(), 4).withItem(NETHERITE_INGOT, 4).withItem(NETHERITE_BLOCK));
+            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem(), 4).withItem(DIAMOND, 4).withItem(DIAMOND_BLOCK));
+            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem(), 4).withItem(NETHERITE_INGOT, 4).withItem(NETHERITE_BLOCK));
+            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem(), 4).withItem(DIAMOND, 4).withItem(DIAMOND_BLOCK));
+            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem(), 4).withItem(NETHERITE_INGOT, 4).withItem(NETHERITE_BLOCK));
+            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem(), 4).withItem(DIAMOND, 4).withItem(DIAMOND_BLOCK));
 
 
             for (GlyphRecipe recipe : recipes) {
@@ -103,6 +103,7 @@ public class ArsProviders {
             }
 
         }
+
 
         protected static Path getScribeGlyphPath(Path pathIn, Item glyph) {
             return pathIn.resolve("data/" + root + "/recipes/" + getRegistryName(glyph).getPath() + ".json");

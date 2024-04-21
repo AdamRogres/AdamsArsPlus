@@ -1,7 +1,7 @@
 package com.adamsmods.adamsarsplus.glyphs.augment_glyph;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.hollingsworth.arsnouveau.api.spell.AbstractAugment;
+import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
@@ -31,4 +31,10 @@ public class AugmentAccelerateThree extends AbstractAugment {
     public String getBookDescription() {
         return "Immensely increases the speed of projectile spells.";
     }
+
+    @Override
+    public SpellTier defaultTier() {
+        return SpellTier.THREE;
+    }
+
 }

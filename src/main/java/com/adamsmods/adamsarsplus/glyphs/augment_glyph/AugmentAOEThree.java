@@ -1,9 +1,10 @@
 package com.adamsmods.adamsarsplus.glyphs.augment_glyph;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.hollingsworth.arsnouveau.api.spell.AbstractAugment;
+import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.SpellStats;
+import com.hollingsworth.arsnouveau.api.spell.SpellTier;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import net.minecraft.resources.ResourceLocation;
 
@@ -29,5 +30,9 @@ public class AugmentAOEThree extends AbstractAugment {
     @Override
     public String getBookDescription() {
         return "Spells will affect a gargantuan area around a targeted block.";
+    }
+
+    public SpellTier defaultTier() {
+        return SpellTier.THREE;
     }
 }
