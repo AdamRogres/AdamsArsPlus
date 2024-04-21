@@ -72,8 +72,5 @@ public class AdamsArsPlus {
     public void doCapabilities(RegisterCapabilitiesEvent event){
 
     }
-    public static void setInterval(Runnable method, int tickInterval, int timeToLive){
-        MinecraftForge.EVENT_BUS.register(new SetInterval(method, tickInterval, timeToLive));
-    }
 }
 
