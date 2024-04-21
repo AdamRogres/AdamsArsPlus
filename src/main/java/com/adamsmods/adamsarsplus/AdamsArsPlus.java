@@ -1,8 +1,7 @@
 package com.adamsmods.adamsarsplus;
 
-import com.adamsmods.adamsarsplus.event.ModEvents;
+
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
-import com.adamsmods.adamsarsplus.util.SetInterval;
 import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,7 +35,6 @@ public class AdamsArsPlus {
         modbus.addListener(this::setup);
         modbus.addListener(this::doClientStuff);
         modbus.addListener(this::doTabThings);
-        modbus.addListener(ModEvents::registerCapabilities);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
 
 

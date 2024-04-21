@@ -1,6 +1,5 @@
 package com.adamsmods.adamsarsplus;
 
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
 import com.adamsmods.adamsarsplus.glyphs.forms.AuraForm;
 import com.adamsmods.adamsarsplus.glyphs.forms.FormMissile;
 import com.adamsmods.adamsarsplus.glyphs.forms.FormOverhead;
