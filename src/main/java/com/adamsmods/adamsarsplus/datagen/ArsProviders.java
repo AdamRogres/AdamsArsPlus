@@ -21,6 +21,9 @@ import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectBurst;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import com.hollingsworth.arsnouveau.common.lib.LibItemNames;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -99,6 +102,8 @@ public class ArsProviders {
             recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
 
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
+            recipes.add(get(EffectDomain.INSTANCE).withItem(AugmentAOEThree.INSTANCE.getGlyph().asItem()).withItem(EffectLinger.INSTANCE.getGlyph().asItem()).withItem(EffectWall.INSTANCE.getGlyph().asItem()).withItem(EffectBurst.INSTANCE.getGlyph().asItem()).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
+
 
             for (GlyphRecipe recipe : recipes) {
                 Path path = getScribeGlyphPath(output, recipe.output.getItem());

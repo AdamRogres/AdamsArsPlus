@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus;
 
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.SpellEfficiency;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
@@ -24,7 +25,7 @@ public class ArsNouveauRegistry {
         register(AugmentExtendTimeTwo.INSTANCE);
         //Effects
         register(SpellEfficiency.INSTANCE);
-
+        register(EffectDomain.INSTANCE);
 
     }
 

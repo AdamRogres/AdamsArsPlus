@@ -1,0 +1,53 @@
+{
+  "type": "ars_nouveau:glyph",
+  "count": 1,
+  "exp": 160,
+  "inputItems": [
+    {
+      "item": {
+        "item": "minecraft:dragons_breath"
+      }
+    },
+    {
+      "item": {
+        "item": "adamarsplus:glyph_aoe_three"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:dragons_breath"
+      }
+    },
+    {
+      "item": {
+        "item": "ars_nouveau:glyph_linger"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:nether_star"
+      }
+    },
+    {
+      "item": {
+        "item": "ars_nouveau:glyph_wall"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:dragons_breath"
+      }
+    },
+    {
+      "item": {
+        "item": "ars_nouveau:burst"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:dragons_breath"
+      }
+    }
+  ],
+  "output": "adamsarsplus:glyph_effectdomain"
+}
