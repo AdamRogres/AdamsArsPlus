@@ -23,11 +23,6 @@ public class AugmentAccelerateTwo extends AbstractAugment {
     }
 
     @Override
-    public SpellStats.Builder applyModifiers(SpellStats.Builder builder, AbstractSpellPart spellPart) {
-        builder.addAccelerationModifier(2.0F);
-        return super.applyModifiers(builder, spellPart);
-    }
-    @Override
     public String getBookDescription() {
         return "Greatly increases the speed of projectile spells.";
     }
@@ -36,4 +31,11 @@ public class AugmentAccelerateTwo extends AbstractAugment {
     public SpellTier defaultTier() {
         return SpellTier.THREE;
     }
+
+    @Override
+    public SpellStats.Builder applyModifiers(SpellStats.Builder builder, AbstractSpellPart spellPart) {
+        builder.addAccelerationModifier(2.0F);
+        return super.applyModifiers(builder, spellPart);
+    }
+
 }

@@ -26,7 +26,7 @@ displayName="Adam's Ars Plus" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 #logoFile="examplemod.png" #optional
 # A text field displayed in the mod UI
-credits="Thanks clement, used your mod as an example" #optional
+credits="Thanks everyone from the Ars Nouveau discord :)" #optional
 # A text field displayed in the mod UI
 authors="Adam aka Th3S3nate" #optional
 # The description text for the mod (multi line!) (#mandatory)

@@ -1,6 +1,8 @@
 package com.adamsmods.adamsarsplus.registry;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import com.adamsmods.adamsarsplus.item.MagicItems;
+import com.adamsmods.adamsarsplus.item.RegularItems;
 import com.hollingsworth.arsnouveau.api.perk.IPerk;
 import com.hollingsworth.arsnouveau.api.registry.PerkRegistry;
 import com.hollingsworth.arsnouveau.api.sound.SpellSound;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 
 public class ModRegistry {
@@ -37,6 +40,8 @@ public class ModRegistry {
     }
 
     //    public static final RegistryObject<Item> EXAMPLE;
+    public static final RegistryObject<Item> MANA_DIAMOND;
+
 
     public static ResourceLocation getGlyphName(String name) {
         return new ResourceLocation(AdamsArsPlus.MOD_ID, ("glyph_" + name));
@@ -48,4 +53,8 @@ public class ModRegistry {
 
     public static SpellSound EXAMPLE_SPELL_SOUND;
 
+    static {
+        MANA_DIAMOND = ITEMS.register("mana_diamond", () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), true));
+
+    }
 }

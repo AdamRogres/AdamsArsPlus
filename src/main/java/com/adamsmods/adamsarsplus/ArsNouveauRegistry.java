@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus;
 
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.SpellEfficiency;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
@@ -14,20 +15,15 @@ public class ArsNouveauRegistry {
     public static List<AbstractSpellPart> registeredSpells = new ArrayList<>(); //this will come handy for datagen
 
     public static void registerGlyphs() {
+       //Augments
         register(AugmentAccelerateThree.INSTANCE);
         register(AugmentAccelerateTwo.INSTANCE);
         register(AugmentAOEThree.INSTANCE);
         register(AugmentAOETwo.INSTANCE);
         register(AugmentExtendTimeThree.INSTANCE);
         register(AugmentExtendTimeTwo.INSTANCE);
-
-
-//        register(Random25.INSTANCE);
-//        register(Random50.INSTANCE);
-//        register(Random75.INSTANCE);
-
-        // register omega glyphs
-
+        //Effects
+        register(SpellEfficiency.INSTANCE);
 
 
     }

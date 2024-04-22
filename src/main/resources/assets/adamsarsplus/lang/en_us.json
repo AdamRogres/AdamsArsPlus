@@ -13,6 +13,10 @@
 	"adamsarsplus.glyph_name.glyph_extendtime_three": 	"Extend Time III",
 	"adamsarsplus.glyph_desc.glyph_extendtime_three": 	"Immensely extends the time that spells last.",
 	"adamsarsplus.glyph_name.glyph_extendtime_two": 	"Extend Time II",
-	"adamsarsplus.glyph_desc.glyph_extendtime_two": 	"Greatly extends the time that spells last."
+	"adamsarsplus.glyph_desc.glyph_extendtime_two": 	"Greatly extends the time that spells last.",
 
+	"adamsarsplus.glyph_name.glyph_spellefficiency": 	"Spell Efficiency",
+	"adamsarsplus.glyph_desc.glyph_spellefficiency": 	"Uses a glyph slot to reduce the mana cost of a spell.",
+
+	"item.adamsarsplus.mana_diamond": 	"Mana Diamond"
 }

@@ -22,11 +22,6 @@ public class AugmentExtendTimeTwo extends AbstractAugment {
     }
 
     @Override
-    public SpellStats.Builder applyModifiers(SpellStats.Builder builder, AbstractSpellPart spellPart) {
-        builder.addDurationModifier(2.0);
-        return super.applyModifiers(builder, spellPart);
-    }
-    @Override
     public String getBookDescription() {
         return "Greatly extends the time that spells last.";
     }
@@ -35,4 +30,11 @@ public class AugmentExtendTimeTwo extends AbstractAugment {
     public SpellTier defaultTier() {
         return SpellTier.THREE;
     }
+
+    @Override
+    public SpellStats.Builder applyModifiers(SpellStats.Builder builder, AbstractSpellPart spellPart) {
+        builder.addDurationModifier(2.0);
+        return super.applyModifiers(builder, spellPart);
+    }
+
 }

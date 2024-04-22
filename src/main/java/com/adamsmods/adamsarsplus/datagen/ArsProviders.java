@@ -4,6 +4,7 @@ import com.adamsmods.adamsarsplus.ArsNouveauRegistry;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.registry.RitualRegistry;
@@ -21,6 +22,7 @@ import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
+import com.hollingsworth.arsnouveau.common.lib.LibItemNames;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
@@ -89,13 +91,14 @@ public class ArsProviders {
 
             Path output = this.generator.getPackOutput().getOutputFolder();
 
-            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem(), 4).withItem(NETHERITE_INGOT, 4).withItem(NETHERITE_BLOCK));
-            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem(), 4).withItem(DIAMOND, 4).withItem(DIAMOND_BLOCK));
-            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem(), 4).withItem(NETHERITE_INGOT, 4).withItem(NETHERITE_BLOCK));
-            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem(), 4).withItem(DIAMOND, 4).withItem(DIAMOND_BLOCK));
-            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem(), 4).withItem(NETHERITE_INGOT, 4).withItem(NETHERITE_BLOCK));
-            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem(), 4).withItem(DIAMOND, 4).withItem(DIAMOND_BLOCK));
+            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(NETHERITE_BLOCK));
+            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
+            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(NETHERITE_BLOCK));
+            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
+            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(NETHERITE_BLOCK));
+            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
 
+            recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
 
             for (GlyphRecipe recipe : recipes) {
                 Path path = getScribeGlyphPath(output, recipe.output.getItem());
@@ -123,6 +126,14 @@ public class ArsProviders {
 
         @Override
         public void collectJsons(CachedOutput cache) {
+
+            recipes.add(builder()
+                    .withSourceCost(10000)
+                    .withPedestalItem(8, ItemsRegistry.SOURCE_GEM)
+                    .withReagent(DIAMOND)
+                    .withResult(MANA_DIAMOND)
+                    .build()
+            );
 
             Path output = this.generator.getPackOutput().getOutputFolder();
             for (EnchantingApparatusRecipe g : recipes) {

@@ -22,11 +22,6 @@ public class AugmentAOETwo extends AbstractAugment {
     }
 
     @Override
-    public SpellStats.Builder applyModifiers(SpellStats.Builder builder, AbstractSpellPart spellPart) {
-        builder.addAOE(2.0d);
-        return super.applyModifiers(builder, spellPart);
-    }
-    @Override
     public String getBookDescription() {
         return "Spells will affect a huge area around a targeted block.";
     }
@@ -35,4 +30,10 @@ public class AugmentAOETwo extends AbstractAugment {
     public SpellTier defaultTier() {
         return SpellTier.THREE;
     }
+    @Override
+    public SpellStats.Builder applyModifiers(SpellStats.Builder builder, AbstractSpellPart spellPart) {
+        builder.addAOE(2.0d);
+        return super.applyModifiers(builder, spellPart);
+    }
+
 }
