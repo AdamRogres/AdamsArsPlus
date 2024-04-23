@@ -1,8 +1,9 @@
-// 1.20.1	2024-04-21T21:05:47.3540024	Example Glyph Recipes
+// 1.20.1	2024-04-22T19:47:06.5476668	Example Glyph Recipes
 17a184471b64a474704aa6f6eecac585b61dd9ef data/adamsarsplus/recipes/glyph_accelerate_three.json
 8c8de1b5f43ca606f5963730586dde74bb4d58bf data/adamsarsplus/recipes/glyph_accelerate_two.json
 c224c3865c7cae8000d47bd4ad7e252b682e7bb0 data/adamsarsplus/recipes/glyph_aoe_three.json
 31295491ee81edbc1375911d156a460edbf76075 data/adamsarsplus/recipes/glyph_aoe_two.json
+52e069edaf1f52d4d2c68339dc898b7226e2efc6 data/adamsarsplus/recipes/glyph_effectdomain.json
 991911fc9fd27b75d4e6880cdfebad5a6bafdc89 data/adamsarsplus/recipes/glyph_extendtime_three.json
 a5a8d7ef06c0623fb480f0747a94bbaafc21078b data/adamsarsplus/recipes/glyph_extendtime_two.json
 cee3b1002004a364ef9b6517fc39131c32c790e0 data/adamsarsplus/recipes/glyph_spellefficiency.json

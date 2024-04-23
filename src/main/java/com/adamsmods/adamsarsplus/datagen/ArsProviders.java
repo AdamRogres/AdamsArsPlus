@@ -3,8 +3,10 @@ package com.adamsmods.adamsarsplus.datagen;
 import com.adamsmods.adamsarsplus.ArsNouveauRegistry;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 
+import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
+import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.registry.RitualRegistry;
@@ -26,6 +28,7 @@ import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import com.hollingsworth.arsnouveau.common.lib.LibItemNames;
+import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
@@ -41,6 +44,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.data.tags.EntityTypeTagsProvider;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -279,6 +284,7 @@ public class ArsProviders {
         ImbuementPage ImbuementPage(ItemLike item) {
             return new ImbuementPage(root + ":imbuement_" + getRegistryName(item.asItem()).getPath());
         }
+
 
     }
 

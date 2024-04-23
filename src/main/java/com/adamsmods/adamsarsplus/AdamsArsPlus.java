@@ -1,7 +1,9 @@
 package com.adamsmods.adamsarsplus;
 
 
+import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
+import com.hollingsworth.arsnouveau.client.registry.ClientHandler;
 import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,7 +20,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AdamsArsPlus.MOD_ID)
@@ -51,7 +52,7 @@ public class AdamsArsPlus {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AdamClientHandler::registerRenderers);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

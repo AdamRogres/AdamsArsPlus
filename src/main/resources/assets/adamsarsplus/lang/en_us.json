@@ -19,7 +19,7 @@
 	"adamsarsplus.glyph_desc.glyph_spellefficiency": 	"Uses a glyph slot to reduce the mana cost of a spell.",
 
 	"adamsarsplus.glyph_name.glyph_effectdomain": 		"Domain",
-	"adamsarsplus.glyph_desc.glyph_effectdomain": 		"Creates a Sphereical area that applies spells on nearby entities for a short time. Applying Sensitive will make this spell target blocks instead. AOE will expand the effective range, Accelerate will cast spells faster, Dampen will cause the domain to be affected by gravity, and Extend Time will increase the duration. After casting a spell with Domain the caster will be effected by Domain burnout and will be unable to cast another domain.",
+	"adamsarsplus.glyph_desc.glyph_effectdomain": 		"Creates a Sphereical area that applies spells on nearby entities for a short time. Applying Sensitive will make this spell target blocks instead. AOE will expand the effective range, Accelerate will cast spells faster, Dampen will cause the domain to target the outer blocks of the domain if used with sensitive the domain will only target the outer blocks, and Extend Time will increase the duration.",
 
 	"item.adamsarsplus.mana_diamond": 	"Mana Diamond"
 }

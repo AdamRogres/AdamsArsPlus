@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus.registry;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.item.MagicItems;
 import com.adamsmods.adamsarsplus.item.RegularItems;
 import com.hollingsworth.arsnouveau.api.perk.IPerk;
@@ -36,7 +37,7 @@ public class ModRegistry {
         SOUNDS.register(bus);
         ENTITIES.register(bus);
         EFFECTS.register(bus);
-
+        AdamsModEntities.ENTITIES.register(bus);
     }
 
     //    public static final RegistryObject<Item> EXAMPLE;
