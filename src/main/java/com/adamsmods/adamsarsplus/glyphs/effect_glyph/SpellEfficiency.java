@@ -23,8 +23,14 @@ public class SpellEfficiency extends AbstractEffect {
 
     @Override
     protected int getDefaultManaCost() {
-        return -50;
+        return 0;
     }
+
+    @Override
+    public SpellTier defaultTier() {
+        return SpellTier.THREE;
+    }
+
     @Override
     protected @NotNull Set<AbstractAugment> getCompatibleAugments() {
         return setOf();

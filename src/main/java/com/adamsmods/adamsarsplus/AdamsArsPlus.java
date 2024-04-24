@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus;
 
 
+import com.adamsmods.adamsarsplus.events.AdamsEvents;
 import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.client.registry.ClientHandler;
@@ -36,6 +37,7 @@ public class AdamsArsPlus {
         modbus.addListener(this::setup);
         modbus.addListener(this::doClientStuff);
         modbus.addListener(this::doTabThings);
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
 
 
