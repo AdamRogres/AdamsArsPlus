@@ -108,6 +108,7 @@ public class ArsProviders {
 
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
             recipes.add(get(EffectDomain.INSTANCE).withItem(AugmentAOEThree.INSTANCE.getGlyph().asItem()).withItem(EffectLinger.INSTANCE.getGlyph().asItem()).withItem(EffectWall.INSTANCE.getGlyph().asItem()).withItem(EffectBurst.INSTANCE.getGlyph().asItem()).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
+            recipes.add(get(EffectLimitless.INSTANCE).withItem(CHORUS_FRUIT, 3).withItem(SpellEfficiency.INSTANCE.getGlyph().asItem(), 6));
 
 
             for (GlyphRecipe recipe : recipes) {

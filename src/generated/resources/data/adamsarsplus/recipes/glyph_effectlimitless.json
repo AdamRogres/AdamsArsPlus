@@ -1,0 +1,53 @@
+{
+  "type": "ars_nouveau:glyph",
+  "count": 1,
+  "exp": 160,
+  "inputItems": [
+    {
+      "item": {
+        "item": "minecraft:chorus_fruit"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:chorus_fruit"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:chorus_fruit"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:glyph_spellefficiency"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:glyph_spellefficiency"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:glyph_spellefficiency"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:glyph_spellefficiency"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:glyph_spellefficiency"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:glyph_spellefficiency"
+      }
+    }
+  ],
+  "output": "adamsarsplus:glyph_effectlimitless"
+}

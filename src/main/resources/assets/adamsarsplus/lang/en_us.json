@@ -16,10 +16,15 @@
 	"adamsarsplus.glyph_desc.glyph_extendtime_two": 	"Greatly extends the time that spells last.",
 
 	"adamsarsplus.glyph_name.glyph_spellefficiency": 	"Spell Efficiency",
-	"adamsarsplus.glyph_desc.glyph_spellefficiency": 	"Uses a glyph slot to reduce the mana cost of a spell.",
+	"adamsarsplus.glyph_desc.glyph_spellefficiency": 	"Uses a glyph slot to reduce the mana cost of a spell. New Cost = Old Cost * 0.7 ^ X",
 
 	"adamsarsplus.glyph_name.glyph_effectdomain": 		"Domain",
 	"adamsarsplus.glyph_desc.glyph_effectdomain": 		"Creates a Sphereical area that applies spells on nearby entities for a short time. Applying Sensitive will make this spell target blocks instead. AOE will expand the effective range, Accelerate will cast spells faster, Dampen will cause the domain to target the outer blocks of the domain if used with sensitive the domain will only target the outer blocks, and Extend Time will increase the duration.",
 
-	"item.adamsarsplus.mana_diamond": 	"Mana Diamond"
+	"adamsarsplus.glyph_name.glyph_effectlimitless": 	"Limitless",
+	"adamsarsplus.glyph_desc.glyph_effectlimitless": 	"Sets the velocity of entities to 0. Applying extend time will inflict an effect that applies limitless.",
+
+	"item.adamsarsplus.mana_diamond": 	"Mana Diamond",
+
+	"effect.adamsarsplus.limitless": "Limitless"
 }

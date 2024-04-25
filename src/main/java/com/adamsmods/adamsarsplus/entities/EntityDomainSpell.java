@@ -90,7 +90,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     public void castSpells() {
         float aoe = getAoe();
         int flatAoe = Math.round(aoe);
-        int radius = 1 + flatAoe;
+        int radius = 3 + flatAoe;
         Predicate<Double> Sphere = shouldFall() ? (distance) -> distance <= radius + 0.5 && distance >= radius - 0.5 : (distance) -> (distance <= radius + 0.5);
 
         if (!level().isClientSide && age % (20 - 2 * getAccelerates()) == 0) {
@@ -127,7 +127,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
 
     @Override
     public int getExpirationTime() {
-        return (int) (70 + extendedTime * 20);
+        return (int) (100 + extendedTime * 20);
     }
 
     @Override
@@ -135,11 +135,11 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         return 0;
     }
 
-    @Override
-    public void playParticles() {
-        ParticleUtil.spawnRitualAreaEffect(getOnPos(), level(), random, getParticleColor(), Math.round(getAoe()), 5, 20);
-        ParticleUtil.spawnLight(level(), getParticleColor(), position().add(0, 0.5, 0), 10);
-    }
+   // @Override
+   // public void playParticles() {
+   //     ParticleUtil.spawnRitualAreaEffect(getOnPos(), level(), random, getParticleColor(), Math.round(getAoe()), 5, 20);
+   //     ParticleUtil.spawnLight(level(), getParticleColor(), position().add(0, 0.5, 0), 10);
+    //}
 
     public EntityDomainSpell(PlayMessages.SpawnEntity packet, Level world) {
         super(AdamsModEntities.DOMAIN_SPELL.get(), world);
