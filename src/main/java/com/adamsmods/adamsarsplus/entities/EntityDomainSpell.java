@@ -10,6 +10,8 @@ import com.hollingsworth.arsnouveau.common.entity.*;
 import com.hollingsworth.arsnouveau.client.particle.ParticleUtil;
 import com.hollingsworth.arsnouveau.common.lib.EntityTags;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDampen;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +20,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import com.hollingsworth.arsnouveau.api.entity.ChangeableBehavior;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.EntityType;
@@ -30,6 +33,7 @@ import net.minecraft.world.phys.*;
 import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.function.Predicate;
 
 
@@ -222,4 +226,5 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         setSensitive(compound.getBoolean("sensitive"));
         setShouldFall(compound.getBoolean("shouldFall"));
     }
+
 }

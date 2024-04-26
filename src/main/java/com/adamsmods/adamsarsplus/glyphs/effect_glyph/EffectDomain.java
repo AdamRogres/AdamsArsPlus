@@ -7,6 +7,8 @@ import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.entity.EntityLingeringSpell;
 import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -76,5 +78,11 @@ public class EffectDomain extends AbstractEffect {
     @Override
     public Set<SpellSchool> getSchools() {
         return setOf(SpellSchools.MANIPULATION);
+    }
+
+    @Override
+    protected void addDefaultInvalidCombos(Set<ResourceLocation> defaults) {
+        defaults.add(EffectLinger.INSTANCE.getRegistryName());
+        defaults.add(EffectWall.INSTANCE.getRegistryName());
     }
 }

@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.glyphs.effect_glyph;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.ArsNouveauRegistry;
 import com.hollingsworth.arsnouveau.api.spell.*;
+import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
 import com.hollingsworth.arsnouveau.common.entity.EnchantedFallingBlock;
 import com.hollingsworth.arsnouveau.common.items.curios.ShapersFocus;
@@ -10,17 +11,21 @@ import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class EffectLimitless extends AbstractEffect implements IPotionEffect {
     public static EffectLimitless INSTANCE = new EffectLimitless(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectlimitless"), "Limitless");
@@ -36,11 +41,30 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
 
                 this.applyConfigPotion(living, ArsNouveauRegistry.LIMITLESS_EFFECT.get(), spellStats);
             }
-                Entity entity = rayTraceResult.getEntity();
-                entity.setDeltaMovement(entity.getDeltaMovement().scale(0));
-                entity.hurtMarked = true;
+
+                makeLSphere(rayTraceResult.getEntity().blockPosition(), world, shooter, spellStats, spellContext, resolver);
 
         }
+    }
+
+    public void makeLSphere(BlockPos center, Level world, @NotNull Entity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver){
+        int radius = (int) (1 + spellStats.getAoeMultiplier());
+
+        Predicate<Double> Sphere = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (distance) -> distance <= radius + 0.5 && distance >= radius - 0.5 : (distance) -> (distance <= radius + 0.5);
+            //Target non-living entities like arrows and spell projectiles
+            for (Entity entity : world.getEntities(shooter, new AABB(center).inflate(radius, radius, radius))) {
+                if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
+                    entity.setDeltaMovement(entity.getDeltaMovement().scale(-0.03));
+                    entity.hurtMarked = true;
+                }
+            }
+            //Target living entities
+            for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(radius, radius, radius))) {
+                if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
+                    entity.setDeltaMovement(entity.getDeltaMovement().scale(-0.03));
+                    entity.hurtMarked = true;
+                }
+            }
     }
 
     @Override
@@ -65,7 +89,8 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
     public Set<AbstractAugment> getCompatibleAugments() {
         return augmentSetOf(
                 AugmentExtendTime.INSTANCE,
-                AugmentDurationDown.INSTANCE
+                AugmentDurationDown.INSTANCE,
+                AugmentAOE.INSTANCE
         );
     }
 
