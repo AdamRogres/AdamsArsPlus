@@ -37,10 +37,6 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         if (rayTraceResult.getEntity() instanceof LivingEntity living) {
-            if (spellStats.hasBuff(AugmentExtendTime.INSTANCE)) {
-
-                this.applyConfigPotion(living, ArsNouveauRegistry.LIMITLESS_EFFECT.get(), spellStats);
-            }
 
                 makeLSphere(rayTraceResult.getEntity().blockPosition(), world, shooter, spellStats, spellContext, resolver);
 
@@ -49,19 +45,21 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
 
     public void makeLSphere(BlockPos center, Level world, @NotNull Entity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver){
         int radius = (int) (1 + spellStats.getAoeMultiplier());
+        double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
 
-        Predicate<Double> Sphere = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (distance) -> distance <= radius + 0.5 && distance >= radius - 0.5 : (distance) -> (distance <= radius + 0.5);
+        Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
+
             //Target non-living entities like arrows and spell projectiles
             for (Entity entity : world.getEntities(shooter, new AABB(center).inflate(radius, radius, radius))) {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().scale(-0.03));
+                    entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
                     entity.hurtMarked = true;
                 }
             }
             //Target living entities
             for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(radius, radius, radius))) {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().scale(-0.03));
+                    entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
                     entity.hurtMarked = true;
                 }
             }
@@ -88,15 +86,17 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
     @Override
     public Set<AbstractAugment> getCompatibleAugments() {
         return augmentSetOf(
-                AugmentExtendTime.INSTANCE,
-                AugmentDurationDown.INSTANCE,
-                AugmentAOE.INSTANCE
+                //AugmentExtendTime.INSTANCE,
+                //AugmentDurationDown.INSTANCE,
+                AugmentAOE.INSTANCE,
+                AugmentAmplify.INSTANCE,
+                AugmentDampen.INSTANCE
         );
     }
 
     @Override
     public String getBookDescription() {
-        return "Causes blocks and entities to fall. When augmented with Extend Time, players will have their flight disabled and will obtain the Gravity effect. While afflicted with Gravity, entities will rapidly fall and take double falling damage.";
+        return "Sets the velocity of all entities in an area to 0 (includes spell projectiles and other entities not normally target-able). Applying AOE will increase the radius this effect is applied. Augmenting with Amplify will multiply the velocity by: -X/3. Augmenting with Dampen will multiply the velocity by: -1.";
     }
 
    @NotNull
