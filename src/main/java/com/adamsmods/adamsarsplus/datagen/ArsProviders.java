@@ -20,10 +20,12 @@ import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.GlyphRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.ImbuementRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
+import com.hollingsworth.arsnouveau.common.items.ManipulationEssence;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectBurst;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectExchange;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
@@ -109,7 +111,7 @@ public class ArsProviders {
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
             recipes.add(get(EffectDomain.INSTANCE).withItem(AugmentAOEThree.INSTANCE.getGlyph().asItem()).withItem(EffectLinger.INSTANCE.getGlyph().asItem()).withItem(EffectWall.INSTANCE.getGlyph().asItem()).withItem(EffectBurst.INSTANCE.getGlyph().asItem()).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
             recipes.add(get(EffectLimitless.INSTANCE).withItem(CHORUS_FRUIT, 3).withItem(SpellEfficiency.INSTANCE.getGlyph().asItem(), 6));
-
+            recipes.add(get(EffectSwapTarget.INSTANCE).withItem(EMERALD_BLOCK).withItem(EffectExchange.INSTANCE.getGlyph().asItem()).withItem(ENDER_EYE, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
 
             for (GlyphRecipe recipe : recipes) {
                 Path path = getScribeGlyphPath(output, recipe.output.getItem());

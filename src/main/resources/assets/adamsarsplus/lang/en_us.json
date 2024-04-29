@@ -24,6 +24,9 @@
 	"adamsarsplus.glyph_name.glyph_effectlimitless": 	"Limitless",
 	"adamsarsplus.glyph_desc.glyph_effectlimitless": 	"Sets the velocity of all entities in an area to 0 (includes spell projectiles and other entities not normally target-able). Applying AOE will increase the radius this effect is applied. Augmenting with Amplify will multiply the velocity by: -X/3. Augmenting with Dampen will multiply the velocity by: -1.",
 
+	"adamsarsplus.glyph_name.glyph_effectswaptarget": 	"Swap Target",
+	"adamsarsplus.glyph_desc.glyph_effectswaptarget": 	"Swaps the roles of the caster and target, allowing for more complex logic. (From ArsOmega, will remove once ArsOmega is updated to 1.20.1)",
+
 	"item.adamsarsplus.mana_diamond": 	"Mana Diamond",
 
 	"effect.adamsarsplus.limitless": "Limitless"

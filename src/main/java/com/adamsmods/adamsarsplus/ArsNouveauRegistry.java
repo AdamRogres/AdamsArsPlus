@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectLimitless;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectSwapTarget;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.SpellEfficiency;
 import com.adamsmods.adamsarsplus.entities.effects.LimitlessEffect;
 
@@ -40,8 +41,7 @@ public class ArsNouveauRegistry {
         register(SpellEfficiency.INSTANCE);
         register(EffectDomain.INSTANCE);
         register(EffectLimitless.INSTANCE);
-
-
+        register(EffectSwapTarget.INSTANCE);
 
     }
 
