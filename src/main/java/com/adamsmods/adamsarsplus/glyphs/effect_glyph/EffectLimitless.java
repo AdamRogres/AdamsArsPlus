@@ -52,15 +52,19 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
             //Target non-living entities like arrows and spell projectiles
             for (Entity entity : world.getEntities(shooter, new AABB(center).inflate(radius, radius, radius))) {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
-                    entity.hurtMarked = true;
+                    if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
+                        entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
+                        entity.hurtMarked = true;
+                    }
                 }
             }
             //Target living entities
             for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(radius, radius, radius))) {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
-                    entity.hurtMarked = true;
+                    if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
+                        entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
+                        entity.hurtMarked = true;
+                    }
                 }
             }
     }
@@ -90,13 +94,14 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
                 //AugmentDurationDown.INSTANCE,
                 AugmentAOE.INSTANCE,
                 AugmentAmplify.INSTANCE,
-                AugmentDampen.INSTANCE
+                AugmentDampen.INSTANCE,
+                AugmentSensitive.INSTANCE
         );
     }
 
     @Override
     public String getBookDescription() {
-        return "Sets the velocity of all entities in an area to 0 (includes spell projectiles and other entities not normally target-able). Applying AOE will increase the radius this effect is applied. Augmenting with Amplify will multiply the velocity by: -X/3. Augmenting with Dampen will multiply the velocity by: -1.";
+        return "Sets the velocity of entities in an area to 0 (includes spell projectiles and other entities not normally target-able). Applying AOE will increase the radius this effect is applied. Augmenting with Amplify will multiply the velocity by: -X/3. Augmenting with Dampen will multiply the velocity by: -1. Augmenting with Sensitive allows the caster to be affected by limitless.";
     }
 
    @NotNull

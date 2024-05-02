@@ -44,6 +44,9 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     public static final EntityDataAccessor<Boolean> LANDED = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> SENSITIVE = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> SHOULD_FALL = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> DOME = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> FILTER_SELF = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
+
     public double extendedTime;
     public int maxProcs = 100;
     public int totalProcs;
@@ -101,7 +104,9 @@ public class EntityDomainSpell extends EntityProjectileSpell {
             if (isSensitive()) {
                 for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
                     if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
-                        spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                        if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
+                            spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                        }
                     }
                 }
             } else {
@@ -109,7 +114,11 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                 for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(getAoe(),getAoe(),getAoe()))) {
                     if (entity.equals(this) || entity.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST))
                         continue;
-                    spellResolver.onResolveEffect(level(), new EntityHitResult(entity));
+                        if(!getDome() || (blockPosition().getY() - 2 < entity.getBlockY())) {
+                            if (!getFilter() || !(spellResolver.spellContext.getUnwrappedCaster().equals(entity))) {
+                                    spellResolver.onResolveEffect(level(), new EntityHitResult(entity));
+                            }
+                        }
                     i++;
                     if (i > 5)
                         break;
@@ -117,7 +126,9 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                 if(shouldFall()){
                     for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
                         if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
-                            spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                            if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
+                                spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                            }
                         }
                     }
                 }
@@ -203,6 +214,22 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         return entityData.get(SHOULD_FALL);
     }
 
+    public boolean getDome() {
+        return entityData.get(DOME);
+    }
+
+    public boolean getFilter() {
+        return entityData.get(FILTER_SELF);
+    }
+
+    public void setDome(boolean dome) {
+        entityData.set(DOME, dome);
+    }
+
+    public void setFilter(boolean filtered) {
+        entityData.set(FILTER_SELF, filtered);
+    }
+
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
@@ -211,6 +238,8 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         entityData.define(LANDED, false);
         entityData.define(SENSITIVE, false);
         entityData.define(SHOULD_FALL, true);
+        entityData.define(DOME, false);
+        entityData.define(FILTER_SELF, false);
     }
 
     @Override
@@ -218,6 +247,8 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("sensitive", isSensitive());
         tag.putBoolean("shouldFall", shouldFall());
+        tag.putBoolean("dome", getDome());
+        tag.putBoolean("selfFiltered", getFilter());
     }
 
     @Override
@@ -225,6 +256,8 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         super.load(compound);
         setSensitive(compound.getBoolean("sensitive"));
         setShouldFall(compound.getBoolean("shouldFall"));
+        setDome(compound.getBoolean("dome"));
+        setFilter(compound.getBoolean("selfFiltered"));
     }
 
 }

@@ -37,6 +37,8 @@ public class EffectDomain extends AbstractEffect {
         SpellContext newContext = spellContext.clone().withSpell(newSpell);
         entityDomainSpell.setAoe((float) spellStats.getAoeMultiplier());
         entityDomainSpell.setSensitive(spellStats.isSensitive());
+        entityDomainSpell.setDome(spellStats.hasBuff(AugmentPierce.INSTANCE));
+        entityDomainSpell.setFilter(spellStats.hasBuff(AugmentExtract.INSTANCE));
         entityDomainSpell.setAccelerates((int) spellStats.getAccMultiplier());
         entityDomainSpell.extendedTime = spellStats.getDurationMultiplier();
         entityDomainSpell.setShouldFall(spellStats.hasBuff(AugmentDampen.INSTANCE));
@@ -65,7 +67,17 @@ public class EffectDomain extends AbstractEffect {
     @NotNull
     @Override
     public Set<AbstractAugment> getCompatibleAugments() {
-        return augmentSetOf(AugmentSensitive.INSTANCE, AugmentAOE.INSTANCE, AugmentAccelerate.INSTANCE, AugmentDecelerate.INSTANCE, AugmentExtendTime.INSTANCE, AugmentDurationDown.INSTANCE, AugmentDampen.INSTANCE);
+        return augmentSetOf(
+                AugmentSensitive.INSTANCE,
+                AugmentAOE.INSTANCE,
+                AugmentAccelerate.INSTANCE,
+                AugmentDecelerate.INSTANCE,
+                AugmentExtendTime.INSTANCE,
+                AugmentDurationDown.INSTANCE,
+                AugmentDampen.INSTANCE,
+                AugmentPierce.INSTANCE,
+                AugmentExtract.INSTANCE,
+                AugmentSplit.INSTANCE);
     }
 
     @Override
