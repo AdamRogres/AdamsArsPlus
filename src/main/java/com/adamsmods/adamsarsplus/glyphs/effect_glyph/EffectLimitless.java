@@ -13,8 +13,10 @@ import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -27,7 +29,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class EffectLimitless extends AbstractEffect implements IPotionEffect {
+import static java.lang.Math.abs;
+
+public class EffectLimitless extends AbstractEffect {
     public static EffectLimitless INSTANCE = new EffectLimitless(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectlimitless"), "Limitless");
 
     public EffectLimitless(ResourceLocation tag, String description) {
@@ -43,6 +47,44 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
         }
     }
 
+    @Override
+    public void onResolveBlock(BlockHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+
+            makeLSphere(rayTraceResult.getBlockPos(), world, shooter, spellStats, spellContext, resolver);
+
+    }
+
+    public void knockback(Entity target, double xPosition, double yPosition, double zPosition, float strength) {
+        double x = xPosition - target.getBlockX();
+        double y = yPosition - target.getBlockY();
+        double z = zPosition - target.getBlockZ();
+
+        if(x > y && x > z){
+            x = x / abs(x);
+            y = y / abs(x);
+            z = z / abs(x);
+        } else if (y > x && y > z) {
+            x = x / abs(y);
+            y = y / abs(y);
+            z = z / abs(y);
+        }
+        else {
+            x = x / abs(z);
+            y = y / abs(z);
+            z = z / abs(z);
+        }
+
+        knockback(target, strength, x, y, z);
+    }
+
+    public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio) {
+
+            entity.hasImpulse = true;
+            entity.setDeltaMovement(entity.getDeltaMovement().scale(0));
+            entity.setDeltaMovement(strength * -1.5 * xRatio, strength * -1.5 * yRatio, strength * -1.5 * zRatio);
+
+    }
+
     public void makeLSphere(BlockPos center, Level world, @NotNull Entity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver){
         int radius = (int) (1 + spellStats.getAoeMultiplier());
         double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
@@ -53,8 +95,13 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
             for (Entity entity : world.getEntities(shooter, new AABB(center).inflate(radius, radius, radius))) {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
                     if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
-                        entity.hurtMarked = true;
+                        if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
+                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp);
+                        }
+                        else {
+                            entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
+                            entity.hurtMarked = true;
+                        }
                     }
                 }
             }
@@ -62,8 +109,13 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
             for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(radius, radius, radius))) {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
                     if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
-                        entity.hurtMarked = true;
+                        if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
+                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp);
+                        }
+                        else {
+                            entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
+                            entity.hurtMarked = true;
+                        }
                     }
                 }
             }
@@ -95,7 +147,8 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
                 AugmentAOE.INSTANCE,
                 AugmentAmplify.INSTANCE,
                 AugmentDampen.INSTANCE,
-                AugmentSensitive.INSTANCE
+                AugmentSensitive.INSTANCE,
+                AugmentPierce.INSTANCE
         );
     }
 
@@ -110,13 +163,4 @@ public class EffectLimitless extends AbstractEffect implements IPotionEffect {
         return setOf(SpellSchools.MANIPULATION);
     }
 
-    @Override
-    public int getBaseDuration() {
-        return POTION_TIME == null ? 2 : POTION_TIME.get();
-    }
-
-    @Override
-    public int getExtendTimeDuration() {
-        return EXTEND_TIME == null ? 1 : EXTEND_TIME.get();
-    }
 }
