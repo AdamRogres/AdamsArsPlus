@@ -97,4 +97,5 @@ public class EffectDomain extends AbstractEffect {
         defaults.add(EffectLinger.INSTANCE.getRegistryName());
         defaults.add(EffectWall.INSTANCE.getRegistryName());
     }
+
 }

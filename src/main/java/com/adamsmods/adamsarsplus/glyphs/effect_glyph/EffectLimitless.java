@@ -54,35 +54,36 @@ public class EffectLimitless extends AbstractEffect {
 
     }
 
-    public void knockback(Entity target, double xPosition, double yPosition, double zPosition, float strength) {
+    public double absDifference(int radius, double ratio){
+        double value = 0;
+
+        if(ratio >= 0){
+            value = radius - ratio;
+        }
+        else{
+            value = (radius + ratio) * -1;
+        }
+        return value;
+    }
+
+    public void knockback(Entity target, double xPosition, double yPosition, double zPosition, float strength, int radius) {
         double x = xPosition - target.getBlockX();
         double y = yPosition - target.getBlockY();
         double z = zPosition - target.getBlockZ();
 
-        if(x > y && x > z){
-            x = x / abs(x);
-            y = y / abs(x);
-            z = z / abs(x);
-        } else if (y > x && y > z) {
-            x = x / abs(y);
-            y = y / abs(y);
-            z = z / abs(y);
-        }
-        else {
-            x = x / abs(z);
-            y = y / abs(z);
-            z = z / abs(z);
-        }
-
-        knockback(target, strength, x, y, z);
+        knockback(target, strength, x, y, z, radius);
     }
 
-    public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio) {
+    public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio, int radius) {
 
             entity.hasImpulse = true;
             entity.setDeltaMovement(entity.getDeltaMovement().scale(0));
-            entity.setDeltaMovement(strength * -1.5 * xRatio, strength * -1.5 * yRatio, strength * -1.5 * zRatio);
-
+            if(strength <=  0) {
+                entity.setDeltaMovement(strength * -0.5 * xRatio, strength * -0.5 * yRatio, strength * -0.5 * zRatio);
+            }
+            else{
+                entity.setDeltaMovement(strength * -0.5 * absDifference(radius, xRatio), strength * -0.5 * absDifference(radius, yRatio), strength * -0.5 * absDifference(radius, zRatio));
+            }
     }
 
     public void makeLSphere(BlockPos center, Level world, @NotNull Entity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver){
@@ -96,7 +97,7 @@ public class EffectLimitless extends AbstractEffect {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
                     if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
                         if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
-                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp);
+                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp, radius);
                         }
                         else {
                             entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
@@ -110,7 +111,7 @@ public class EffectLimitless extends AbstractEffect {
                 if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
                     if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
                         if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
-                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp);
+                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp, radius);
                         }
                         else {
                             entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
