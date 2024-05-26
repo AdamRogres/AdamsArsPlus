@@ -3,6 +3,8 @@ package com.adamsmods.adamsarsplus.lib;
 public class AdamsLibPotions {
 
     public static final String LIMITLESS = "limitless";
+    public static final String DOMAIN_BURNOUT = "domain_burnout";
+
 
     public static String potion(String base) {
         return base + "_potion";

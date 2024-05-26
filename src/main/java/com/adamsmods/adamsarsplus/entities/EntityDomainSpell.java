@@ -185,7 +185,6 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         entityData.set(AOE, aoe);
     }
 
-    //for compat
     public float getAoe() {
         return (this.isSensitive() ? 1 : 3) + entityData.get(AOE);
     }

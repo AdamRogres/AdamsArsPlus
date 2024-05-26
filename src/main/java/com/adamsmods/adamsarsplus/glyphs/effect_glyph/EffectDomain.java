@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.glyphs.effect_glyph;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 
 import com.adamsmods.adamsarsplus.entities.EntityDomainSpell;
+import com.adamsmods.adamsarsplus.lib.AdamsLibPotions;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.entity.EntityLingeringSpell;
 import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
@@ -10,7 +11,9 @@ import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -19,15 +22,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
+import static com.adamsmods.adamsarsplus.Config.DOMAIN_BURNOUT;
+
 public class EffectDomain extends AbstractEffect {
     public EffectDomain(ResourceLocation tag, String description) {
         super(tag, description);
     }
     public static final EffectDomain INSTANCE = new EffectDomain(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectdomain"), "Domain");
 
+    public boolean canUseDomian(LivingEntity playerEntity) {
+        return isRealPlayer(playerEntity) && (playerEntity.getEffect(DOMAIN_BURNOUT_EFFECT.get()) == null || (playerEntity instanceof Player player && player.isCreative()));
+    }
+
     @Override
     public void onResolve(HitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         super.onResolve(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
+        if (!canUseDomian(shooter)) {
+            return;
+        }
+
         Vec3 hit = safelyGetHitPos(rayTraceResult);
         EntityDomainSpell entityDomainSpell = new EntityDomainSpell(world, shooter);
         spellContext.setCanceled(true);
@@ -46,8 +60,13 @@ public class EffectDomain extends AbstractEffect {
         entityDomainSpell.setPos(hit.x, hit.y, hit.z);
         entityDomainSpell.setColor(spellContext.getColors());
         world.addFreshEntity(entityDomainSpell);
-    }
 
+        int ticks = (int) (20.0 * (10.0 + spellStats.getDurationMultiplier()));
+
+        if (DOMAIN_BURNOUT.get()) {
+            shooter.addEffect(new MobEffectInstance(DOMAIN_BURNOUT_EFFECT.get(), ticks));
+        }
+    }
 
     @Override
     public String getBookDescription() {

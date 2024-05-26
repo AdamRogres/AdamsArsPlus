@@ -6,6 +6,7 @@ import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectLimitless;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectSwapTarget;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.SpellEfficiency;
 import com.adamsmods.adamsarsplus.entities.effects.LimitlessEffect;
+import com.adamsmods.adamsarsplus.entities.effects.DEburnoutEffect;
 
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
@@ -20,12 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.MOD_ID;
+import static com.adamsmods.adamsarsplus.lib.AdamsLibPotions.DOMAIN_BURNOUT;
 import static com.adamsmods.adamsarsplus.lib.AdamsLibPotions.LIMITLESS;
 
 public class ArsNouveauRegistry {
 
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MOD_ID);
     public static final RegistryObject<MobEffect> LIMITLESS_EFFECT = EFFECTS.register(LIMITLESS, LimitlessEffect::new);
+    public static final RegistryObject<MobEffect> DOMAIN_BURNOUT_EFFECT = EFFECTS.register(DOMAIN_BURNOUT, DEburnoutEffect::new);
+
 
     public static List<AbstractSpellPart> registeredSpells = new ArrayList<>(); //this will come handy for datagen
 

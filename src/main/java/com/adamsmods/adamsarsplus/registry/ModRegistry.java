@@ -2,6 +2,7 @@ package com.adamsmods.adamsarsplus.registry;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
+import com.adamsmods.adamsarsplus.entities.effects.DEburnoutEffect;
 import com.adamsmods.adamsarsplus.item.MagicItems;
 import com.adamsmods.adamsarsplus.item.RegularItems;
 import com.hollingsworth.arsnouveau.api.perk.IPerk;
@@ -18,6 +19,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import static com.adamsmods.adamsarsplus.lib.AdamsLibPotions.DOMAIN_BURNOUT;
 
 
 public class ModRegistry {
@@ -47,6 +50,8 @@ public class ModRegistry {
     public static ResourceLocation getGlyphName(String name) {
         return new ResourceLocation(AdamsArsPlus.MOD_ID, ("glyph_" + name));
     }
+
+    public static final RegistryObject<MobEffect> DOMAIN_BURNOUT_EFFECT = EFFECTS.register(DOMAIN_BURNOUT, DEburnoutEffect::new);
 
     public static void registerPerk(IPerk perk) {
         PerkRegistry.registerPerk(perk);

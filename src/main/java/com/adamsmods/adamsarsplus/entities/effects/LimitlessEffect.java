@@ -1,5 +1,6 @@
 package com.adamsmods.adamsarsplus.entities.effects;
 
+import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
@@ -16,7 +17,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = ArsNouveau.MODID)
+@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
 public class LimitlessEffect extends MobEffect {
 
     public LimitlessEffect() {
