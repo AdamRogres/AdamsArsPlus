@@ -1,0 +1,56 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 5,
+  "output": {
+    "item": "adamsarsplus:camr_robes_a"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "adamsarsplus:true_elemental_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:true_elemental_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:true_elemental_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:true_elemental_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "item": "adamsarsplus:camr_robes"
+    }
+  ],
+  "sourceCost": 9000,
+  "tier": 4
+}

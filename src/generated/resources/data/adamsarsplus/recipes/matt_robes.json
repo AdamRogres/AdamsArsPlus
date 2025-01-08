@@ -1,0 +1,56 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 4,
+  "output": {
+    "item": "adamsarsplus:matt_robes"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "adamsarsplus:hero_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:hero_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:hero_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:hero_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "tag": "adamsarsplus:robe_a"
+    }
+  ],
+  "sourceCost": 8000,
+  "tier": 4
+}

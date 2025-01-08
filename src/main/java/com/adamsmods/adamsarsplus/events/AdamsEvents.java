@@ -25,6 +25,9 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.UUID;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.MANA_EXHAUST_EFFECT;
+
 @Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
 public class AdamsEvents {
 
@@ -40,4 +43,12 @@ public class AdamsEvents {
         }
         e.currentCost = (int)(R * newCost);
     }
+
+    @SubscribeEvent
+    public static void newRegenCalc(ManaRegenCalcEvent e) {
+       if(!(e.getEntity().getEffect(MANA_EXHAUST_EFFECT.get()) == null)){
+        e.setRegen(0);
+       }
+    }
+
 }

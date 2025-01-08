@@ -1,0 +1,56 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 6,
+  "output": {
+    "item": "adamsarsplus:adam_hood_a"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:netherite_ingot"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "item": "adamsarsplus:adam_hood"
+    }
+  ],
+  "sourceCost": 10000,
+  "tier": 5
+}

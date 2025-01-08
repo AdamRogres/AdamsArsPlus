@@ -1,17 +1,30 @@
 package com.adamsmods.adamsarsplus.entities;
 
+import com.adamsmods.adamsarsplus.block.DomainShell;
+import com.adamsmods.adamsarsplus.block.ModBlocks;
+import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 
 import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.hollingsworth.arsnouveau.ArsNouveau;
+import com.hollingsworth.arsnouveau.api.ANFakePlayer;
 import com.hollingsworth.arsnouveau.api.item.IWandable;
+import com.hollingsworth.arsnouveau.api.spell.SpellContext;
+import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
+import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
+import com.hollingsworth.arsnouveau.api.util.SpellUtil;
+import com.hollingsworth.arsnouveau.common.block.MageBlock;
+import com.hollingsworth.arsnouveau.common.block.tile.MageBlockTile;
 import com.hollingsworth.arsnouveau.common.entity.*;
 import com.hollingsworth.arsnouveau.client.particle.ParticleUtil;
+import com.hollingsworth.arsnouveau.common.items.curios.ShapersFocus;
 import com.hollingsworth.arsnouveau.common.lib.EntityTags;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDampen;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
+import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,20 +34,32 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import com.hollingsworth.arsnouveau.api.entity.ChangeableBehavior;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.*;
 import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.network.PlayMessages;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+
 
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.SIMPLE_DOMAIN_EFFECT;
+import static com.adamsmods.adamsarsplus.Config.MAX_DOMAIN_ENTITIES;
+import static com.adamsmods.adamsarsplus.block.ModBlocks.DOMAIN_SHELL_BLOCK;
+import static com.hollingsworth.arsnouveau.setup.registry.BlockRegistry.MAGE_BLOCK;
 
 
 public class EntityDomainSpell extends EntityProjectileSpell {
@@ -42,17 +67,18 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     public static final EntityDataAccessor<Integer> ACCELERATES = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> AOE = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Boolean> LANDED = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Boolean> SENSITIVE = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Boolean> SHOULD_FALL = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> OPEN = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> DOME = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FILTER_SELF = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
 
     public double extendedTime;
     public int maxProcs = 100;
     public int totalProcs;
+    public int shellblocks;
+    public double refinement;
 
     public EntityDomainSpell(EntityType<? extends EntityProjectileSpell> type, Level worldIn) {
-        super(AdamsModEntities.DOMAIN_SPELL.get(), worldIn);
+        super(type, worldIn);
     }
 
     public EntityDomainSpell(Level worldIn, double x, double y, double z) {
@@ -74,8 +100,13 @@ public class EntityDomainSpell extends EntityProjectileSpell {
             boolean isOnGround = level().getBlockState(blockPosition()).blocksMotion();
             this.setLanded(isOnGround);
         }
+
         super.tick();
         castSpells();
+
+        if(calcShell() > this.shellblocks / 2){
+            this.remove(RemovalReason.DISCARDED);
+        }
     }
 
     @Override
@@ -98,10 +129,10 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         float aoe = getAoe();
         int flatAoe = Math.round(aoe);
         int radius = 3 + flatAoe;
-        Predicate<Double> Sphere = shouldFall() ? (distance) -> distance <= radius + 0.5 && distance >= radius - 0.5 : (distance) -> (distance <= radius + 0.5);
+        Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
 
         if (!level().isClientSide && age % (20 - 2 * getAccelerates()) == 0) {
-            if (isSensitive()) {
+            if (getOpen()) {
                 for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
                     if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
                         if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
@@ -109,34 +140,59 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                         }
                     }
                 }
-            } else {
-                int i = 0;
-                for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(getAoe(),getAoe(),getAoe()))) {
-                    if (entity.equals(this) || entity.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST))
+            }
+
+            int i = 0;
+            for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(getAoe(),getAoe(),getAoe()))) {
+                if (entity.equals(this) || entity.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST))
+                    continue;
+                if (entity instanceof LivingEntity){
+                    if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
                         continue;
-                        if(!getDome() || (blockPosition().getY() - 2 < entity.getBlockY())) {
-                            if (!getFilter() || !(spellResolver.spellContext.getUnwrappedCaster().equals(entity))) {
-                                    spellResolver.onResolveEffect(level(), new EntityHitResult(entity));
-                            }
-                        }
-                    i++;
-                    if (i > 5)
-                        break;
-                }
-                if(shouldFall()){
-                    for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
-                        if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
-                            if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
-                                spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
-                            }
-                        }
                     }
                 }
-                totalProcs += i;
-                if (totalProcs >= maxProcs)
-                    this.remove(RemovalReason.DISCARDED);
+                if(!getDome() || (blockPosition().getY() - 2 < entity.getBlockY())) {
+                    if (!getFilter() || !(spellResolver.spellContext.getUnwrappedCaster().equals(entity))) {
+                        spellResolver.onResolveEffect(level(), new EntityHitResult(entity));
+                    }
+                }
+
+                i++;
+                if (i > MAX_DOMAIN_ENTITIES.get())
+                    break;
+            }
+
+            totalProcs += i;
+            if (totalProcs >= maxProcs)
+                this.remove(RemovalReason.DISCARDED);
+        }
+    }
+
+    public int calcShell(){
+        int breaks = this.shellblocks;
+
+        float aoe = getAoe();
+        int flatAoe = Math.round(aoe);
+        int radius = 4 + flatAoe;
+        Predicate<Double> Sphere =  (distance) -> (distance <= radius + 0.5);
+
+        for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
+            if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
+               BlockEntity var12 = level().getBlockEntity(p);
+
+               if (var12 instanceof DomainShellTile) {
+                   DomainShellTile tile = (DomainShellTile)var12;
+
+                   if(tile.refinement == this.refinement){
+                       breaks--;
+                   } else if (tile.refinement < this.refinement) {
+                       ((DomainShellTile) var12).age = (double)120.0F + (double)20.0F * ((DomainShellTile) var12).lengthModifier;
+                   }
+               }
             }
         }
+
+        return breaks;
     }
 
 
@@ -186,7 +242,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     }
 
     public float getAoe() {
-        return (this.isSensitive() ? 1 : 3) + entityData.get(AOE);
+        return 1 + entityData.get(AOE);
     }
 
     public void setLanded(boolean landed) {
@@ -197,20 +253,12 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         return entityData.get(LANDED);
     }
 
-    public void setSensitive(boolean sensitive) {
-        entityData.set(SENSITIVE, sensitive);
+    public void setOpen(boolean open) {
+        entityData.set(OPEN, open);
     }
 
-    public boolean isSensitive() {
-        return entityData.get(SENSITIVE);
-    }
-
-    public void setShouldFall(boolean shouldFall) {
-        entityData.set(SHOULD_FALL, shouldFall);
-    }
-
-    public boolean shouldFall() {
-        return entityData.get(SHOULD_FALL);
+    public boolean getOpen() {
+        return entityData.get(OPEN);
     }
 
     public boolean getDome() {
@@ -235,8 +283,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         entityData.define(ACCELERATES, 0);
         entityData.define(AOE, 0f);
         entityData.define(LANDED, false);
-        entityData.define(SENSITIVE, false);
-        entityData.define(SHOULD_FALL, true);
+        entityData.define(OPEN, false);
         entityData.define(DOME, false);
         entityData.define(FILTER_SELF, false);
     }
@@ -244,8 +291,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putBoolean("sensitive", isSensitive());
-        tag.putBoolean("shouldFall", shouldFall());
+        tag.putBoolean("open", getOpen());
         tag.putBoolean("dome", getDome());
         tag.putBoolean("selfFiltered", getFilter());
     }
@@ -253,8 +299,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     @Override
     public void load(CompoundTag compound) {
         super.load(compound);
-        setSensitive(compound.getBoolean("sensitive"));
-        setShouldFall(compound.getBoolean("shouldFall"));
+        setOpen(compound.getBoolean("open"));
         setDome(compound.getBoolean("dome"));
         setFilter(compound.getBoolean("selfFiltered"));
     }

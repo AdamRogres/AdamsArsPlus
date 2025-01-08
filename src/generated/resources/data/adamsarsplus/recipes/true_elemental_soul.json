@@ -1,0 +1,30 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:true_elemental_soul"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:flame_soul"
+    },
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "adamsarsplus:mana_diamond"
+    }
+  ],
+  "sourceCost": 10000
+}

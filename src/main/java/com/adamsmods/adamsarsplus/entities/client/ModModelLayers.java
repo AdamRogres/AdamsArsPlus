@@ -1,0 +1,23 @@
+package com.adamsmods.adamsarsplus.entities.client;
+
+import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.resources.ResourceLocation;
+
+public class ModModelLayers {
+    public static final ModelLayerLocation RYAN_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "ryan_layer"), "main");
+    public static final ModelLayerLocation CADE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "cade_layer"), "main");
+    public static final ModelLayerLocation NICK_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "nick_layer"), "main");
+    public static final ModelLayerLocation CAM_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "cam_layer"), "main");
+    public static final ModelLayerLocation MATT_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "matt_layer"), "main");
+    public static final ModelLayerLocation ADAM_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "adam_layer"), "main");
+
+    public static final ModelLayerLocation MAGE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "mage_layer"), "main");
+}

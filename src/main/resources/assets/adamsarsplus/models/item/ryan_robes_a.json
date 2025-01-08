@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "adamsarsplus:item/armor/ryan_robes_tint",
+    "layer1": "adamsarsplus:item/armor/ryan_robes_gold"
+  }
+}

@@ -6,7 +6,10 @@ import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
+import com.adamsmods.adamsarsplus.glyphs.method_glyph.MethodDetonate;
+import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
 import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
+import com.adamsmods.adamsarsplus.recipe.jei.AArmorRecipe;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.registry.RitualRegistry;
@@ -16,11 +19,13 @@ import com.hollingsworth.arsnouveau.api.spell.AbstractEffect;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.GlyphRecipe;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.ImbuementRecipe;
+import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeBuilder;
 import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.GlyphRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.ImbuementRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
 import com.hollingsworth.arsnouveau.common.items.ManipulationEssence;
+import com.hollingsworth.arsnouveau.common.items.ModItem;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
@@ -48,9 +53,12 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
@@ -101,17 +109,35 @@ public class ArsProviders {
 
             Path output = this.generator.getPackOutput().getOutputFolder();
 
-            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(NETHERITE_BLOCK));
-            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
-            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(NETHERITE_BLOCK));
-            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
-            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(NETHERITE_BLOCK));
-            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem(), 4).withItem(MANA_DIAMOND, 4).withItem(DIAMOND_BLOCK));
+            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
+            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
+            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
+            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
+            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
+            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
+
+            recipes.add(get(AugmentOpenDomain.INSTANCE).withItem(VOID_SOUL, 8).withItem(NETHER_STAR));
 
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
-            recipes.add(get(EffectDomain.INSTANCE).withItem(AugmentAOEThree.INSTANCE.getGlyph().asItem()).withItem(EffectLinger.INSTANCE.getGlyph().asItem()).withItem(EffectWall.INSTANCE.getGlyph().asItem()).withItem(EffectBurst.INSTANCE.getGlyph().asItem()).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
-            recipes.add(get(EffectLimitless.INSTANCE).withItem(CHORUS_FRUIT, 3).withItem(SpellEfficiency.INSTANCE.getGlyph().asItem(), 6));
+            recipes.add(get(EffectDomain.INSTANCE).withItem(TRUE_ELEMENTAL_SOUL,4).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
+            recipes.add(get(EffectLimitless.INSTANCE).withItem(ItemsRegistry.ABJURATION_ESSENCE, 3).withItem(VOID_SOUL, 6));
             recipes.add(get(EffectSwapTarget.INSTANCE).withItem(EMERALD_BLOCK).withItem(EffectExchange.INSTANCE.getGlyph().asItem()).withItem(ENDER_EYE, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
+
+            recipes.add(get(EffectSimpleDomain.INSTANCE).withItem(ELEMENTAL_SOUL,4).withItem(MANA_DIAMOND,4).withItem(ItemsRegistry.CONJURATION_ESSENCE));
+
+            recipes.add(get(EffectEruption.INSTANCE).withItem(FLAME_SOUL,3).withItem(ItemsRegistry.FIRE_ESSENCE,2).withItem(FLINT_AND_STEEL));
+            recipes.add(get(EffectIceburst.INSTANCE).withItem(FROST_SOUL,3).withItem(ItemsRegistry.WATER_ESSENCE,2).withItem(BLUE_ICE));
+            recipes.add(get(EffectRaiseEarth.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
+            recipes.add(get(EffectDivineSmite.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(ItemsRegistry.AIR_ESSENCE,2).withItem(LIGHTNING_ROD));
+            recipes.add(get(EffectMeteorSwarm.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE,2).withItem(FIRE_CHARGE));
+
+            recipes.add(get(EffectAnnihilate.INSTANCE).withItem(VOID_SOUL,3).withItem(ItemsRegistry.ABJURATION_ESSENCE,2).withItem(CHORUS_FRUIT));
+
+            recipes.add(get(MethodDetonate.INSTANCE).withItem(FLAME_SOUL).withItem(GUNPOWDER,2).withItem(ARROW, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
+            recipes.add(get(PropagateDetonate.INSTANCE).withItem(MethodDetonate.INSTANCE.getGlyph().asItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
+
+
+
 
             for (GlyphRecipe recipe : recipes) {
                 Path path = getScribeGlyphPath(output, recipe.output.getItem());
@@ -140,13 +166,76 @@ public class ArsProviders {
         @Override
         public void collectJsons(CachedOutput cache) {
 
-            recipes.add(builder()
-                    .withSourceCost(10000)
-                    .withPedestalItem(8, ItemsRegistry.SOURCE_GEM)
-                    .withReagent(DIAMOND)
-                    .withResult(MANA_DIAMOND)
-                    .build()
-            );
+            recipes.add(builder().withSourceCost(10000).withPedestalItem(8, ItemsRegistry.SOURCE_GEM).withReagent(DIAMOND).withResult(MANA_DIAMOND).build());
+            recipes.add(builder().withSourceCost(10000).withPedestalItem(1, FLAME_SOUL).withPedestalItem(1, FROST_SOUL).withPedestalItem(1, EARTH_SOUL).withReagent(MANA_DIAMOND).withResult(ELEMENTAL_SOUL).build());
+            recipes.add(builder().withSourceCost(10000).withPedestalItem(1, FLAME_SOUL).withPedestalItem(1, FROST_SOUL).withPedestalItem(1, EARTH_SOUL).withPedestalItem(1, HERO_SOUL).withPedestalItem(1, LIGHTNING_SOUL).withReagent(MANA_DIAMOND).withResult(TRUE_ELEMENTAL_SOUL).build());
+
+            // Ryan Armor
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(RYAN_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_HOOD)).withPedestalItem(4,FLAME_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(RYAN_ROBES).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_ROBE)).withPedestalItem(4,FLAME_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(RYAN_LEGGINGS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_LEG)).withPedestalItem(4,FLAME_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(RYAN_BOOTS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_BOOT)).withPedestalItem(4,FLAME_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(RYAN_HOOD_A).withReagent(RYAN_HOOD).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(RYAN_ROBES_A).withReagent(RYAN_ROBES).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(RYAN_LEGGINGS_A).withReagent(RYAN_LEGGINGS).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(RYAN_BOOTS_A).withReagent(RYAN_BOOTS).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+
+            // Cade Armor
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(CADE_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_HOOD)).withPedestalItem(4,FROST_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(CADE_ROBES).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_ROBE)).withPedestalItem(4,FROST_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(CADE_LEGGINGS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_LEG)).withPedestalItem(4,FROST_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(CADE_BOOTS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_BOOT)).withPedestalItem(4,FROST_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(CADE_HOOD_A).withReagent(CADE_HOOD).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(CADE_ROBES_A).withReagent(CADE_ROBES).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(CADE_LEGGINGS_A).withReagent(CADE_LEGGINGS).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(CADE_BOOTS_A).withReagent(CADE_BOOTS).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+
+            // Nick Armor
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(NICK_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_HOOD)).withPedestalItem(4,EARTH_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(NICK_ROBES).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_ROBE)).withPedestalItem(4,EARTH_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(NICK_LEGGINGS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_LEG)).withPedestalItem(4,EARTH_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,3,builder().withResult(NICK_BOOTS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_BOOT)).withPedestalItem(4,EARTH_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));
+
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(NICK_HOOD_A).withReagent(NICK_HOOD).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(NICK_ROBES_A).withReagent(NICK_ROBES).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(NICK_LEGGINGS_A).withReagent(NICK_LEGGINGS).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(3,4,builder().withResult(NICK_BOOTS_A).withReagent(NICK_BOOTS).withPedestalItem(4,ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(8500).keepNbtOfReagent(true).build()));
+
+            // Cam Armor
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(CAMR_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_HOOD_A)).withPedestalItem(4,LIGHTNING_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(CAMR_ROBES).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_ROBE_A)).withPedestalItem(4,LIGHTNING_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(CAMR_LEGGINGS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_LEG_A)).withPedestalItem(4,LIGHTNING_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(CAMR_BOOTS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_BOOT_A)).withPedestalItem(4,LIGHTNING_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(CAMR_HOOD_A).withReagent(CAMR_HOOD).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(CAMR_ROBES_A).withReagent(CAMR_ROBES).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(CAMR_LEGGINGS_A).withReagent(CAMR_LEGGINGS).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(CAMR_BOOTS_A).withReagent(CAMR_BOOTS).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+
+            // Matt Armor
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(MATT_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_HOOD_A)).withPedestalItem(4,HERO_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(MATT_ROBES).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_ROBE_A)).withPedestalItem(4,HERO_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(MATT_LEGGINGS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_LEG_A)).withPedestalItem(4,HERO_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,4,builder().withResult(MATT_BOOTS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_BOOT_A)).withPedestalItem(4,HERO_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8000).keepNbtOfReagent(true).build()));
+
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(MATT_HOOD_A).withReagent(MATT_HOOD).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(MATT_ROBES_A).withReagent(MATT_ROBES).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(MATT_LEGGINGS_A).withReagent(MATT_LEGGINGS).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(4,5,builder().withResult(MATT_BOOTS_A).withReagent(MATT_BOOTS).withPedestalItem(4,TRUE_ELEMENTAL_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(9000).keepNbtOfReagent(true).build()));
+
+            // Adam Armor
+            recipes.add(new AArmorRecipe(5,5,builder().withResult(ADAM_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_HOOD_B)).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(5,5,builder().withResult(ADAM_ROBES).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_ROBE_B)).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(5,5,builder().withResult(ADAM_LEGGINGS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_LEG_B)).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8500).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(5,5,builder().withResult(ADAM_BOOTS).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGE_BOOT_B)).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(8500).keepNbtOfReagent(true).build()));
+
+            recipes.add(new AArmorRecipe(5,6,builder().withResult(ADAM_HOOD_A).withReagent(ADAM_HOOD).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(10000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(5,6,builder().withResult(ADAM_ROBES_A).withReagent(ADAM_ROBES).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(10000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(5,6,builder().withResult(ADAM_LEGGINGS_A).withReagent(ADAM_LEGGINGS).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(10000).keepNbtOfReagent(true).build()));
+            recipes.add(new AArmorRecipe(5,6,builder().withResult(ADAM_BOOTS_A).withReagent(ADAM_BOOTS).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(10000).keepNbtOfReagent(true).build()));
+
 
             Path output = this.generator.getPackOutput().getOutputFolder();
             for (EnchantingApparatusRecipe g : recipes) {

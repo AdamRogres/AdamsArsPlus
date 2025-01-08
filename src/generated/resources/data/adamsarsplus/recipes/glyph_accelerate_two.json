@@ -10,21 +10,6 @@
     },
     {
       "item": {
-        "item": "ars_nouveau:glyph_accelerate"
-      }
-    },
-    {
-      "item": {
-        "item": "ars_nouveau:glyph_accelerate"
-      }
-    },
-    {
-      "item": {
-        "item": "ars_nouveau:glyph_accelerate"
-      }
-    },
-    {
-      "item": {
         "item": "adamsarsplus:mana_diamond"
       }
     },
@@ -45,7 +30,7 @@
     },
     {
       "item": {
-        "item": "minecraft:diamond_block"
+        "item": "adamsarsplus:elemental_soul"
       }
     }
   ],

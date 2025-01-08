@@ -12,14 +12,14 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
-        //classpath group: 'net.neoforged', name: 'NeoGradle', version: '6.0.+', changing: true
+        classpath group: 'net.neoforged', name: 'NeoGradle', version: '6.0.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.+'
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-//apply plugin: 'net.neoforged.gradle'
+apply plugin: 'net.neoforged.gradle'
 apply plugin: 'idea'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'maven-publish'

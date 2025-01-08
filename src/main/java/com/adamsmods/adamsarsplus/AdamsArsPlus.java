@@ -1,11 +1,14 @@
 package com.adamsmods.adamsarsplus;
 
 
+import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
+import com.adamsmods.adamsarsplus.entities.client.*;
 import com.adamsmods.adamsarsplus.events.AdamsEvents;
 import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.client.registry.ClientHandler;
 import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -32,7 +35,7 @@ public class AdamsArsPlus {
     public AdamsArsPlus() {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         ModRegistry.registerRegistries(modbus);
-        ;
+
         ArsNouveauRegistry.registerGlyphs();
         modbus.addListener(this::setup);
         modbus.addListener(this::doClientStuff);
@@ -51,10 +54,20 @@ public class AdamsArsPlus {
     private void setup(final FMLCommonSetupEvent event) {
         ArsNouveauRegistry.registerSounds();
         ArsNouveauRegistry.addAugments();
+        ArsNouveauRegistry.registerPerks();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(AdamClientHandler::registerRenderers);
+
+        EntityRenderers.register(AdamsModEntities.RYAN_ENTITY.get(), RyanRenderer::new);
+        EntityRenderers.register(AdamsModEntities.CADE_ENTITY.get(), CadeRenderer::new);
+        EntityRenderers.register(AdamsModEntities.NICK_ENTITY.get(), NickRenderer::new);
+        EntityRenderers.register(AdamsModEntities.CAM_ENTITY.get(), CamRenderer::new);
+        EntityRenderers.register(AdamsModEntities.MATT_ENTITY.get(), MattRenderer::new);
+        EntityRenderers.register(AdamsModEntities.SUMMON_SKELETON_M.get(), RenderSummonedSkeletonM::new);
+        EntityRenderers.register(AdamsModEntities.ADAM_ENTITY.get(), AdamRenderer::new);
+        EntityRenderers.register(AdamsModEntities.MAGE_ENTITY.get(), MageRenderer::new);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

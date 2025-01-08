@@ -1,26 +1,25 @@
 package com.adamsmods.adamsarsplus.entities;
 
 
+import com.adamsmods.adamsarsplus.entities.custom.*;
 import com.adamsmods.adamsarsplus.lib.AdamsLibEntityNames;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
-import com.hollingsworth.arsnouveau.common.lib.LibEntityNames;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.MOD_ID;
-import static com.hollingsworth.arsnouveau.ArsNouveau.MODID;
+import static net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES;
 
 public class AdamsModEntities {
 
-        public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID);
+        public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ENTITY_TYPES, MOD_ID);
 
         static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String name, EntityType.Builder<T> builder) {
             return ENTITIES.register(name, () -> builder.build(MOD_ID + ":" + name));
@@ -36,8 +35,79 @@ public class AdamsModEntities {
                         .setUpdateInterval(120).setCustomClientFactory(EntityDomainSpell::new));
 
 
-        public static boolean genericGroundSpawn(EntityType<? extends Entity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource random) {
-            return worldIn.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) && worldIn.getRawBrightness(pos, 0) > 8;
-        }
+        public static final RegistryObject<EntityType<DetonateProjectile>> DETONATE_SPELL = registerEntity(
+                AdamsLibEntityNames.DETONATE,
+                EntityType.Builder.<DetonateProjectile>of(DetonateProjectile::new, MobCategory.MISC)
+                        .sized(0.5f, 0.5f)
+                        .setTrackingRange(20)
+                        .fireImmune()
+                        .setShouldReceiveVelocityUpdates(true)
+                        .noSave()
+                        .setUpdateInterval(120).setCustomClientFactory(DetonateProjectile::new));
 
+    public static final RegistryObject<EntityType<MeteorProjectile>> METEOR_SPELL = registerEntity(
+            AdamsLibEntityNames.METEOR,
+            EntityType.Builder.<MeteorProjectile>of(MeteorProjectile::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .setTrackingRange(20)
+                    .fireImmune()
+                    .setShouldReceiveVelocityUpdates(true)
+                    .noSave()
+                    .setUpdateInterval(120).setCustomClientFactory(MeteorProjectile::new));
+
+    public static final RegistryObject<EntityType<EntityDivineSmite>> DIVINE_SMITE = registerEntity(
+            AdamsLibEntityNames.DIVINESMITE,
+                    EntityType.Builder.<EntityDivineSmite>of(EntityDivineSmite::new, MobCategory.MISC)
+                            .noSave()
+                            .sized(0.0F, 0.0F)
+                            .clientTrackingRange(16)
+                            .updateInterval(Integer.MAX_VALUE)
+                            .setShouldReceiveVelocityUpdates(true).setUpdateInterval(60));
+
+    public static final RegistryObject<EntityType<SummonSkeleton_m>> SUMMON_SKELETON_M = registerEntity(
+            AdamsLibEntityNames.SUMMONED_SKELETON_M,
+                EntityType.Builder.<SummonSkeleton_m>of(SummonSkeleton_m::new, MobCategory.CREATURE)
+                        .sized(1.0F, 1.8F)
+                        .clientTrackingRange(10));
+
+
+    public static final RegistryObject<EntityType<RyanEntity>> RYAN_ENTITY = registerEntity(
+                AdamsLibEntityNames.RYAN,
+                EntityType.Builder.<RyanEntity>of(RyanEntity::new, MobCategory.MONSTER)
+                        .sized(0.7f, 1.9f));
+
+        public static final RegistryObject<EntityType<CadeEntity>> CADE_ENTITY = registerEntity(
+                AdamsLibEntityNames.CADE,
+                EntityType.Builder.<CadeEntity>of(CadeEntity::new, MobCategory.MONSTER)
+                        .sized(0.6f, 1.7f));
+
+        public static final RegistryObject<EntityType<NickEntity>> NICK_ENTITY = registerEntity(
+                AdamsLibEntityNames.NICK,
+                EntityType.Builder.<NickEntity>of(NickEntity::new, MobCategory.MONSTER)
+                        .sized(0.9f, 2.3f));
+
+        public static final RegistryObject<EntityType<CamEntity>> CAM_ENTITY = registerEntity(
+                AdamsLibEntityNames.CAM,
+                EntityType.Builder.<CamEntity>of(CamEntity::new, MobCategory.MONSTER)
+                        .sized(0.7f, 2.0f));
+
+        public static final RegistryObject<EntityType<MattEntity>> MATT_ENTITY = registerEntity(
+                AdamsLibEntityNames.MATT,
+                EntityType.Builder.<MattEntity>of(MattEntity::new, MobCategory.MONSTER)
+                        .sized(0.8f, 2.2f));
+        public static final RegistryObject<EntityType<AdamEntity>> ADAM_ENTITY = registerEntity(
+                AdamsLibEntityNames.ADAM,
+                EntityType.Builder.<AdamEntity>of(AdamEntity::new, MobCategory.MONSTER)
+                        .sized(0.6f, 1.8f));
+
+    public static final RegistryObject<EntityType<MysteriousMageEntity>> MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.MAGE,
+            EntityType.Builder.<MysteriousMageEntity>of(MysteriousMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f));
+
+
+    public static boolean genericGroundSpawn(EntityType<? extends Entity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource random) {
+            return worldIn.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) && worldIn.getRawBrightness(pos, 0) > 8;
     }
+
+}

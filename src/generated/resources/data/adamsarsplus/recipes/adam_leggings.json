@@ -1,0 +1,56 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 5,
+  "output": {
+    "item": "adamsarsplus:adam_leggings"
+  },
+  "pedestalItems": [
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:void_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:mana_diamond"
+      }
+    }
+  ],
+  "reagent": [
+    {
+      "tag": "adamsarsplus:legs_b"
+    }
+  ],
+  "sourceCost": 8500,
+  "tier": 5
+}

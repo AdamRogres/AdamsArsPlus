@@ -1,10 +1,11 @@
 package com.adamsmods.adamsarsplus.item;
 
+import com.hollingsworth.arsnouveau.common.items.ModItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 //credits for code go to: https://github.com/dkmk100/ArsOmega/blob/37c9ba1d9c76ccde893ca12a8987bf4bdc9e4ffa/src/main/java/com/dkmk100/arsomega/items/BasicItem.java
-public class RegularItems extends Item {
+public class RegularItems extends ModItem {
     boolean showEnch = false;
     String name;
 

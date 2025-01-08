@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "adamsarsplus:item/armor/camr_boots_tint"
+  }
+}
