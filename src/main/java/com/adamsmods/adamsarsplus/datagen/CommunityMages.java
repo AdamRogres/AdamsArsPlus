@@ -16,26 +16,22 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class CommunityMages {
     public static List<ComMages> mages = new ArrayList();
-    public static List<UUID> CONTRIBUTORS = new ArrayList();
 
     public CommunityMages() {
     }
 
     public static void init() {
         try {
+
             JsonObject object = JsonParser.parseString(readUrl(new URL("https://raw.githubusercontent.com/AdamRogres/AdamsArsPlus/refs/heads/master/src/main/resources/data/adamsarsplus/mysterious_mage_spells/spell_list.json"))).getAsJsonObject();
 
-            for(JsonElement element : object.getAsJsonArray("uuids")) {
-                String uuid = element.getAsString();
-                CONTRIBUTORS.add(UUID.fromString(uuid));
-            }
 
             for(JsonElement element : object.getAsJsonArray("mageOwner")) {
                 JsonObject jsonObject = element.getAsJsonObject();
                 String name = jsonObject.get("name").getAsString();
                 String color = jsonObject.get("color").getAsString();
                 String spell = jsonObject.get("spell").getAsString();
-                String coold = jsonObject.get("coold").getAsString();
+                Integer coold = jsonObject.get("coold").getAsInt();
                 mages.add(new ComMages(name, color, spell, coold));
             }
         } catch (IOException var2) {
@@ -45,6 +41,30 @@ public class CommunityMages {
             }
         }
 
+    }
+
+    public static void initAlt(){
+        mages.add(new ComMages("Flame Mage","red",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
+        mages.add(new ComMages("Water Mage","blue",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
+        mages.add(new ComMages("Earth Mage","green",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
+        mages.add(new ComMages("Air Mage","white",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
+        mages.add(new ComMages("Abjuration Mage","purple",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
+        mages.add(new ComMages("Conjuration Mage","gray",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
+        mages.add(new ComMages("Manipulation Mage","orange",
+                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
+                ,100));
     }
 
     public static String readUrl(URL url) throws IOException {
@@ -65,9 +85,9 @@ public class CommunityMages {
         public String name;
         public String color;
         public String spell;
-        public String coold;
+        public Integer coold;
 
-        public ComMages(String name, String color, String spell, String coold) {
+        public ComMages(String name, String color, String spell, Integer coold) {
             this.name = name;
             this.color = color;
             this.spell = spell;

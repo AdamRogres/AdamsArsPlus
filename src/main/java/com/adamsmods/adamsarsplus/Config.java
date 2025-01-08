@@ -12,6 +12,7 @@ public class Config {
     public static ForgeConfigSpec.IntValue      MAX_DOMAIN_ENTITIES;
     public static ForgeConfigSpec.BooleanValue  DOMAIN_BURNOUT;
     public static ForgeConfigSpec.BooleanValue  DISCOUNT_BACKLASH;
+    public static ForgeConfigSpec.BooleanValue  COM_MAGES;
 
     public static ForgeConfigSpec SERVER_CONFIG;
     static {
@@ -22,6 +23,7 @@ public class Config {
         DISCOUNT_BACKLASH   = SERVER_BUILDER.comment("does the spell efficiency glyph inflict mana exhaustion?").define("doDiscountBacklash", true);
         MAX_DISCOUNTS       = SERVER_BUILDER.comment("maximum number of times spell efficiency can appear").defineInRange("maxDiscount",5,0,10);
         MAX_DOMAIN_ENTITIES = SERVER_BUILDER.comment("maximum number of entities a domain can target every spell cast").defineInRange("maxDomainEntities",10,1,100);
+        COM_MAGES           = SERVER_BUILDER.comment("include community spells for the mysterious mage entity?").define("doComMages", true);
 
         SERVER_CONFIG = SERVER_BUILDER.build();
     }

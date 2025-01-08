@@ -4,7 +4,7 @@
       "name":   "MistakeMaker",
       "color":  "purple",
       "spell":  "ars_nouveau:glyph_ignite-ars_nouveau:glyph_explosion-ars_nouveau:glyph_amplify-ars_nouveau:glyph_amplify-ars_nouveau:glyph_aoe-ars_nouveau:glyph_aoe",
-      "coold":  "100"
+      "coold":  100
     }
 
   ]

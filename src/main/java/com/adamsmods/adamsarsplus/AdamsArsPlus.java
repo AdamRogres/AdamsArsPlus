@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus;
 
 
+import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.client.*;
 import com.adamsmods.adamsarsplus.events.AdamsEvents;
@@ -25,6 +26,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AdamsArsPlus.MOD_ID)
 public class AdamsArsPlus {
@@ -43,7 +46,6 @@ public class AdamsArsPlus {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
 
-
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -55,6 +57,9 @@ public class AdamsArsPlus {
         ArsNouveauRegistry.registerSounds();
         ArsNouveauRegistry.addAugments();
         ArsNouveauRegistry.registerPerks();
+
+        CommunityMages.initAlt();
+        CommunityMages.init();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

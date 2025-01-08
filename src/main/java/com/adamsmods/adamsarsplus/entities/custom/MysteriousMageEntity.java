@@ -8,6 +8,7 @@ import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
 import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
+import com.google.gson.JsonElement;
 import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -49,11 +50,15 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public String color = "white";
     public Spell mageSpell;
     public int spellCooldown;
+    public boolean init = true;
 
     public static final EntityDataAccessor<Boolean> CASTING =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
@@ -63,7 +68,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public MysteriousMageEntity(EntityType<? extends Monster> pEntityType, Level pLevel){
         super(pEntityType, pLevel);
 
-        this.mageSpawn(pLevel);
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -76,6 +80,12 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
+
+        if(init){
+            mageSpawn();
+
+            init = false;
+        }
 
         if(castCooldown > 0) {
             castCooldown--;
@@ -204,14 +214,21 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public Spell parseSpellData(String spellString, String color){
 
-        Spell returnSpell = new Spell()
-                .withColor(stringColor(color));
+        Spell returnSpell = new Spell();
+
+        returnSpell.color = stringColor(color);
 
         String[] tokens = spellString.split("-");
 
+        List<ResourceLocation> parsedSpell = new ArrayList();
+
         for(String t : tokens){
-            ResourceLocation registryName = new ResourceLocation(t);
-            AbstractSpellPart part = (AbstractSpellPart)GlyphRegistry.getSpellpartMap().get(registryName);
+            ResourceLocation part = ResourceLocation.tryParse(t);
+            parsedSpell.add(part);
+        }
+
+        for(ResourceLocation rl : parsedSpell) {
+            AbstractSpellPart part = (AbstractSpellPart)GlyphRegistry.getSpellpartMap().get(rl);
             if (part != null) {
                 returnSpell.recipe.add(part);
             }
@@ -220,7 +237,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         return returnSpell;
     }
 
-    public void setCooldown(int newCooldown){
+    public void setCooldown(Integer newCooldown){
         this.spellCooldown = newCooldown;
     }
 
@@ -300,7 +317,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                 CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(randomSource.nextInt(CommunityMages.mages.size()));
                 this.setColor(communityMage.color);
                 this.setCustomName(Component.literal(communityMage.name));
-                this.setCooldown(Integer.parseInt(communityMage.coold));
+                this.setCooldown(communityMage.coold);
                 this.mageSpell = parseSpellData(communityMage.spell, communityMage.color);
 
             } catch (Exception e) {
@@ -313,14 +330,17 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
     }
 
-    public void mageSpawn(Level pLevel) {
-        RandomSource randomSource = pLevel.getRandom();
-        if (randomSource.nextFloat() <= 0.1F && !CommunityMages.mages.isEmpty()) {
+    public void mageSpawn() {
+
+        if (!CommunityMages.mages.isEmpty()) {
             try {
-                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(randomSource.nextInt(CommunityMages.mages.size()));
+                int index = random.nextInt(CommunityMages.mages.size());
+
+                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(index);
+
                 this.setColor(communityMage.color);
                 this.setCustomName(Component.literal(communityMage.name));
-                this.setCooldown(Integer.parseInt(communityMage.coold));
+                this.setCooldown(communityMage.coold);
                 this.mageSpell = parseSpellData(communityMage.spell, communityMage.color);
 
             } catch (Exception e) {
@@ -328,6 +348,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
             }
         } else {
             this.setColor("white");
+            this.setCustomName(Component.literal("Oops"));
         }
     }
 

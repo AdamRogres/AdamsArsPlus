@@ -91,11 +91,22 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
     }
 
     void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell){
-        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(spell.color));
+        if(spell != null) {
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(spell.color));
 
-        summonProjectiles(entity.level(), entity, spell, resolver);
+            summonProjectiles(entity.level(), entity, spell, resolver);
+        }
 
         this.mageEntity.castCooldown = this.spellCooldown + random.nextInt(this.spellCooldown);
+        /*
+        if(this.spellCooldown > 0){
+            this.mageEntity.castCooldown = this.spellCooldown + random.nextInt(this.spellCooldown);
+        } else if(this.spellCooldown == 0){
+            this.mageEntity.castCooldown = 20;
+        } else {
+            this.mageEntity.castCooldown = 500;
+        }
+        */
     }
 
     public boolean canUse() {
