@@ -23,7 +23,7 @@ public class CommunityMages {
 
     public static void init() {
         try {
-            JsonObject object = JsonParser.parseString(readUrl(new URL("https://raw.githubusercontent.com/baileyholl/Ars-Nouveau/main/supporters.json"))).getAsJsonObject();
+            JsonObject object = JsonParser.parseString(readUrl(new URL("https://raw.githubusercontent.com/AdamRogres/AdamsArsPlus/refs/heads/master/src/main/resources/data/adamsarsplus/mysterious_mage_spells/spell_list.json"))).getAsJsonObject();
 
             for(JsonElement element : object.getAsJsonArray("uuids")) {
                 String uuid = element.getAsString();
