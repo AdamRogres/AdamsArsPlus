@@ -63,6 +63,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public MysteriousMageEntity(EntityType<? extends Monster> pEntityType, Level pLevel){
         super(pEntityType, pLevel);
 
+        this.mageSpawn(pLevel);
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -252,7 +253,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(2, new MageCastingGoal<>(this, 1.0D, 40f, () -> castCooldown <= 0, ModAnimationsDefinition.MAGE_CAST.hashCode(), 15, this.spellCooldown, this.mageSpell));
+        this.goalSelector.addGoal(2, new MageCastingGoal<>(this, 1.0D, 40f, () -> (castCooldown <= 0 && this.mageSpell != null), ModAnimationsDefinition.MAGE_CAST.hashCode(), 15, this.spellCooldown, this.mageSpell));
 
         this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, (double)1.0F));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, (double)1.0F, 0.0F));
@@ -310,6 +311,24 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         }
 
         return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+    }
+
+    public void mageSpawn(Level pLevel) {
+        RandomSource randomSource = pLevel.getRandom();
+        if (randomSource.nextFloat() <= 0.1F && !CommunityMages.mages.isEmpty()) {
+            try {
+                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(randomSource.nextInt(CommunityMages.mages.size()));
+                this.setColor(communityMage.color);
+                this.setCustomName(Component.literal(communityMage.name));
+                this.setCooldown(Integer.parseInt(communityMage.coold));
+                this.mageSpell = parseSpellData(communityMage.spell, communityMage.color);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.setColor("white");
+        }
     }
 
 }
