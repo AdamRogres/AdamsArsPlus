@@ -4,12 +4,11 @@ import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
 import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.adamsmods.adamsarsplus.util.SpellString;
-import com.adamsmods.adamsarsplus.util.SpellString.*;
 
-import com.hollingsworth.arsnouveau.api.registry.GlyphRegistry;
-import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
+import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +17,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -30,6 +30,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public static final EntityDataAccessor<Boolean> CASTING =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Integer> INDEX =
+            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.INT);
 
     public int castCooldown = 0;
 
@@ -78,6 +81,8 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         }
 
         if(this.level().isClientSide()) {
+
+
             setupAnimationStates();
         }
 
@@ -121,11 +126,12 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public void setCasting(boolean casting) { this.entityData.set(CASTING, casting); }
     public boolean isCasting(){ return this.entityData.get(CASTING); }
 
+    public void setIndex(Integer index) { this.entityData.set(INDEX, index); }
+    public Integer getIndex(){ return this.entityData.get(INDEX); }
+
     public void setColor(String newColor){
         this.color = newColor;
     }
-
-
 
     public void setSpellData(String spellString, String color){
         this.spell = spellString;
@@ -158,12 +164,18 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(CASTING, false);
+        this.entityData.define(INDEX, 0);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
 
-        tag.putInt("cast", castCooldown);
+        tag.putInt("cast",      castCooldown);
+        tag.putString("color",  color);
+        tag.putString("name",   name);
+        tag.putString("spell",  spell);
+        tag.putString("coold",  coold);
+
 
     }
 
@@ -172,12 +184,22 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         super.readAdditionalSaveData(tag);
 
         this.castCooldown = tag.getInt("cast");
+        this.setColor(tag.getString("color"));
+        this.setName(tag.getString("name"));
+        this.setCooldown(tag.getString("coold"));
+        this.setSpellData(tag.getString("spell"), tag.getString("color"));
 
     }
 
-    public void setCustomName(@javax.annotation.Nullable Component pName, String name) {
+    public void setName(String name){
         this.name = name;
 
+        if(name != "Mage"){
+            setCustomName(Component.literal(name));
+        }
+    }
+
+    public void setCustomName(@javax.annotation.Nullable Component pName) {
         super.setCustomName(pName);
     }
 
@@ -231,15 +253,15 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     }
 
     public void mageSpawn() {
+        RandomSource randomSource = this.level().getRandom();
 
         if (!CommunityMages.mages.isEmpty()) {
             try {
-                int index = random.nextInt(CommunityMages.mages.size());
-
-                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(index);
+                this.setIndex(randomSource.nextInt(CommunityMages.mages.size()));
+                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(this.getIndex());
 
                 this.setColor(communityMage.color);
-                this.setCustomName(Component.literal(communityMage.name), communityMage.name);
+                this.setName(communityMage.name);
                 this.setCooldown(communityMage.coold);
                 this.setSpellData(communityMage.spell, communityMage.color);
 
@@ -248,8 +270,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
             }
         } else {
             this.setColor("white");
-            this.setCustomName(Component.literal("Oops"));
+            this.setName("Oops");
         }
     }
-
 }

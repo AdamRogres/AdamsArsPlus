@@ -48,8 +48,8 @@ public class CommunityMages {
                 "ignite-aoe-delay-flare-explosion-burst-aoe-sensitive-ignite"
                 ,"medium"));
         mages.add(new ComMages("Water Mage","blue",
-                "burst-sensitive-aoe-conjure_water-delay-freeze-delay-ice_burst"
-                ,"long"));
+                "burst-sensitive-aoe-conjure_water-delay-freeze"
+                ,"medium"));
         mages.add(new ComMages("Earth Mage","green",
                 "burst-sensitive-raise_earth"
                 ,"medium"));
@@ -60,7 +60,7 @@ public class CommunityMages {
                 "harm-amp-extend-hex-swap_target-heal"
                 ,"short"));
         mages.add(new ComMages("Conjuration Mage","gray",
-                "summon_undead-split-split"
+                "summon_undead"
                 ,"long"));
         mages.add(new ComMages("Manipulation Mage","orange",
                 "harm-amp-swap_target-craft"
