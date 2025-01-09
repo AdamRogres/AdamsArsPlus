@@ -31,7 +31,7 @@ public class CommunityMages {
                 String name = jsonObject.get("name").getAsString();
                 String color = jsonObject.get("color").getAsString();
                 String spell = jsonObject.get("spell").getAsString();
-                Integer coold = jsonObject.get("coold").getAsInt();
+                String coold = jsonObject.get("coold").getAsString();
                 mages.add(new ComMages(name, color, spell, coold));
             }
         } catch (IOException var2) {
@@ -45,26 +45,26 @@ public class CommunityMages {
 
     public static void initAlt(){
         mages.add(new ComMages("Flame Mage","red",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "ignite-aoe"
+                ,"short"));
         mages.add(new ComMages("Water Mage","blue",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "conjure_water-aoe"
+                ,"long"));
         mages.add(new ComMages("Earth Mage","green",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "burst-sensitive-raise_earth"
+                ,"medium"));
         mages.add(new ComMages("Air Mage","white",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "launch-delay-windshear"
+                ,"medium"));
         mages.add(new ComMages("Abjuration Mage","purple",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "limitless-pierce-amp-aoe_three"
+                ,"medium"));
         mages.add(new ComMages("Conjuration Mage","gray",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "summon_undead-split-split"
+                ,"long"));
         mages.add(new ComMages("Manipulation Mage","orange",
-                "ars_nouveau:glyph_ignite-ars_nouveau:glyph_aoe"
-                ,100));
+                "harm-swap_target-craft"
+                ,"short"));
     }
 
     public static String readUrl(URL url) throws IOException {
@@ -85,9 +85,9 @@ public class CommunityMages {
         public String name;
         public String color;
         public String spell;
-        public Integer coold;
+        public String coold;
 
-        public ComMages(String name, String color, String spell, Integer coold) {
+        public ComMages(String name, String color, String spell, String coold) {
             this.name = name;
             this.color = color;
             this.spell = spell;
