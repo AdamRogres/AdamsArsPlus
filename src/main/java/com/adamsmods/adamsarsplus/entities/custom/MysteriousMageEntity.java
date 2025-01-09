@@ -49,7 +49,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public static final EntityDataAccessor<Boolean> CASTING =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public int castCooldown;
+    public int castCooldown = 0;
 
     public MysteriousMageEntity(EntityType<? extends Monster> pEntityType, Level pLevel){
         super(pEntityType, pLevel);
@@ -140,7 +140,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
         returnSpell.color = SpellString.stringColor(color);
 
-        this.mageSpell.setRecipe(returnSpell.recipe);
+        this.mageSpell = returnSpell;
     }
 
     public void setCooldown(String newCooldown){
@@ -151,6 +151,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
             case "medium"   -> this.spellCooldown = 50;
             case "long"     -> this.spellCooldown = 200;
         }
+
     }
 
     @Override
@@ -184,7 +185,12 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(2, new MageCastingGoal<>(this, 1.0D, 40f, () -> (castCooldown <= 0 && this.mageSpell != null), ModAnimationsDefinition.MAGE_CAST.hashCode(), 15, this.spellCooldown, this.mageSpell));
+        this.goalSelector.addGoal(1, new MageCastingGoal<>(this, 1.0D, 40f,
+                () -> castCooldown <= 0,         ModAnimationsDefinition.MAGE_CAST.hashCode(), 15,
+                () -> Math.max(spellCooldown,1),
+                () -> mageSpell));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,Player.class,10,1.3D,1.0D));
+        this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,IronGolem.class,10,1.3D,1.0D));
 
         this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, (double)1.0F));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, (double)1.0F, 0.0F));

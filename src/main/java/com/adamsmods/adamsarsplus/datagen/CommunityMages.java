@@ -45,25 +45,25 @@ public class CommunityMages {
 
     public static void initAlt(){
         mages.add(new ComMages("Flame Mage","red",
-                "ignite-aoe"
-                ,"short"));
+                "ignite-aoe-delay-flare-explosion-burst-aoe-sensitive-ignite"
+                ,"medium"));
         mages.add(new ComMages("Water Mage","blue",
-                "conjure_water-aoe"
+                "burst-sensitive-aoe-conjure_water-delay-freeze-delay-ice_burst"
                 ,"long"));
         mages.add(new ComMages("Earth Mage","green",
                 "burst-sensitive-raise_earth"
                 ,"medium"));
         mages.add(new ComMages("Air Mage","white",
-                "launch-delay-windshear"
+                "launch-slowfall-delay-duration_down-windshear"
                 ,"medium"));
         mages.add(new ComMages("Abjuration Mage","purple",
-                "limitless-pierce-amp-aoe_three"
-                ,"medium"));
+                "harm-amp-extend-hex-swap_target-heal"
+                ,"short"));
         mages.add(new ComMages("Conjuration Mage","gray",
                 "summon_undead-split-split"
                 ,"long"));
         mages.add(new ComMages("Manipulation Mage","orange",
-                "harm-swap_target-craft"
+                "harm-amp-swap_target-craft"
                 ,"short"));
     }
 

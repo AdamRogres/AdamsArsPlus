@@ -44,8 +44,8 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
     int animId;
     boolean done;
 
-    int spellCooldown;
-    Spell mageSpell;
+    Supplier<Integer> spellCooldown;
+    Supplier<Spell> mageSpell;
 
     Supplier<Boolean> canUse;
 
@@ -53,7 +53,7 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
     private int ticksUntilNextAttack = 5;
     private boolean shouldCountTillNextAttack = false;
 
-    public MageCastingGoal(MysteriousMageEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks, int spellCooldown, Spell mageSpell) {
+    public MageCastingGoal(MysteriousMageEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks, Supplier<Integer> spellCooldown, Supplier<Spell> mageSpell) {
         this.mageEntity = entity;
         this.speedModifier = speed;
         this.attackRadiusSqr = attackRange * attackRange;
@@ -97,7 +97,9 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
             summonProjectiles(entity.level(), entity, spell, resolver);
         }
 
-        this.mageEntity.castCooldown = this.spellCooldown + random.nextInt(this.spellCooldown);
+        System.out.println(this.spellCooldown.get());
+
+        this.mageEntity.castCooldown = this.spellCooldown.get() + random.nextInt(this.spellCooldown.get());
         /*
         if(this.spellCooldown > 0){
             this.mageEntity.castCooldown = this.spellCooldown + random.nextInt(this.spellCooldown);
@@ -211,7 +213,7 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
                 }
 
                 if(isTimeToAttack()) {
-                    performCastAttack(this.mageEntity, 1.0F, this.mageSpell);
+                    performCastAttack(this.mageEntity, 1.0F, this.mageSpell.get());
                     mageEntity.setCasting(false);
                     this.done = true;
                 }
