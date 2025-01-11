@@ -1,16 +1,22 @@
 {
   "mageOwner": [
     {
-      "name":   "MistakeMaker",
+       "name":  "MistakeMaker",
       "color":  "purple",
       "spell":  "exchange-rotate-leap-delay-pull-amp-launch-launch",
       "coold":  "short"
     },
     {
-      "name": "Lyrloch the Dark",
-      "color": "black",
-      "spell": "wither-amp-amp-amp-hex-amp-amp-amp-amp",
-      "coold": "medium"
+       "name":  "Lyrloch the Dark",
+      "color":  "black",
+      "spell":  "wither-amp-amp-amp-hex-amp-amp-amp-amp",
+      "coold":  "medium"
+    },
+    {
+       "name":  "Pointy",
+      "color":  "pink",
+      "spell":  "linger-accelerate_three-harm-swap_target-heal-amp-amp-amp-amp-dispel",
+      "coold":  "medium"
     }
 
   ]

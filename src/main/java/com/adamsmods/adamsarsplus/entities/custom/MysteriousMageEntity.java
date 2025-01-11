@@ -8,9 +8,17 @@ import com.adamsmods.adamsarsplus.util.SpellString;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
+import com.hollingsworth.arsnouveau.api.util.NBTUtil;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
+import com.hollingsworth.arsnouveau.common.entity.Starbuncle;
+import com.hollingsworth.arsnouveau.common.network.Networking;
+import com.hollingsworth.arsnouveau.common.network.PacketSyncTag;
+import com.hollingsworth.arsnouveau.setup.registry.RegistryHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -31,6 +39,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -46,6 +55,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public Spell mageSpell;
     public int spellCooldown;
     public boolean init = true;
+    public boolean init2 = true;
 
     public static final EntityDataAccessor<Boolean> CASTING =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
@@ -70,10 +80,13 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public void tick() {
         super.tick();
 
-        if(init){
-            mageSpawn();
-
-            init = false;
+        if(!this.level().isClientSide()){
+            if(init){
+                mageSpawn();
+                init = false;
+            }
+        } else {
+            setColor(CommunityMages.mages.get(this.getIndex()).color);
         }
 
         if(castCooldown > 0) {
@@ -81,8 +94,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         }
 
         if(this.level().isClientSide()) {
-
-
             setupAnimationStates();
         }
 
@@ -126,7 +137,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public void setCasting(boolean casting) { this.entityData.set(CASTING, casting); }
     public boolean isCasting(){ return this.entityData.get(CASTING); }
 
-    public void setIndex(Integer index) { this.entityData.set(INDEX, index); }
+    public void setIndex(Integer index) { this.entityData.set(INDEX, index, true); }
     public Integer getIndex(){ return this.entityData.get(INDEX); }
 
     public void setColor(String newColor){
@@ -170,12 +181,11 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
 
-        tag.putInt("cast",      castCooldown);
+        tag.putInt(   "cast",   castCooldown);
         tag.putString("color",  color);
         tag.putString("name",   name);
         tag.putString("spell",  spell);
         tag.putString("coold",  coold);
-
 
     }
 
@@ -183,10 +193,10 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
 
-        this.castCooldown = tag.getInt("cast");
-        this.setColor(tag.getString("color"));
-        this.setName(tag.getString("name"));
-        this.setCooldown(tag.getString("coold"));
+        this.castCooldown = tag.getInt( "cast");
+        this.setColor(tag.getString(    "color"));
+        this.setName(tag.getString(     "name"));
+        this.setCooldown(tag.getString( "coold"));
         this.setSpellData(tag.getString("spell"), tag.getString("color"));
 
     }
