@@ -48,7 +48,7 @@ public class CommunityMages {
                 "ignite-aoe-delay-flare-explosion-burst-aoe-sensitive-ignite"
                 ,"medium"));
         mages.add(new ComMages("Water Mage","blue",
-                "burst-sensitive-aoe-conjure_water-delay-freeze"
+                "linger-sensitive-conjure_water-delay-burst-freeze-cold_snap"
                 ,"medium"));
         mages.add(new ComMages("Earth Mage","green",
                 "burst-sensitive-raise_earth"

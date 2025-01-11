@@ -4,6 +4,7 @@ import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.ArsNouveauRegistry;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
+import com.hollingsworth.arsnouveau.api.util.DamageUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
 import com.hollingsworth.arsnouveau.common.entity.EnchantedFallingBlock;
 import com.hollingsworth.arsnouveau.common.items.curios.ShapersFocus;
@@ -14,6 +15,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -31,7 +34,7 @@ import java.util.function.Predicate;
 
 import static java.lang.Math.abs;
 
-public class EffectLimitless extends AbstractEffect {
+public class EffectLimitless extends AbstractEffect implements IDamageEffect {
     public static EffectLimitless INSTANCE = new EffectLimitless(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectlimitless"), "Limitless");
 
     public EffectLimitless(ResourceLocation tag, String description) {
@@ -41,9 +44,22 @@ public class EffectLimitless extends AbstractEffect {
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         if (rayTraceResult.getEntity() instanceof LivingEntity living) {
+            if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
+                double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
+                int radius = (int) (1 + spellStats.getAoeMultiplier());
 
+                knockback(living, shooter, (float) amp * radius);
+
+                float damage = (float) (4 + (3 * (spellStats.getAmpMultiplier())));
+                DamageSource damageS = DamageUtil.source(world, DamageTypes.FLY_INTO_WALL, shooter);
+                if(spellStats.hasBuff(AugmentExtract.INSTANCE)){
+                    attemptDamage(world, shooter, spellStats, spellContext, resolver, living, damageS, 0);
+                } else {
+                    attemptDamage(world, shooter, spellStats, spellContext, resolver, living, damageS, damage);
+                }
+            } else {
                 makeLSphere(rayTraceResult.getEntity().blockPosition(), world, shooter, spellStats, spellContext, resolver);
-
+            }
         }
     }
 
@@ -66,6 +82,24 @@ public class EffectLimitless extends AbstractEffect {
         return value;
     }
 
+    public void knockback(Entity target, LivingEntity shooter, float strength) {
+        this.knockback(target, (double)strength, (double)Mth.sin(shooter.getYHeadRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(shooter.getYHeadRot() * ((float)Math.PI / 180F))));
+    }
+
+    public void knockback(Entity entity, double strength, double xRatio, double zRatio) {
+        if (entity instanceof LivingEntity living) {
+            strength *= 5.0;
+        }
+
+        if (strength > (double)0.0F) {
+            entity.hasImpulse = true;
+            Vec3 vec3 = entity.getDeltaMovement();
+            Vec3 vec31 = (new Vec3(xRatio, (double)0.0F, zRatio)).normalize().scale(strength);
+            entity.setDeltaMovement(vec3.x / (double)2.0F - vec31.x, entity.onGround() ? Math.min(0.4, vec3.y / (double)2.0F + strength) : vec3.y, vec3.z / (double)2.0F - vec31.z);
+        }
+
+    }
+
     public void knockback(Entity target, double xPosition, double yPosition, double zPosition, float strength, int radius) {
         double x = xPosition - target.getBlockX();
         double y = yPosition - target.getBlockY();
@@ -75,6 +109,8 @@ public class EffectLimitless extends AbstractEffect {
     }
 
     public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio, int radius) {
+
+            strength *= 5.0;
 
             entity.hasImpulse = true;
             entity.setDeltaMovement(entity.getDeltaMovement().scale(0));
@@ -112,6 +148,18 @@ public class EffectLimitless extends AbstractEffect {
                     if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
                         if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
                             knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp, radius);
+
+                            if(shooter instanceof LivingEntity shooterL) {
+
+                                float damage = (float) (4 + (3 * (spellStats.getAmpMultiplier())));
+                                DamageSource damageS = DamageUtil.source(world, DamageTypes.FLY_INTO_WALL, shooter);
+
+                                if(spellStats.hasBuff(AugmentExtract.INSTANCE)){
+                                    attemptDamage(world, shooterL, spellStats, spellContext, resolver, entity, damageS, 0);
+                                } else {
+                                    attemptDamage(world, shooterL, spellStats, spellContext, resolver, entity, damageS, damage);
+                                }
+                            }
                         }
                         else {
                             entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
@@ -143,8 +191,6 @@ public class EffectLimitless extends AbstractEffect {
     @Override
     public Set<AbstractAugment> getCompatibleAugments() {
         return augmentSetOf(
-                //AugmentExtendTime.INSTANCE,
-                //AugmentDurationDown.INSTANCE,
                 AugmentAOE.INSTANCE,
                 AugmentAmplify.INSTANCE,
                 AugmentDampen.INSTANCE,

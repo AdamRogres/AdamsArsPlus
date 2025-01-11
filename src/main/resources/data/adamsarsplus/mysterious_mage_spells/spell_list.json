@@ -17,6 +17,12 @@
       "color":  "pink",
       "spell":  "linger-accelerate_three-harm-swap_target-heal-amp-amp-amp-amp-dispel",
       "coold":  "medium"
+    },
+    {
+       "name":  "Gojo",
+      "color":  "light_blue",
+      "spell":  "limitless-aoe_three-pierce-amp-delay-limitless-aoe_three-amp-pierce-dampen",
+      "coold":  "medium"
     }
 
   ]
