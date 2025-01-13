@@ -60,6 +60,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.CADE_ENTITY;
+
 public class CadeEntity extends Monster implements RangedAttackMob {
 
 
@@ -85,6 +88,10 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         this.moveControl = new FlyingMoveControl(this, 10, false);
         this.navigation = createNavigator(level(), AdvancedPathNavigate.MovementType.FLYING);
         this.navigatorType = 1;
+    }
+
+    public CadeEntity(Level pLevel){
+        this(CADE_ENTITY.get(), pLevel);
     }
 
     protected PathingStuckHandler createStuckHandler() {

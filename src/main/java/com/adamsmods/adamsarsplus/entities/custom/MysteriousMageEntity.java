@@ -6,23 +6,15 @@ import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.adamsmods.adamsarsplus.util.SpellString;
 
 import com.hollingsworth.arsnouveau.api.spell.Spell;
-import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
-import com.hollingsworth.arsnouveau.api.util.NBTUtil;
-import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
-import com.hollingsworth.arsnouveau.common.entity.Starbuncle;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketSyncTag;
-import com.hollingsworth.arsnouveau.setup.registry.RegistryHelper;
+import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MAGE_ENTITY;
+
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -38,12 +30,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
@@ -55,7 +42,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public Spell mageSpell;
     public int spellCooldown;
     public boolean init = true;
-    public boolean init2 = true;
 
     public static final EntityDataAccessor<Boolean> CASTING =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
@@ -66,7 +52,10 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public MysteriousMageEntity(EntityType<? extends Monster> pEntityType, Level pLevel){
         super(pEntityType, pLevel);
+    }
 
+    public MysteriousMageEntity(Level pLevel){
+        this(MAGE_ENTITY.get(), pLevel);
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -267,7 +256,12 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
         if (!CommunityMages.mages.isEmpty()) {
             try {
-                this.setIndex(randomSource.nextInt(CommunityMages.mages.size()));
+                if(COM_MAGES.get()){
+                    this.setIndex(randomSource.nextInt(CommunityMages.mages.size()));
+                } else {
+                    this.setIndex(randomSource.nextInt(7));
+                }
+
                 CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(this.getIndex());
 
                 this.setColor(communityMage.color);

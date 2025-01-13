@@ -37,6 +37,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.CAM_ENTITY;
+
 public class CamEntity extends Monster implements RangedAttackMob {
 
 
@@ -68,6 +71,10 @@ public class CamEntity extends Monster implements RangedAttackMob {
         this.moveControl = new FlyingMoveControl(this, 10, false);
         this.navigation = createNavigator(level(), AdvancedPathNavigate.MovementType.FLYING);
         this.navigatorType = 1;
+    }
+
+    public CamEntity(Level pLevel){
+        this(CAM_ENTITY.get(), pLevel);
     }
 
     protected PathingStuckHandler createStuckHandler() {

@@ -25,8 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.UUID;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.MANA_EXHAUST_EFFECT;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 
 @Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
 public class AdamsEvents {
@@ -36,6 +35,9 @@ public class AdamsEvents {
         double R = 1;
         double newCost = e.currentCost;
         int X = e.context.getSpell().getInstanceCount(SpellEfficiency.INSTANCE);
+        if(e.context.getUnwrappedCaster().hasEffect(SIX_EYES_EFFECT.get())){
+            X += 2;
+        }
 
         while(X > 0){
             R = R * 0.7;

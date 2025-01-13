@@ -43,6 +43,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.RYAN_ENTITY;
+
 public class RyanEntity extends Monster implements RangedAttackMob {
     public static final EntityDataAccessor<Boolean> ATTACKING =
             SynchedEntityData.defineId(RyanEntity.class, EntityDataSerializers.BOOLEAN);
@@ -68,6 +71,10 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
         switchNavigator(1);
         this.bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
+    }
+
+    public RyanEntity(Level pLevel){
+        this(RYAN_ENTITY.get(), pLevel);
     }
 
     protected PathingStuckHandler createStuckHandler() {

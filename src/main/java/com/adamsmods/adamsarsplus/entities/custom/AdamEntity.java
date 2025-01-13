@@ -62,6 +62,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.SIMPLE_DOMAIN_EFFECT;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
 import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
 public class AdamEntity extends Monster implements RangedAttackMob {
@@ -109,6 +110,10 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         this.navigation = createNavigator(level(), AdvancedPathNavigate.MovementType.FLYING);
         this.navigatorType = 1;
 
+    }
+
+    public AdamEntity(Level pLevel){
+        this(ADAM_ENTITY.get(), pLevel);
     }
 
     protected PathingStuckHandler createStuckHandler() {

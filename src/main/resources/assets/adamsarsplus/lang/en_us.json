@@ -60,8 +60,13 @@
 	"adamsarsplus.glyph_name.glyph_propdetonate": 		"Propagate Detonate",
 	"adamsarsplus.glyph_desc.glyph_propdetonate": 		"Summons a projectile where the spell resolves that applies spell effects when this projectile hits a target or block. The projectile will resolve in the air after traveling for a set time. This time can be altered with extend time. Pierce will cause this time to reset on spell resolve.",
 
+	"adamsarsplus.ritual_desc.ritual_mage_summon": 		"Without augments, this ritual will summon a random variety of Mysterious Mages. When augmented with a fire/water/earth essence a powerful mage will be summoned. Using an air or conjuration essence requires an elemental soul and abjuration essence requires a true elemental soul. Note: Mages can be highly destructive.",
+
+	"item.adamsarsplus.thread_sixeyes": 				"Six Eyes",
+	"adamsarsplus.perk_desc.thread_sixeyes":			"Grants the user the Six Eyes. Granting superior vision and legendary mana efficiency.",
 
 	"item.adamsarsplus.mana_diamond": 					"Mana Diamond",
+	"item.adamsarsplus.mage_cloth": 					"Mage Cloth",
 	"item.adamsarsplus.flame_soul": 					"Flame Soul",
 	"item.adamsarsplus.frost_soul": 					"Frost Soul",
 	"item.adamsarsplus.earth_soul": 					"Earth Soul",
@@ -71,6 +76,8 @@
 	"item.adamsarsplus.true_elemental_soul": 			"Awakened Elemental Soul",
 	"item.adamsarsplus.void_soul": 						"Void Soul",
 
+	"item.adamsarsplus.ritual_mage_summon": 			"Summon Mage",
+
 	"block.adamsarsplus.domain_shell_block": 			"Domain Shell",
 
 	"effect.adamsarsplus.limitless": 					"Limitless",
@@ -78,6 +85,7 @@
 	"effect.adamsarsplus.mana_exhaust": 				"Mana Exhaustion",
 	"effect.adamsarsplus.simple_domain": 				"Simple Domain",
 	"effect.adamsarsplus.eruption": 					"Eruption",
+	"effect.adamsarsplus.six_eyes": 					"Six Eyes",
 
 	"entity.adamsarsplus.ryan": 						"Ryan: Slayer of Dragons",
 	"entity.adamsarsplus.cade": 						"Cade: The Immutable Frost",

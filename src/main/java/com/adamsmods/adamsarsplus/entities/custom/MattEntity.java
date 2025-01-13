@@ -35,6 +35,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MATT_ENTITY;
 import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
 public class MattEntity extends Monster implements RangedAttackMob {
@@ -71,6 +73,10 @@ public class MattEntity extends Monster implements RangedAttackMob {
         this.moveControl = new FlyingMoveControl(this, 10, false);
         this.navigation = createNavigator(level(), AdvancedPathNavigate.MovementType.FLYING);
         this.navigatorType = 1;
+    }
+
+    public MattEntity(Level pLevel){
+        this(MATT_ENTITY.get(), pLevel);
     }
 
     protected PathingStuckHandler createStuckHandler() {

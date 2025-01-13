@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 

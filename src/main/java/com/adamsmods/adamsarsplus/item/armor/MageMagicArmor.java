@@ -25,6 +25,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -117,21 +118,36 @@ public class MageMagicArmor extends ArmorItem implements IManaEquipment, IDyeabl
                 if(this.material == CADE){
                     attributes.put((Attribute) PerkAttributes.MAX_MANA.get(), new AttributeModifier(uuid, "max_mana_armor",             (double)(40 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
                     attributes.put((Attribute) PerkAttributes.MANA_REGEN_BONUS.get(), new AttributeModifier(uuid, "mana_regen_armor",   (double)(2 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.SPELL_DAMAGE_BONUS.get(), new AttributeModifier(uuid,"spell_damage_armor",(double)(perkHolder.getTier() + 1), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MAX_HEALTH, new AttributeModifier("max_health_armor",                         (double)(perkHolder.getTier() - 2), AttributeModifier.Operation.ADDITION));
                 } else if(this.material == RYAN){
                     attributes.put((Attribute) PerkAttributes.MAX_MANA.get(), new AttributeModifier(uuid, "max_mana_armor",             (double)(35 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
                     attributes.put((Attribute) PerkAttributes.MANA_REGEN_BONUS.get(), new AttributeModifier(uuid, "mana_regen_armor",   (double)(1.5 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.SPELL_DAMAGE_BONUS.get(), new AttributeModifier(uuid,"spell_damage_armor",(double)(perkHolder.getTier()), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MAX_HEALTH, new AttributeModifier("max_health_armor",                         (double)(perkHolder.getTier()), AttributeModifier.Operation.ADDITION));
                 } else if(this.material == NICK){
                     attributes.put((Attribute) PerkAttributes.MAX_MANA.get(), new AttributeModifier(uuid, "max_mana_armor",             (double)(30 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
                     attributes.put((Attribute) PerkAttributes.MANA_REGEN_BONUS.get(), new AttributeModifier(uuid, "mana_regen_armor",   (double)(1 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.SPELL_DAMAGE_BONUS.get(), new AttributeModifier(uuid,"spell_damage_armor",(double)(perkHolder.getTier() - 1), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MAX_HEALTH, new AttributeModifier("max_health_armor",                         (double)(perkHolder.getTier() + 2), AttributeModifier.Operation.ADDITION));
                 }else if(this.material == CAMR){
                     attributes.put((Attribute) PerkAttributes.MAX_MANA.get(), new AttributeModifier(uuid, "max_mana_armor",             (double)(38 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
                     attributes.put((Attribute) PerkAttributes.MANA_REGEN_BONUS.get(), new AttributeModifier(uuid, "mana_regen_armor",   (double)(2.5 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.SPELL_DAMAGE_BONUS.get(), new AttributeModifier(uuid,"spell_damage_armor",(double)(perkHolder.getTier() + 1), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MAX_HEALTH, new AttributeModifier("max_health_armor",                         (double)(perkHolder.getTier()), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MOVEMENT_SPEED, new AttributeModifier("speed_armor",                          (double)(0.1), AttributeModifier.Operation.ADDITION));
                 }else if(this.material == MATT){
                     attributes.put((Attribute) PerkAttributes.MAX_MANA.get(), new AttributeModifier(uuid, "max_mana_armor",             (double)(30 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
                     attributes.put((Attribute) PerkAttributes.MANA_REGEN_BONUS.get(), new AttributeModifier(uuid, "mana_regen_armor",   (double)(1 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.SPELL_DAMAGE_BONUS.get(), new AttributeModifier(uuid,"spell_damage_armor",(double)(perkHolder.getTier()), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MAX_HEALTH, new AttributeModifier("max_health_armor",                         (double)(perkHolder.getTier() + 7), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.WARDING.get(), new AttributeModifier(uuid,"warding_armor",                (double)(1), AttributeModifier.Operation.ADDITION));
                 }else if(this.material == ADAM){
                     attributes.put((Attribute) PerkAttributes.MAX_MANA.get(), new AttributeModifier(uuid, "max_mana_armor",             (double)(50 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
                     attributes.put((Attribute) PerkAttributes.MANA_REGEN_BONUS.get(), new AttributeModifier(uuid, "mana_regen_armor",   (double)(4 * (perkHolder.getTier() + 1)), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.SPELL_DAMAGE_BONUS.get(), new AttributeModifier(uuid,"spell_damage_armor",(double)(perkHolder.getTier() + 2), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) Attributes.MAX_HEALTH, new AttributeModifier("max_health_armor",                         (double)(perkHolder.getTier() + 5), AttributeModifier.Operation.ADDITION));
+                    attributes.put((Attribute) PerkAttributes.WARDING.get(), new AttributeModifier(uuid,"warding_armor",                (double)(1), AttributeModifier.Operation.ADDITION));
                 }
 
                 for(PerkInstance perkInstance : perkHolder.getPerkInstances()) {

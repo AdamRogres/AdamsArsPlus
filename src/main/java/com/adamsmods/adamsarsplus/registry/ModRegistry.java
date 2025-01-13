@@ -87,6 +87,7 @@ public class ModRegistry {
 
     //    public static final RegistryObject<Item> EXAMPLE;
     public static final RegistryObject<ModItem> MANA_DIAMOND;
+    public static final RegistryObject<ModItem> MAGE_CLOTH;
 
     public static final RegistryObject<ModItem> FLAME_SOUL;
     public static final RegistryObject<ModItem> FROST_SOUL;
@@ -168,6 +169,7 @@ public class ModRegistry {
     public static final RegistryObject<MobEffect> MANA_EXHAUST_EFFECT = EFFECTS.register(MANA_EXHAUST, ManaExhaustEffect::new);
     public static final RegistryObject<MobEffect> SIMPLE_DOMAIN_EFFECT = EFFECTS.register(SIMPLE_DOMAIN, simpleDomainEffect::new);
     public static final RegistryObject<MobEffect> ERUPTION_EFFECT = EFFECTS.register(ERUPTION, eruptionEffect::new);
+    public static final RegistryObject<MobEffect> SIX_EYES_EFFECT = EFFECTS.register(SIX_EYES, SixEyesEffect::new);
 
     public static void registerPerk(IPerk perk) {
         PerkRegistry.registerPerk(perk);
@@ -180,17 +182,18 @@ public class ModRegistry {
         RECIPE_TYPES = DeferredRegister.create(ForgeRegistries.Keys.RECIPE_TYPES, MOD_ID);
 
         // Regular Items
-        MANA_DIAMOND    = ITEMS.register("mana_diamond",    () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), true));
+        MANA_DIAMOND        = ITEMS.register("mana_diamond",    () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), true));
+        MAGE_CLOTH          = ITEMS.register("mage_cloth",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
 
-        FLAME_SOUL      = ITEMS.register("flame_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        FROST_SOUL      = ITEMS.register("frost_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        EARTH_SOUL      = ITEMS.register("earth_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        LIGHTNING_SOUL  = ITEMS.register("lightning_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        HERO_SOUL       = ITEMS.register("hero_soul",       () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        VOID_SOUL       = ITEMS.register("void_soul",       () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        FLAME_SOUL          = ITEMS.register("flame_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        FROST_SOUL          = ITEMS.register("frost_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        EARTH_SOUL          = ITEMS.register("earth_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        LIGHTNING_SOUL      = ITEMS.register("lightning_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        HERO_SOUL           = ITEMS.register("hero_soul",       () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        VOID_SOUL           = ITEMS.register("void_soul",       () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
 
-        ELEMENTAL_SOUL  = ITEMS.register("elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        TRUE_ELEMENTAL_SOUL  = ITEMS.register("true_elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        ELEMENTAL_SOUL      = ITEMS.register("elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        TRUE_ELEMENTAL_SOUL = ITEMS.register("true_elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
 
         // Armor Sets
         CADE_BOOTS          = ITEMS.register("cade_boots",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS));

@@ -16,8 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 import java.util.Set;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.MANA_EXHAUST_EFFECT;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 import static com.adamsmods.adamsarsplus.Config.*;
 
 
@@ -29,7 +28,7 @@ public class SpellEfficiency extends AbstractEffect {
 
     @Override
     public void onResolve(HitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        if (DISCOUNT_BACKLASH.get()) {
+        if (DISCOUNT_BACKLASH.get() && !shooter.hasEffect(SIX_EYES_EFFECT.get())) {
 
             int X = spellContext.getSpell().getInstanceCount(SpellEfficiency.INSTANCE);
             int ticks = (int) (40.0 * X);

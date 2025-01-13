@@ -39,6 +39,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.NICK_ENTITY;
+
 public class NickEntity extends Monster implements RangedAttackMob {
 
 
@@ -70,6 +73,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
         this.moveControl = new FlyingMoveControl(this, 10, false);
         this.navigation = createNavigator(level(), AdvancedPathNavigate.MovementType.FLYING);
         this.navigatorType = 1;
+    }
+
+    public NickEntity(Level pLevel){
+        this(NICK_ENTITY.get(), pLevel);
     }
 
     protected PathingStuckHandler createStuckHandler() {

@@ -9,6 +9,7 @@ import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.client.registry.ClientHandler;
 import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
+import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,6 +41,7 @@ public class AdamsArsPlus {
         ModRegistry.registerRegistries(modbus);
 
         ArsNouveauRegistry.registerGlyphs();
+
         modbus.addListener(this::setup);
         modbus.addListener(this::doClientStuff);
         modbus.addListener(this::doTabThings);
@@ -57,6 +59,8 @@ public class AdamsArsPlus {
         ArsNouveauRegistry.registerSounds();
         ArsNouveauRegistry.addAugments();
         ArsNouveauRegistry.registerPerks();
+
+        event.enqueueWork(AdamsModEntities::registerPlacements);
 
         CommunityMages.initAlt();
         CommunityMages.init();

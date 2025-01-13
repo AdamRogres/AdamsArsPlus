@@ -1,20 +1,26 @@
 package com.adamsmods.adamsarsplus.entities;
 
-
 import com.adamsmods.adamsarsplus.entities.custom.*;
 import com.adamsmods.adamsarsplus.lib.AdamsLibEntityNames;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.List;
+
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.MOD_ID;
+import static com.adamsmods.adamsarsplus.Config.MAGE_DIMENSION_BLACKLIST;
 import static net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES;
 
 public class AdamsModEntities {
@@ -103,11 +109,20 @@ public class AdamsModEntities {
     public static final RegistryObject<EntityType<MysteriousMageEntity>> MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.MAGE,
             EntityType.Builder.<MysteriousMageEntity>of(MysteriousMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f));
+                    .sized(0.7f, 1.8f)
+                    .clientTrackingRange(10));
 
 
     public static boolean genericGroundSpawn(EntityType<? extends Entity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource random) {
             return worldIn.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) && worldIn.getRawBrightness(pos, 0) > 8;
+    }
+
+    public static void registerPlacements() {
+        SpawnPlacements.register((EntityType) MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageSpawnRules);
+    }
+
+    public static boolean mageSpawnRules(EntityType<? extends Monster> type, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
+        return worldIn.getDifficulty() != Difficulty.PEACEFUL && Monster.checkMonsterSpawnRules(type, worldIn, reason, pos, randomIn) && !((List) MAGE_DIMENSION_BLACKLIST.get()).contains(worldIn.getLevel().dimension().location().toString());
     }
 
 }
