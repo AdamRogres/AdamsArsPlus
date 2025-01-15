@@ -1,0 +1,30 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:thread_adrenaline"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "minecraft:pufferfish"
+    },
+    {
+      "item": "minecraft:heart_of_the_sea"
+    },
+    {
+      "item": "minecraft:powder_snow_bucket"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:blank_thread"
+    }
+  ],
+  "sourceCost": 0
+}

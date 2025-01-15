@@ -62,8 +62,23 @@
 
 	"adamsarsplus.ritual_desc.ritual_mage_summon": 		"Without augments, this ritual will summon a random variety of Mysterious Mages. When augmented with a fire/water/earth essence a powerful mage will be summoned. Using an air or conjuration essence requires an elemental soul and abjuration essence requires a true elemental soul. Note: Mages can be highly destructive.",
 
-	"item.adamsarsplus.thread_sixeyes": 				"Six Eyes",
+	"item.adamsarsplus.thread_sixeyes": 				"Thread of Six Eyes",
 	"adamsarsplus.perk_desc.thread_sixeyes":			"Grants the user the Six Eyes. Granting superior vision and legendary mana efficiency.",
+
+	"item.adamsarsplus.thread_cloudsteps": 				"Thread of Cloud Steps",
+	"adamsarsplus.perk_desc.thread_cloudsteps":			"Grants the user flight.",
+
+	"item.adamsarsplus.thread_immortal": 				"Thread of Immortality",
+	"adamsarsplus.perk_desc.thread_immortal":			"Grants the user a set of regenerating absorption hearts that draws from your mana.",
+
+	"item.adamsarsplus.thread_invincible": 				"Thread of Invincibility",
+	"adamsarsplus.perk_desc.thread_invincible":			"Grants the user additional armor.",
+
+	"item.adamsarsplus.thread_adrenaline": 				"Thread of Adrenaline",
+	"adamsarsplus.perk_desc.thread_adrenaline":			"Grants a boost of mana regeneration after taking damage. This boost scales based on the amount of health missing.",
+
+	"item.adamsarsplus.thread_draconic": 				"Thread of Draconic Hex",
+	"adamsarsplus.perk_desc.thread_draconic":			"Inflicts a draconic curse upon spell targets when using a damaging spell.",
 
 	"item.adamsarsplus.mana_diamond": 					"Mana Diamond",
 	"item.adamsarsplus.mage_cloth": 					"Mage Cloth",
@@ -86,6 +101,7 @@
 	"effect.adamsarsplus.simple_domain": 				"Simple Domain",
 	"effect.adamsarsplus.eruption": 					"Eruption",
 	"effect.adamsarsplus.six_eyes": 					"Six Eyes",
+	"effect.adamsarsplus.mana_health": 					"Immortal Shield",
 
 	"entity.adamsarsplus.ryan": 						"Ryan: Slayer of Dragons",
 	"entity.adamsarsplus.cade": 						"Cade: The Immutable Frost",

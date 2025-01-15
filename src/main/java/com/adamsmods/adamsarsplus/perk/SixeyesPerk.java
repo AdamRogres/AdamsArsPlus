@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.perk;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.api.APerkSlot;
 import com.hollingsworth.arsnouveau.api.perk.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,10 @@ public class SixeyesPerk extends Perk implements ITickablePerk {
 
     public String getLangName() {
         return "Six Eyes";
+    }
+
+    public String getName() {
+        return Component.translatable("item.adamsarsplus.thread_sixeyes").getString();
     }
 
     @Override

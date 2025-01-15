@@ -170,6 +170,8 @@ public class ModRegistry {
     public static final RegistryObject<MobEffect> SIMPLE_DOMAIN_EFFECT = EFFECTS.register(SIMPLE_DOMAIN, simpleDomainEffect::new);
     public static final RegistryObject<MobEffect> ERUPTION_EFFECT = EFFECTS.register(ERUPTION, eruptionEffect::new);
     public static final RegistryObject<MobEffect> SIX_EYES_EFFECT = EFFECTS.register(SIX_EYES, SixEyesEffect::new);
+    public static final RegistryObject<MobEffect> MANA_HEALTH_EFFECT = EFFECTS.register(MANA_HEALTH, ManaHealthEffect::new);
+
 
     public static void registerPerk(IPerk perk) {
         PerkRegistry.registerPerk(perk);

@@ -7,7 +7,7 @@ import com.adamsmods.adamsarsplus.entities.effects.*;
 
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.MethodDetonate;
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
-import com.adamsmods.adamsarsplus.perk.SixeyesPerk;
+import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
 import com.adamsmods.api.APerkSlot;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
@@ -41,7 +41,7 @@ public class ArsNouveauRegistry {
     public static final RegistryObject<MobEffect> SIMPLE_DOMAIN_EFFECT = EFFECTS.register(SIMPLE_DOMAIN, simpleDomainEffect::new);
     public static final RegistryObject<MobEffect> ERUPTION_EFFECT = EFFECTS.register(ERUPTION, eruptionEffect::new);
     public static final RegistryObject<MobEffect> SIX_EYES_EFFECT = EFFECTS.register(SIX_EYES, SixEyesEffect::new);
-
+    public static final RegistryObject<MobEffect> MANA_HEALTH_EFFECT = EFFECTS.register(MANA_HEALTH, ManaHealthEffect::new);
 
     public static List<AbstractSpellPart> registeredSpells = new ArrayList<>(); //this will come handy for datagen
 
@@ -78,6 +78,11 @@ public class ArsNouveauRegistry {
 
         // Perks
         registerPerk(SixeyesPerk.INSTANCE);
+        registerPerk(CloudStepsPerk.INSTANCE);
+        registerPerk(ImmortalPerk.INSTANCE);
+        registerPerk(DraconicHexPerk.INSTANCE);
+        registerPerk(AdrenalinePerk.INSTANCE);
+        registerPerk(InvinciblePerk.INSTANCE);
 
     }
 

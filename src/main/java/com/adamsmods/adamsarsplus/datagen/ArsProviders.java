@@ -7,7 +7,7 @@ import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.MethodDetonate;
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
-import com.adamsmods.adamsarsplus.perk.SixeyesPerk;
+import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.recipe.jei.AArmorRecipe;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
@@ -51,6 +51,7 @@ import java.util.function.Consumer;
 
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.prefix;
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.AIR_ESSENCE;
 import static com.hollingsworth.arsnouveau.setup.registry.RegistryHelper.getRegistryName;
 import static net.minecraft.world.item.Items.*;
 
@@ -134,7 +135,7 @@ public class ArsProviders {
             recipes.add(get(EffectEruption.INSTANCE).withItem(FLAME_SOUL,3).withItem(ItemsRegistry.FIRE_ESSENCE,2).withItem(FLINT_AND_STEEL));
             recipes.add(get(EffectIceburst.INSTANCE).withItem(FROST_SOUL,3).withItem(ItemsRegistry.WATER_ESSENCE,2).withItem(BLUE_ICE));
             recipes.add(get(EffectRaiseEarth.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
-            recipes.add(get(EffectDivineSmite.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(ItemsRegistry.AIR_ESSENCE,2).withItem(LIGHTNING_ROD));
+            recipes.add(get(EffectDivineSmite.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(AIR_ESSENCE,2).withItem(LIGHTNING_ROD));
             recipes.add(get(EffectMeteorSwarm.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE,2).withItem(FIRE_CHARGE));
 
             recipes.add(get(EffectAnnihilate.INSTANCE).withItem(VOID_SOUL,3).withItem(ItemsRegistry.ABJURATION_ESSENCE,2).withItem(CHORUS_FRUIT));
@@ -176,6 +177,11 @@ public class ArsProviders {
 
             // Perks
             recipes.add(builder().withResult(getPerkItem(SixeyesPerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, VOID_SOUL).withPedestalItem(2, END_CRYSTAL).withPedestalItem(2, NETHERITE_BLOCK).build());
+            recipes.add(builder().withResult(getPerkItem(CloudStepsPerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, LIGHTNING_SOUL).withPedestalItem(ELYTRA).withPedestalItem(3,AIR_ESSENCE).build());
+            recipes.add(builder().withResult(getPerkItem(ImmortalPerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, HERO_SOUL).withPedestalItem(ENCHANTED_GOLDEN_APPLE).withPedestalItem(3, GHAST_TEAR).build());
+            recipes.add(builder().withResult(getPerkItem(DraconicHexPerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, FLAME_SOUL).withPedestalItem(WITHER_SKELETON_SKULL).withPedestalItem(2, BLAZE_POWDER).build());
+            recipes.add(builder().withResult(getPerkItem(AdrenalinePerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, FROST_SOUL).withPedestalItem(PUFFERFISH).withPedestalItem(HEART_OF_THE_SEA).withPedestalItem(POWDER_SNOW_BUCKET).build());
+            recipes.add(builder().withResult(getPerkItem(InvinciblePerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, EARTH_SOUL).withPedestalItem(ANVIL).withPedestalItem(3, NETHERITE_SCRAP).build());
 
             // Ryan Armor
             recipes.add(new AArmorRecipe(3,3,builder().withResult(RYAN_HOOD).withReagent(Ingredient.of(AdamsItemTagsProvider.MAGIC_HOOD)).withPedestalItem(4,FLAME_SOUL).withPedestalItem(4,MANA_DIAMOND).withSourceCost(7000).keepNbtOfReagent(true).build()));

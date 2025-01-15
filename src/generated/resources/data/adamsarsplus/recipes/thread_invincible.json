@@ -1,0 +1,33 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:thread_invincible"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "minecraft:anvil"
+    },
+    {
+      "item": "minecraft:netherite_scrap"
+    },
+    {
+      "item": "minecraft:netherite_scrap"
+    },
+    {
+      "item": "minecraft:netherite_scrap"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:blank_thread"
+    }
+  ],
+  "sourceCost": 0
+}

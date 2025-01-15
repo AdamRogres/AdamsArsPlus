@@ -1,0 +1,30 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:thread_draconic"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:flame_soul"
+    },
+    {
+      "item": "adamsarsplus:flame_soul"
+    },
+    {
+      "item": "minecraft:wither_skeleton_skull"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:blank_thread"
+    }
+  ],
+  "sourceCost": 0
+}

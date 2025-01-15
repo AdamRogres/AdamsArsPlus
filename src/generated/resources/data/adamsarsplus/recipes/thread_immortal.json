@@ -1,0 +1,33 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:thread_immortal"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "minecraft:enchanted_golden_apple"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:blank_thread"
+    }
+  ],
+  "sourceCost": 0
+}

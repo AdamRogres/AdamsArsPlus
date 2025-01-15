@@ -1,0 +1,33 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:thread_cloudsteps"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "minecraft:elytra"
+    },
+    {
+      "item": "ars_nouveau:air_essence"
+    },
+    {
+      "item": "ars_nouveau:air_essence"
+    },
+    {
+      "item": "ars_nouveau:air_essence"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "ars_nouveau:blank_thread"
+    }
+  ],
+  "sourceCost": 0
+}
