@@ -7,6 +7,7 @@ import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeThree;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeTwo;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectMeteorSwarm;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -15,11 +16,9 @@ import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.network.Networking;
 import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDampen;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtract;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectHarm;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectHex;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectLightning;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectWither;
+import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -70,11 +69,10 @@ public class MattDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
             .add(AugmentExtract.INSTANCE)
             .add(AugmentAccelerateThree.INSTANCE)
 
-            .add(EffectWither.INSTANCE)
-            .add(AugmentAmplify.INSTANCE,8)
-            .add(EffectHarm.INSTANCE)
-            .add(AugmentAmplify.INSTANCE,8)
-            .add(AugmentExtendTimeTwo.INSTANCE)
+            .add(EffectMeteorSwarm.INSTANCE)
+            .add(EffectExplosion.INSTANCE)
+            .add(AugmentAmplify.INSTANCE, 16)
+            .add(AugmentDampen.INSTANCE)
 
             .add(EffectHex.INSTANCE)
             .add(AugmentExtendTimeTwo.INSTANCE)

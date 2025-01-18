@@ -208,7 +208,7 @@ public class MageMagicArmor extends ArmorItem implements IManaEquipment, IDyeabl
     public @Nullable String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         AdamGenericModel<MageMagicArmor> genericModel = (AdamGenericModel)this.model;
         String var10003 = genericModel.textPathRoot;
-        return (new ResourceLocation("adamsarsplus", "textures/" + var10003 + "/" + genericModel.name + "_" + this.getColor(stack) + ".png")).toString();
+        return (new ResourceLocation("adamsarsplus", "textures/" + var10003 + "/" + genericModel.name + "/" + this.getColor(stack) + ".png")).toString();
     }
 
     public void setColor(String color, ItemStack armor) {
@@ -217,9 +217,9 @@ public class MageMagicArmor extends ArmorItem implements IManaEquipment, IDyeabl
     public String getColor(ItemStack object) {
         IPerkHolder<ItemStack> perkHolder = PerkUtil.getPerkHolder(object);
         if (!(perkHolder instanceof ArmorPerkHolder data)) {
-            return "default";
+            return "gray";
         } else {
-            return data.getColor() != null && !data.getColor().isEmpty() ? data.getColor() : "default";
+            return data.getColor() != null && !data.getColor().isEmpty() ? data.getColor() : "gray";
         }
     }
 

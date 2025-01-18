@@ -169,5 +169,26 @@
 	"item.adamsarsplus.adam_boots_a": 					"Awakened Void Archmage Boots",
 	"item.adamsarsplus.adam_leggings_a": 				"Awakened Void Archmage Leggings",
 	"item.adamsarsplus.adam_robes_a": 					"Awakened Void Archmage Chestplate",
-	"item.adamsarsplus.adam_hood_a": 					"Awakened Void Archmage Helmet"
+	"item.adamsarsplus.adam_hood_a": 					"Awakened Void Archmage Helmet",
+
+	"ars_nouveau.page.adamsarsplus_tweaks": 			"Ars Plus",
+	"adamsarsplus.page.adamsarsplus_tweaks": 			"To begin the content of Ars Plus you'll want to hunt the Mysterious Mages that have appeared across your world and obtain their Mage Cloth. Once you're ready, craft a ritual of Mage Summoning to challenge the strongest of mages and obtain their magecraft.",
+	"adamsarsplus.page.adamsarsplus_tweaks_2": 			"If you'd like to submit a custom Mysterious Mage of your own, message @th3S3nate on the Ars Nouveau discord under the Ars Plus channel :)",
+
+	"adamsarsplus.page.elemental_soul": 				"The culmination of the three elements that formed the material plane. With the basic elements of creation under your control you've gained all you need to take your magecraft to the next tier.",
+	"adamsarsplus.page.true_elemental_soul": 			"The culmination of the elements that form heaven and earth. With the power of the heavens under your control you've reached the apex of what should be possible with magic... but whispers from the void speak of power beyond comprehension.",
+
+	"adamsarsplus.page.ryan_hood": 						"Taking your Tier 3 mage armor you've discovered how to augment it with the elemental flame souls you've obtained to push your magecraft to an elite level.",
+	"adamsarsplus.page.ryan_hood_a": 					"Using the culmination of the elements composing the material plane you've discovered how to awaken the latent potential within your flame armor and upgrade it to Tier 4.",
+	"adamsarsplus.page.cade_hood": 						"Taking your Tier 3 mage armor you've discovered how to augment it with the elemental frost souls you've obtained to push your magecraft to an elite level.",
+	"adamsarsplus.page.cade_hood_a": 					"Using the culmination of the elements composing the material plane you've discovered how to awaken the latent potential within your frost armor and upgrade it to Tier 4.",
+	"adamsarsplus.page.nick_hood": 						"Taking your Tier 3 mage armor you've discovered how to augment it with the elemental earth souls you've obtained to push your magecraft to an elite level.",
+	"adamsarsplus.page.nick_hood_a": 					"Using the culmination of the elements composing the material plane you've discovered how to awaken the latent potential within your earth armor and upgrade it to Tier 4.",
+	"adamsarsplus.page.camr_hood": 						"Taking your Elemental mage armor you've discovered how to augment it with the elemental lightning souls you've obtained to push your magecraft to an ascendant level.",
+	"adamsarsplus.page.camr_hood_a": 					"Using the culmination of the elements composing the heavenly and material plane you've discovered how to awaken the latent potential within your lightning armor and upgrade it to Tier 5.",
+	"adamsarsplus.page.matt_hood": 						"Taking your Elemental mage armor you've discovered how to augment it with the elemental ancient souls you've obtained to push your magecraft to an ascendant level.",
+	"adamsarsplus.page.matt_hood_a": 					"Using the culmination of the elements composing the heavenly and material plane you've discovered how to awaken the latent potential within your hero armor and upgrade it to Tier 5.",
+	"adamsarsplus.page.adam_hood": 						"Taking your Ascendant mage armor you've discovered how to augment it with the elemental void souls you've obtained to push your magecraft to a level beyond what should be possible.",
+	"adamsarsplus.page.adam_hood_a": 					"Using the elements of the void plane you've discovered how to awaken the latent potential within your void armor and upgrade it to Tier 6."
+
 }

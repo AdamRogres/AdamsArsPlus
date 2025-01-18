@@ -1,0 +1,14 @@
+{
+  "type": "ars_nouveau:dye",
+  "ingredients": [
+    {
+      "tag": "forge:dyes"
+    },
+    {
+      "item": "adamsarsplus:ryan_leggings"
+    }
+  ],
+  "result": {
+    "item": "adamsarsplus:ryan_leggings"
+  }
+}

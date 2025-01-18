@@ -1,0 +1,14 @@
+{
+  "type": "ars_nouveau:dye",
+  "ingredients": [
+    {
+      "tag": "forge:dyes"
+    },
+    {
+      "item": "adamsarsplus:matt_boots_a"
+    }
+  ],
+  "result": {
+    "item": "adamsarsplus:matt_boots_a"
+  }
+}

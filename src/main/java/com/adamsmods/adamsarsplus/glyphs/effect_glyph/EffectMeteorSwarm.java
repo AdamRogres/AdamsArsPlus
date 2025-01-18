@@ -50,7 +50,7 @@ public class EffectMeteorSwarm extends AbstractEffect implements IPropagator {
             projectiles.add(new MeteorProjectile(world, resolver));
         }
         float velocity = Math.max(0.1f, 0.75f + stats.getAccMultiplier() / 2);
-        if(stats.getBuffCount(AugmentSensitive.INSTANCE) != 0){
+        if(stats.getBuffCount(AugmentSensitive.INSTANCE) == 0){
             velocity = 0 + stats.getAccMultiplier() / 2;
         }
 
@@ -75,10 +75,9 @@ public class EffectMeteorSwarm extends AbstractEffect implements IPropagator {
             opposite = opposite * -1;
             counter++;
 
-            if(stats.getBuffCount(AugmentSensitive.INSTANCE) != 0){
+            if(stats.getBuffCount(AugmentSensitive.INSTANCE) == 0){
                 proj.setGravity(true);
             }
-            proj.setIgnored(MeteorProjectile.basicIgnores(shooter, stats.hasBuff(AugmentSensitive.INSTANCE), resolver.spell));
             proj.accelerates = stats.getAccMultiplier();
 
             world.addFreshEntity(proj);
@@ -117,7 +116,8 @@ public class EffectMeteorSwarm extends AbstractEffect implements IPropagator {
         return augmentSetOf(
                 AugmentAOE.INSTANCE,
                 AugmentAccelerate.INSTANCE,
-                AugmentSensitive.INSTANCE
+                AugmentSensitive.INSTANCE,
+                AugmentPierce.INSTANCE
         );
     }
 

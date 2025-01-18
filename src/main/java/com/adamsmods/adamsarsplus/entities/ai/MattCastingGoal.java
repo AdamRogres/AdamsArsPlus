@@ -79,7 +79,7 @@ public class MattCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
 
     public Spell mattCastSpell = new Spell()
             .add(AugmentAccelerateTwo.INSTANCE)
-            .add(AugmentDurationDown.INSTANCE)
+            .add(AugmentDurationDown.INSTANCE,3)
 
             .add(EffectSummonUndead_boss.INSTANCE)
             .add(AugmentSplit.INSTANCE, 2)

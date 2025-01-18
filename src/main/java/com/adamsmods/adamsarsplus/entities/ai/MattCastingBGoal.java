@@ -65,10 +65,12 @@ public class MattCastingBGoal<T extends Mob & RangedAttackMob> extends Goal {
             .add(AugmentAccelerate.INSTANCE)
             .add(AugmentDurationDown.INSTANCE)
             .add(EffectBurst.INSTANCE)
-            .add(AugmentAOE.INSTANCE,2)
+            .add(AugmentSensitive.INSTANCE)
 
             .add(EffectMeteorSwarm.INSTANCE)
+            .add(AugmentPierce.INSTANCE)
             .add(AugmentAOEThree.INSTANCE)
+            .add(EffectDelay.INSTANCE)
             .add(EffectExplosion.INSTANCE)
             .add(AugmentAmplify.INSTANCE,16)
 

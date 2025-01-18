@@ -44,7 +44,7 @@ public class ImmortalPerk extends Perk implements ITickablePerk {
     public void tick(ItemStack itemStack, Level level, Player player, PerkInstance perkInstance) {
         MobEffectInstance effectInstance = ((LivingEntity)player).getEffect((MobEffect) MANA_HEALTH_EFFECT.get());
 
-        int amp = Math.min(effectInstance != null ? effectInstance.getAmplifier() : -1,(int)(player.getAbsorptionAmount() / 2));
+        int amp = Math.min(effectInstance != null ? effectInstance.getAmplifier() : -1,(int)Math.floor((player.getAbsorptionAmount() / 2)));
 
         if (player.level().getGameTime() % 40L == 0L) {
 

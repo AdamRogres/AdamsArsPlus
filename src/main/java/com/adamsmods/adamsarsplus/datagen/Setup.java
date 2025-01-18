@@ -28,12 +28,13 @@ public class Setup {
         gen.addProvider(event.includeServer(), new ArsProviders.GlyphProvider(gen));
         gen.addProvider(event.includeServer(), new ArsProviders.EnchantingAppProvider(gen));
         gen.addProvider(event.includeServer(), new ArsProviders.CraftingTableProvider(gen));
+        gen.addProvider(event.includeServer(), new AdamDyeRecipeDatagen(gen));
 
         BlockTagsProvider BTP = new AdamsItemTagsProvider.AdamBlockTagsProvider(gen, provider, fileHelper);
 
         gen.addProvider(event.includeServer(), new AdamsEntityTagProvider(output, provider, fileHelper));
         gen.addProvider(event.includeServer(), new AdamsItemTagsProvider(output, provider, fileHelper));
-        gen.addProvider(event.includeServer(), new ArsProviders.PatchouliProvider(gen));
+        gen.addProvider(event.includeServer(), new AdamPatchouliProvider(gen));
     }
 
 

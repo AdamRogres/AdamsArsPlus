@@ -37,8 +37,8 @@ public class AdrenalinePerk extends Perk implements ITickablePerk {
 
     @Override
     public void tick(ItemStack itemStack, Level level, Player player, PerkInstance perkInstance) {
-        if(player.isHurt()){
-            player.addEffect(new MobEffectInstance(MANA_REGEN_EFFECT.get(), (perkInstance.getSlot().value - 3) * 100, (int)(player.getHealth()/player.getMaxHealth()), false, false));
+        if(player.hurtTime > 0){
+            player.addEffect(new MobEffectInstance(MANA_REGEN_EFFECT.get(), (perkInstance.getSlot().value - 3) * 150, Math.min((int)(player.getMaxHealth()/(Math.max(player.getHealth(),1))), 10), true, false));
         }
     }
 }

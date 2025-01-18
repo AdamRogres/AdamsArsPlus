@@ -41,7 +41,7 @@ public class AdamArmorRenderer extends GeoArmorRenderer<MageMagicArmor> {
         GeoModel<MageMagicArmor> var3 = this.model;
         if (var3 instanceof AdamGenericModel<MageMagicArmor> genericModel) {
             String var10003 = genericModel.textPathRoot;
-            return new ResourceLocation("adamsarsplus", "textures/" + var10003 + "/" + genericModel.name + "_" + instance.getColor(this.getCurrentStack()) + ".png");
+            return new ResourceLocation("adamsarsplus", "textures/" + var10003 + "/" + genericModel.name + "/" + instance.getColor(this.getCurrentStack()) + ".png");
         } else {
             return super.getTextureLocation(instance);
         }
