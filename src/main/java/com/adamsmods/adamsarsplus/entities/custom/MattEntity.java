@@ -3,7 +3,16 @@ package com.adamsmods.adamsarsplus.entities.custom;
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
 import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
+import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
+import com.hollingsworth.arsnouveau.api.spell.Spell;
+import com.hollingsworth.arsnouveau.api.spell.SpellContext;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectBlink;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectDispel;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectHeal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,6 +41,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +71,8 @@ public class MattEntity extends Monster implements RangedAttackMob {
     public int castingCooldown;
     public int castingBCooldown;
     public int domainCooldown;
+
+    public int recoverCooldown;
 
     public int navigatorType;
 
@@ -147,6 +159,13 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         if(domainCooldown > 0) {
             domainCooldown--;
+        }
+        if(recoverCooldown > 0) {
+            recoverCooldown--;
+        }
+        else{
+            performSpellSelf(this,1.0F, mattRecoverSpell, mattColor);
+            recoverCooldown = random.nextInt(200) + 200;
         }
 
         if(this.level().isClientSide()) {
@@ -244,6 +263,20 @@ public class MattEntity extends Monster implements RangedAttackMob {
         this.walkAnimation.update(f, 0.2f);
     }
 
+    private ParticleColor mattColor = new ParticleColor(255, 150, 0);
+
+    public Spell mattRecoverSpell = new Spell()
+            .add(EffectDispel.INSTANCE)
+            .add(EffectHeal.INSTANCE)
+            .add(AugmentAmplify.INSTANCE,3)
+
+            .withColor(mattColor);
+
+    public void performSpellSelf(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+        resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+    }
 
     public void setAttackingA(boolean attackingA) { this.entityData.set(ATTACKING_A, attackingA); }
     public boolean isAttackingA(){ return this.entityData.get(ATTACKING_A); }
@@ -294,6 +327,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         tag.putInt("casting", castingCooldown);
         tag.putInt("castingb", castingBCooldown);
         tag.putInt("domain", domainCooldown);
+        tag.putInt("heal", recoverCooldown);
 
     }
 
@@ -322,6 +356,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         this.castingCooldown = tag.getInt("casting");
         this.castingBCooldown = tag.getInt("castingb");
         this.domainCooldown = tag.getInt( "domain");
+        this.recoverCooldown = tag.getInt( "heal");
 
         if (this.hasCustomName()) {
             this.bossEvent.setName(this.getDisplayName());

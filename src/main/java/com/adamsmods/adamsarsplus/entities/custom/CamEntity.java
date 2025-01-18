@@ -3,7 +3,13 @@ package com.adamsmods.adamsarsplus.entities.custom;
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
 import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
+import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
+import com.hollingsworth.arsnouveau.api.spell.Spell;
+import com.hollingsworth.arsnouveau.api.spell.SpellContext;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectBlink;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -34,6 +40,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +66,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
     public int attackBCooldown;
     public int castingCooldown;
     public int domainCooldown;
+
+    public int blinkCooldown;
 
     public int navigatorType;
 
@@ -139,6 +148,9 @@ public class CamEntity extends Monster implements RangedAttackMob {
         }
         if(domainCooldown > 0) {
             domainCooldown--;
+        }
+        if(blinkCooldown > 0) {
+            blinkCooldown--;
         }
 
         if(this.level().isClientSide()) {
@@ -271,6 +283,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
         tag.putInt("attackb", attackBCooldown);
         tag.putInt("casting", castingCooldown);
         tag.putInt("domain", domainCooldown);
+        tag.putInt("blink", blinkCooldown);
 
     }
 
@@ -278,6 +291,18 @@ public class CamEntity extends Monster implements RangedAttackMob {
     public boolean hurt(DamageSource source, float amount) {
         if (source.is(DamageTypes.LAVA) || source.is(DamageTypes.FALL) || source.is(DamageTypes.LIGHTNING_BOLT) || source.is(DamageTypes.ON_FIRE))
             return false;
+
+        if(this.blinkCooldown <= 0){
+            if(source.is(DamageTypes.IN_WALL)){
+                this.teleportRelative(0,8,0);
+            } else if(!this.level().isClientSide()) {
+                performSpellSelf(this, 1.0F, camBlinkSpell, camColor);
+            }
+
+            this.blinkCooldown = random.nextInt(160) + 40;
+
+            return super.hurt(source, amount);
+        }
 
         return super.hurt(source, amount);
     }
@@ -292,6 +317,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
         this.castingCooldown = tag.getInt("casting");
 
         this.domainCooldown = tag.getInt( "domain");
+
+        this.blinkCooldown = tag.getInt( "blink");
 
         if (this.hasCustomName()) {
             this.bossEvent.setName(this.getDisplayName());
@@ -348,10 +375,24 @@ public class CamEntity extends Monster implements RangedAttackMob {
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
     }
+
+    private ParticleColor camColor = new ParticleColor(255, 255, 255);
+
+    public Spell camBlinkSpell = new Spell()
+            .add(EffectBlink.INSTANCE)
+
+            .withColor(camColor);
+
+
     @Override
     public void performRangedAttack(LivingEntity entity, float p_82196_2_) {
 
     }
 
+    public void performSpellSelf(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+        resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+    }
 
 }
