@@ -269,4 +269,5 @@ public class ModRegistry {
             return BuiltInRegistries.RECIPE_TYPE.getKey(this).toString();
         }
     }
+
 }

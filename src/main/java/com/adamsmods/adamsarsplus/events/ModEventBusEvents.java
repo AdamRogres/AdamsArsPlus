@@ -12,12 +12,11 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+/*
+@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEventBusEvents {
-
     @SubscribeEvent
-    public static void registerAttributes(EntityAttributeCreationEvent event) {
+    public static void registerAttributes(final EntityAttributeCreationEvent event) {
         event.put(AdamsModEntities.RYAN_ENTITY.get(), RyanEntity.createAttributes().build());
         event.put(AdamsModEntities.CADE_ENTITY.get(), CadeEntity.createAttributes().build());
         event.put(AdamsModEntities.NICK_ENTITY.get(), NickEntity.createAttributes().build());
@@ -28,3 +27,4 @@ public class ModEventBusEvents {
     }
 
 }
+*/

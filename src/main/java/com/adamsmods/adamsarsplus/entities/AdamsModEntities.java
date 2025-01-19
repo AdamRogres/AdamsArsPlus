@@ -14,6 +14,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -112,6 +115,21 @@ public class AdamsModEntities {
                     .sized(0.7f, 1.8f)
                     .clientTrackingRange(10));
 
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class RegistrationHandler {
+
+        @SubscribeEvent
+        public static void registerEntityAttributes(final EntityAttributeCreationEvent event) {
+            event.put(AdamsModEntities.RYAN_ENTITY.get(), RyanEntity.createAttributes().build());
+            event.put(AdamsModEntities.CADE_ENTITY.get(), CadeEntity.createAttributes().build());
+            event.put(AdamsModEntities.NICK_ENTITY.get(), NickEntity.createAttributes().build());
+            event.put(AdamsModEntities.CAM_ENTITY.get(), CamEntity.createAttributes().build());
+            event.put(AdamsModEntities.MATT_ENTITY.get(), MattEntity.createAttributes().build());
+            event.put(AdamsModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().build());
+            event.put(AdamsModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.SUMMON_SKELETON_M.get(), SummonSkeleton_m.createAttributes().build());
+        }
+    }
 
     public static boolean genericGroundSpawn(EntityType<? extends Entity> animal, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource random) {
             return worldIn.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) && worldIn.getRawBrightness(pos, 0) > 8;

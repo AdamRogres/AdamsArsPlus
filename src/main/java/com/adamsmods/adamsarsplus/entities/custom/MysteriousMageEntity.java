@@ -2,7 +2,6 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.adamsmods.adamsarsplus.util.SpellString;
 
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -207,7 +206,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
         this.goalSelector.addGoal(1, new MageCastingGoal<>(this, 1.0D, 40f,
-                () -> castCooldown <= 0,         ModAnimationsDefinition.MAGE_CAST.hashCode(), 15,
+                () -> castCooldown <= 0,         0, 15,
                 () -> Math.max(spellCooldown,1),
                 () -> mageSpell));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,Player.class,10,1.3D,1.0D));

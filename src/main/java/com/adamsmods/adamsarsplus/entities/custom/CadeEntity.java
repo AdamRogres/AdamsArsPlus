@@ -2,26 +2,9 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAOEThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeTwo;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
-import com.adamsmods.adamsarsplus.registry.ModRegistry;
-import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
-import com.hollingsworth.arsnouveau.api.spell.Spell;
-import com.hollingsworth.arsnouveau.api.spell.SpellContext;
-import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
-import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
-import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDampen;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtract;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import com.hollingsworth.arsnouveau.setup.registry.DamageTypesRegistry;
-import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -47,20 +30,14 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.animal.Rabbit;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.CADE_ENTITY;
 
 public class CadeEntity extends Monster implements RangedAttackMob {
@@ -276,9 +253,9 @@ public class CadeEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new CadeDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, ModAnimationsDefinition.CADE_CASTC.hashCode(), 15));
-        this.goalSelector.addGoal(2, new CadeCastingBGoal<>(this, 1.0D, 20f, () -> castBCooldown <= 0, ModAnimationsDefinition.CADE_CASTB.hashCode(), 15));
-        this.goalSelector.addGoal(2, new CadeCastingAGoal<>(this, 1.0D, 35f, () -> castACooldown <= 0, ModAnimationsDefinition.CADE_CASTA.hashCode(), 15));
+        this.goalSelector.addGoal(1, new CadeDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new CadeCastingBGoal<>(this, 1.0D, 20f, () -> castBCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new CadeCastingAGoal<>(this, 1.0D, 35f, () -> castACooldown <= 0, 0, 15));
 
         this.goalSelector.addGoal(4, new CadeEntity.CadeAvoidEntityGoal(this, Player.class, 15.0F, 1, 1.2));
         this.goalSelector.addGoal(4, new CadeEntity.CadeAvoidEntityGoal(this, IronGolem.class, 15.0F, 1, 1.2));

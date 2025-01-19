@@ -2,7 +2,6 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -17,8 +16,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -44,7 +41,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.CAM_ENTITY;
 
 public class CamEntity extends Monster implements RangedAttackMob {
@@ -336,8 +332,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
         this.goalSelector.addGoal(1, new CamAttackABGoal(this, 1.0D, true, () -> attackABCooldown != 0));
 
-        this.goalSelector.addGoal(2, new CamDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, ModAnimationsDefinition.CAM_DOMAIN.hashCode(), 13));
-        this.goalSelector.addGoal(2, new CamCastingGoal<>(this, 1.0D, 35f, () -> castingCooldown <= 0, ModAnimationsDefinition.CAM_CAST.hashCode(), 12));
+        this.goalSelector.addGoal(2, new CamDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 13));
+        this.goalSelector.addGoal(2, new CamCastingGoal<>(this, 1.0D, 35f, () -> castingCooldown <= 0, 0, 12));
         this.goalSelector.addGoal(2, new CamAttackBGoal(this, 1.0D, true, () -> attackBCooldown <= 0));
 
         this.goalSelector.addGoal(3, new CamAttackAAGoal(this, 1.0D, true, () -> true));

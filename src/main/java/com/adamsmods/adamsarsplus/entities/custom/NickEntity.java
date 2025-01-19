@@ -2,7 +2,6 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -18,8 +17,6 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -39,7 +36,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.NICK_ENTITY;
 
 public class NickEntity extends Monster implements RangedAttackMob {
@@ -310,7 +306,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         this.goalSelector.addGoal(1, new NickAttackBBGoal(this, 1.0D, true, () -> attackBBCooldown != 0));
 
-        this.goalSelector.addGoal(2, new NickDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, ModAnimationsDefinition.NICK_CAST.hashCode(), 24));
+        this.goalSelector.addGoal(2, new NickDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 24));
         this.goalSelector.addGoal(2, new NickAttackCGoal(this, 1.0D, true, () -> attackCCooldown <= 0));
         this.goalSelector.addGoal(2, new NickAttackBAGoal(this, 1.0D, true, () -> attackBACooldown <= 0));
         this.goalSelector.addGoal(3, new NickAttackGoal(this, 1.0D, true, () -> true));

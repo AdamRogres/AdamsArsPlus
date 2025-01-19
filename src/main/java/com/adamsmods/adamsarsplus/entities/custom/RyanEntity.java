@@ -6,8 +6,6 @@ import com.adamsmods.adamsarsplus.entities.ai.RyanDomainGoal;
 import com.adamsmods.adamsarsplus.entities.ai.RyanAttackGoal;
 
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.GroundMoveHelper;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
-import com.hollingsworth.arsnouveau.common.entity.pathfinding.MovementHandler;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -30,7 +28,6 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
@@ -43,7 +40,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.RYAN_ENTITY;
 
 public class RyanEntity extends Monster implements RangedAttackMob {
@@ -294,8 +290,8 @@ public class RyanEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new RyanDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, ModAnimationsDefinition.RYAN_CAST.hashCode(), 15));
-        this.goalSelector.addGoal(1, new RyanCastingGoal(this, 1.0D, 20f, () -> castCooldown <= 0, ModAnimationsDefinition.RYAN_CAST.hashCode(), 15));
+        this.goalSelector.addGoal(1, new RyanDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(1, new RyanCastingGoal(this, 1.0D, 20f, () -> castCooldown <= 0, 0, 15));
         this.goalSelector.addGoal(2, new RyanAttackGoal(this, 1.0D, true, () -> true));
 
         this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, (double)1.0F));

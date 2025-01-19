@@ -3,12 +3,8 @@ package com.adamsmods.adamsarsplus.entities.custom;
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.AdamCastingAGoal;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAOEThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectAnnihilate;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectLimitless;
-import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -17,11 +13,7 @@ import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDurationDown;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentPierce;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSensitive;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectBlink;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectBurst;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectDispel;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectHeal;
 import net.minecraft.core.particles.ParticleTypes;
@@ -492,14 +484,14 @@ public class AdamEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new AdamDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, ModAnimationsDefinition.ADAM_DOMAIN.hashCode(), 13));
+        this.goalSelector.addGoal(1, new AdamDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 13));
 
-        this.goalSelector.addGoal(2, new AdamCastingAGoal<>(this, 1.0D, 70f, () -> castingACooldown <= 0, ModAnimationsDefinition.ADAM_CASTA.hashCode(), 15));
-        this.goalSelector.addGoal(2, new AdamCastingBGoal<>(this, 1.0D, 70f, () -> castingBCooldown <= 0, ModAnimationsDefinition.ADAM_CASTB.hashCode(), 15));
+        this.goalSelector.addGoal(2, new AdamCastingAGoal<>(this, 1.0D, 70f, () -> castingACooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new AdamCastingBGoal<>(this, 1.0D, 70f, () -> castingBCooldown <= 0, 0, 15));
 
         this.goalSelector.addGoal(3, new AdamAttackABGoal(this, 1.0D, true, () -> attackABCooldown != 0));
         this.goalSelector.addGoal(3, new AdamAttackBGoal(this, 1.0D, true, () -> attackBCooldown <= 0));
-        this.goalSelector.addGoal(3, new AdamBlockingGoal<>(this, 1.0D, 70f, () -> blockCooldown <= 0, ModAnimationsDefinition.ADAM_BLOCK.hashCode(), 12));
+        this.goalSelector.addGoal(3, new AdamBlockingGoal<>(this, 1.0D, 70f, () -> blockCooldown <= 0, 0, 12));
 
         this.goalSelector.addGoal(4, new AdamAttackAAGoal(this, 1.0D, true, () -> true));
 

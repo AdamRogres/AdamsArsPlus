@@ -2,7 +2,6 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.ai.*;
 import com.adamsmods.adamsarsplus.entities.ai.pathfinding.AdvancedPathNavigate;
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -10,7 +9,6 @@ import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.pathfinding.PathingStuckHandler;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectBlink;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectDispel;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectHeal;
 import net.minecraft.nbt.CompoundTag;
@@ -45,9 +43,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MATT_ENTITY;
-import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
 public class MattEntity extends Monster implements RangedAttackMob {
 
@@ -372,12 +368,12 @@ public class MattEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new MattDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, ModAnimationsDefinition.MATT_DOMAIN.hashCode(), 15));
-        this.goalSelector.addGoal(2, new MattCastingGoal<>(this, 1.0D, 35f, () -> castingCooldown <= 0, ModAnimationsDefinition.MATT_CAST.hashCode(), 12));
-        this.goalSelector.addGoal(2, new MattCastingBGoal<>(this, 1.0D, 35f, () -> castingBCooldown <= 0, ModAnimationsDefinition.MATT_CAST.hashCode(), 12));
+        this.goalSelector.addGoal(1, new MattDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new MattCastingGoal<>(this, 1.0D, 35f, () -> castingCooldown <= 0, 0, 12));
+        this.goalSelector.addGoal(2, new MattCastingBGoal<>(this, 1.0D, 35f, () -> castingBCooldown <= 0, 0, 12));
         this.goalSelector.addGoal(2, new MattAttackBGoal(this, 1.0D, true, () -> attackBCooldown <= 0));
 
-        this.goalSelector.addGoal(3, new MattBlockingGoal<>(this, 1.0D, 70f, () -> blockCooldown <= 0, ModAnimationsDefinition.MATT_CAST.hashCode(), 12));
+        this.goalSelector.addGoal(3, new MattBlockingGoal<>(this, 1.0D, 70f, () -> blockCooldown <= 0, 0, 12));
 
         this.goalSelector.addGoal(4, new MattAttackAGoal(this, 1.0D, true, () -> true));
 
