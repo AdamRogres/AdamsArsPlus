@@ -30,7 +30,7 @@ public class simpleDomainEffect extends MobEffect {
         world = pLivingEntity.level();
 
         if (world instanceof ServerLevel level) {
-            playRingParticles(pLivingEntity, level, 2);
+            playRingParticles(pLivingEntity, level, 2 + pAmplifier);
         }
     }
 
@@ -48,9 +48,10 @@ public class simpleDomainEffect extends MobEffect {
         double yOff = -1;
         double zOff = 0;
 
-        double iOff = Math.random() * 180;
+        double radiusFactor = 360 / radius;
+        double iOff = Math.random() * radiusFactor;
 
-        for (int i = 0; i < 360; i = i + 180) {
+        for (int i = 0; i < 360; i = i + (int)radiusFactor) {
             xOff = radius * cos(toRadians(i + iOff));
             zOff = radius * sin(toRadians(i + iOff));
 

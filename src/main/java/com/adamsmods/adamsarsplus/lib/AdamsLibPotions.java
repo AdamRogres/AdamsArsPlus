@@ -9,6 +9,7 @@ public class AdamsLibPotions {
     public static final String ERUPTION = "eruption";
     public static final String SIX_EYES = "six_eyes";
     public static final String MANA_HEALTH = "mana_health";
+    public static final String ICEBURST = "ice_burst";
 
     public static String potion(String base) {
         return base + "_potion";

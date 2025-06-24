@@ -1,9 +1,15 @@
 package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
+import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
+import com.hollingsworth.arsnouveau.api.spell.Spell;
+import com.hollingsworth.arsnouveau.api.spell.SpellContext;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.SummonSkeleton;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
+import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -33,6 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,10 +53,23 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     private @Nullable BlockPos boundOrigin;
     private boolean limitedLifespan;
     private int limitedLifeTicks;
+    private SpellContext spell;
 
     class NamelessClass_1 extends MeleeAttackGoal {
         NamelessClass_1(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {
             super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
+        }
+
+        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+            double d0 = this.getAttackReachSqr(pEnemy);
+            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+                this.resetAttackCooldown();
+                this.mob.swing(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(pEnemy);
+
+                performSpellAttack(this.mob, 1.0F, spell.getSpell(), spell.getColors(), pEnemy);
+            }
+
         }
 
         public void stop() {
@@ -63,7 +83,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         }
     }
 
-    public SummonSkeleton_m(Level level, LivingEntity owner, ItemStack item) {
+    public SummonSkeleton_m(Level level, LivingEntity owner, ItemStack item, SpellContext spell) {
         super((EntityType) ModEntities.SUMMON_SKELETON.get(), level);
 
         this.meleeGoal = new NamelessClass_1(this, 2.2, true);
@@ -71,11 +91,19 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         this.owner = owner;
         this.limitedLifespan = true;
         this.setOwnerID(owner.getUUID());
+        this.spell = spell;
     }
 
     public SummonSkeleton_m(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
         this.meleeGoal = new NamelessClass_1(this, 2.2, true);
+    }
+
+    void performSpellAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color, LivingEntity enemy){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+        resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
+
     }
 
     public EntityType<?> getType() {
@@ -127,10 +155,10 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     public void setWeapon(ItemStack item) {
         this.setItemSlot(EquipmentSlot.MAINHAND, item);
 
-        this.setItemSlot(EquipmentSlot.HEAD, Items.NETHERITE_HELMET.getDefaultInstance());
-        this.setItemSlot(EquipmentSlot.CHEST, Items.NETHERITE_CHESTPLATE.getDefaultInstance());
-        this.setItemSlot(EquipmentSlot.LEGS, Items.NETHERITE_LEGGINGS.getDefaultInstance());
-        this.setItemSlot(EquipmentSlot.FEET, Items.NETHERITE_BOOTS.getDefaultInstance());
+        this.setItemSlot(EquipmentSlot.HEAD, ItemsRegistry.ARCANIST_HOOD.asItem().getDefaultInstance());
+        this.setItemSlot(EquipmentSlot.CHEST, ItemsRegistry.ARCANIST_ROBES.asItem().getDefaultInstance());
+        this.setItemSlot(EquipmentSlot.LEGS, ItemsRegistry.ARCANIST_LEGGINGS.asItem().getDefaultInstance());
+        this.setItemSlot(EquipmentSlot.FEET, ItemsRegistry.ARCANIST_BOOTS.asItem().getDefaultInstance());
 
         this.reassessWeaponGoal();
     }

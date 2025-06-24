@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 import static java.lang.Math.abs;
 
 public class EffectLimitless extends AbstractEffect implements IDamageEffect {
@@ -65,8 +67,20 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
 
     @Override
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+        if(spellStats.hasBuff(AugmentExtendTime.INSTANCE)){
+            int amp     = (int)(spellStats.getAmpMultiplier());
+            int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
 
+            shooter.addEffect(new MobEffectInstance(LIMITLESS_EFFECT.get(), time, amp));
+
+            AdamsArsPlus.setInterval(() -> {
+                makeLSphere(shooter.blockPosition(), world, shooter, spellStats, spellContext, resolver);
+
+            }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT.get())));
+
+        } else {
             makeLSphere(rayTraceResult.getBlockPos(), world, shooter, spellStats, spellContext, resolver);
+        }
 
     }
 
@@ -195,7 +209,8 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 AugmentAmplify.INSTANCE,
                 AugmentDampen.INSTANCE,
                 AugmentSensitive.INSTANCE,
-                AugmentPierce.INSTANCE
+                AugmentPierce.INSTANCE,
+                AugmentExtendTime.INSTANCE
         );
     }
 

@@ -26,6 +26,9 @@ public class SpellString {
             case "aoe_three" -> {
                 retPart = AugmentAOEThree.INSTANCE;
             }
+            case "lesser_aoe" -> {
+                retPart = AugmentLesserAOE.INSTANCE;
+            }
             case "accelerate" -> {
                 retPart = AugmentAccelerate.INSTANCE;
             }
@@ -37,6 +40,12 @@ public class SpellString {
             }
             case "amp" -> {
                 retPart = AugmentAmplify.INSTANCE;
+            }
+            case "amp_two" -> {
+                retPart = AugmentAmplifyTwo.INSTANCE;
+            }
+            case "amp_three" -> {
+                retPart = AugmentAmplifyThree.INSTANCE;
             }
             case "extend" -> {
                 retPart = AugmentExtendTime.INSTANCE;
@@ -53,6 +62,12 @@ public class SpellString {
             case "duration_down" -> {
                 retPart = AugmentDurationDown.INSTANCE;
             }
+            case "duration_down_two" -> {
+                retPart = AugmentDurationDownTwo.INSTANCE;
+            }
+            case "duration_down_three" -> {
+                retPart = AugmentDurationDownThree.INSTANCE;
+            }
             case "pierce" -> {
                 retPart = AugmentPierce.INSTANCE;
             }
@@ -61,6 +76,12 @@ public class SpellString {
             }
             case "dampen" -> {
                 retPart = AugmentDampen.INSTANCE;
+            }
+            case "dampen_two" -> {
+                retPart = AugmentDampenTwo.INSTANCE;
+            }
+            case "dampen_three" -> {
+                retPart = AugmentDampenThree.INSTANCE;
             }
             case "extract" -> {
                 retPart = AugmentExtract.INSTANCE;

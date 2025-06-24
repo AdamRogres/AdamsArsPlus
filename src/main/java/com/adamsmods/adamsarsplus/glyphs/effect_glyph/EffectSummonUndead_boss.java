@@ -4,9 +4,12 @@ import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.custom.SummonSkeleton_m;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.entity.SummonSkeleton;
+import com.hollingsworth.arsnouveau.common.items.EnchantersSword;
 import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectSummonUndead;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -30,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
+
 public class EffectSummonUndead_boss extends AbstractEffect {
     public static EffectSummonUndead_boss INSTANCE = new EffectSummonUndead_boss(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectsummonundead_m"), "Summon Undead");
 
@@ -38,30 +43,30 @@ public class EffectSummonUndead_boss extends AbstractEffect {
     }
 
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        if (true) {
+
+        spellContext.setCanceled(true);
+        if (spellContext.getCurrentIndex() >= spellContext.getSpell().recipe.size())
+            return;
+        Spell newSpell = spellContext.getRemainingSpell();
+        SpellContext newContext = spellContext.clone().withSpell(newSpell);
+
+
+        if (canSummonM(shooter)) {
             Vec3 vector3d = this.safelyGetHitPos(rayTraceResult);
             int ticks = (int)((double)20.0F * ((double)(Integer)this.GENERIC_INT.get() + (double)(Integer)this.EXTEND_TIME.get() * spellStats.getDurationMultiplier()));
             BlockPos pos = BlockPos.containing(vector3d);
             if (ticks > 0) {
-                int count = 3 + spellStats.getBuffCount(AugmentSplit.INSTANCE);
+                int count = 2 + spellStats.getBuffCount(AugmentSplit.INSTANCE);
 
                 for(int i = 0; i < count; ++i) {
                     BlockPos blockpos = pos.offset(-2 + shooter.getRandom().nextInt(5), 2, -2 + shooter.getRandom().nextInt(5));
-                    ItemStack weapon = Items.IRON_SWORD.getDefaultInstance();
-                    if (spellStats.hasBuff(AugmentPierce.INSTANCE)) {
-                        weapon = Items.BOW.getDefaultInstance();
-                        if (spellStats.getAmpMultiplier() > (double)0.0F) {
-                            weapon.enchant(Enchantments.POWER_ARROWS, Math.max(4, (int)spellStats.getAmpMultiplier()) - 1);
-                        }
-                    } else if (spellStats.getAmpMultiplier() >= (double)3.0F) {
-                        weapon = Items.NETHERITE_AXE.getDefaultInstance();
-                    } else if (spellStats.getAmpMultiplier() > (double)2.0F) {
-                        weapon = Items.NETHERITE_SWORD.getDefaultInstance();
-                    } else if (spellStats.getAmpMultiplier() > (double)1.0F) {
-                        weapon = Items.DIAMOND_SWORD.getDefaultInstance();
+                    ItemStack weapon = ENCHANTERS_SWORD.asItem().getDefaultInstance();
+
+                    if (spellStats.getAmpMultiplier() > (double)0.0F) {
+                        weapon.enchant(Enchantments.SHARPNESS, Math.max(4, (int)spellStats.getAmpMultiplier()) - 1);
                     }
 
-                    SummonSkeleton_m undeadentity = new SummonSkeleton_m(world, shooter, weapon);
+                    SummonSkeleton_m undeadentity = new SummonSkeleton_m(world, shooter, weapon, newContext);
                     undeadentity.moveTo(blockpos, 0.0F, 0.0F);
                     undeadentity.finalizeSpawn((ServerLevelAccessor)world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData)null, (CompoundTag)null);
                     undeadentity.setOwner(shooter);
@@ -69,15 +74,43 @@ public class EffectSummonUndead_boss extends AbstractEffect {
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, undeadentity);
                 }
 
-                //shooter.addEffect(new MobEffectInstance((MobEffect) ModPotions.SUMMONING_SICKNESS_EFFECT.get(), ticks));
+                shooter.addEffect(new MobEffectInstance((MobEffect) ModPotions.SUMMONING_SICKNESS_EFFECT.get(), ticks));
             }
         }
+    }
+
+    public boolean canSummonM(LivingEntity playerEntity) {
+        boolean var10000;
+        label25: {
+            if (this.isRealPlayer(playerEntity)) {
+                if (playerEntity.getEffect((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get()) == null) {
+                    break label25;
+                }
+
+                if (playerEntity instanceof Player) {
+                    Player player = (Player)playerEntity;
+                    if (player.isCreative()) {
+                        break label25;
+                    }
+                }
+            } else {
+                break label25;
+            }
+
+            var10000 = false;
+            return var10000;
+        }
+
+        var10000 = true;
+        return var10000;
     }
 
     public void buildConfig(ForgeConfigSpec.Builder builder) {
         super.buildConfig(builder);
         this.addGenericInt(builder, 15, "Base duration in seconds", "duration");
         this.addExtendTimeConfig(builder, 10);
+        PER_SPELL_LIMIT = builder.comment("The maximum number of times this glyph may appear in a single spell").defineInRange("per_spell_limit", 1, 1, 1);
+
     }
 
     public int getDefaultManaCost() {
@@ -89,7 +122,12 @@ public class EffectSummonUndead_boss extends AbstractEffect {
     }
 
     public @NotNull Set<AbstractAugment> getCompatibleAugments() {
-        return this.setOf(new AbstractAugment[]{AugmentExtendTime.INSTANCE, AugmentDurationDown.INSTANCE, AugmentAmplify.INSTANCE, AugmentSplit.INSTANCE, AugmentPierce.INSTANCE});
+        return this.setOf(new AbstractAugment[]{
+                AugmentExtendTime.INSTANCE,
+                AugmentDurationDown.INSTANCE,
+                AugmentAmplify.INSTANCE,
+                AugmentSplit.INSTANCE
+        });
     }
 
     public String getBookDescription() {
@@ -98,5 +136,12 @@ public class EffectSummonUndead_boss extends AbstractEffect {
 
     public @NotNull Set<SpellSchool> getSchools() {
         return this.setOf(new SpellSchool[]{SpellSchools.CONJURATION});
+    }
+
+    @Override
+    protected void addDefaultInvalidCombos(Set<ResourceLocation> defaults) {
+        defaults.add(EffectLinger.INSTANCE.getRegistryName());
+        defaults.add(EffectWall.INSTANCE.getRegistryName());
+        defaults.add(EffectDomain.INSTANCE.getRegistryName());
     }
 }

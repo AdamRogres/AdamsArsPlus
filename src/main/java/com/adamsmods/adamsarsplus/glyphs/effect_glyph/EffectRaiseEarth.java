@@ -8,10 +8,10 @@ import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentPierce;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectKnockback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,7 +120,8 @@ public class EffectRaiseEarth extends AbstractEffect implements IDamageEffect {
                 double speed = 2 + (0.3f * spellStats.getAmpMultiplier()) + (0.5f * spellStats.getBuffCount(AugmentPierce.INSTANCE) + spellStats.getBuffCount(AugmentAccelerate.INSTANCE));
                 entity.hurtMarked = true;
                 entity.hasImpulse = true;
-                EffectKnockback.INSTANCE.knockback(entity, shooter, (float)speed);
+
+                knockback(entity, shooter, (float)speed);
             }
 
             float damage = 4 + 2*(float)spellStats.getAmpMultiplier();
@@ -127,6 +129,58 @@ public class EffectRaiseEarth extends AbstractEffect implements IDamageEffect {
 
             this.attemptDamage(world,shooter,spellStats,spellContext,resolver, entity,  damageT, damage);
         }
+    }
+
+    public void knockback(Entity target, LivingEntity shooter, float strength) {
+        this.knockback(target, (double)strength, (double) Mth.sin(shooter.getYHeadRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(shooter.getYHeadRot() * ((float)Math.PI / 180F))));
+    }
+
+    public void knockback(Entity entity, double strength, double xRatio, double zRatio) {
+        if (entity instanceof LivingEntity living) {
+            strength *= 5.0;
+        }
+
+        if (strength > (double)0.0F) {
+            entity.hasImpulse = true;
+            Vec3 vec3 = entity.getDeltaMovement();
+            Vec3 vec31 = (new Vec3(xRatio, (double)0.0F, zRatio)).normalize().scale(strength);
+            entity.setDeltaMovement(vec3.x / (double)2.0F - vec31.x, entity.onGround() ? Math.min(0.4, vec3.y / (double)2.0F + strength) : vec3.y, vec3.z / (double)2.0F - vec31.z);
+        }
+
+    }
+
+    public void knockback(Entity target, double xPosition, double yPosition, double zPosition, float strength, int radius) {
+        double x = xPosition - target.getBlockX();
+        double y = yPosition - target.getBlockY();
+        double z = zPosition - target.getBlockZ();
+
+        knockback(target, strength, x, y, z, radius);
+    }
+
+    public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio, int radius) {
+
+        strength *= 5.0;
+
+        entity.hasImpulse = true;
+        entity.setDeltaMovement(entity.getDeltaMovement().scale(0));
+        if(strength <=  0) {
+            entity.setDeltaMovement(strength * -0.5 * xRatio, strength * -0.5 * yRatio, strength * -0.5 * zRatio);
+        }
+        else{
+            entity.setDeltaMovement(strength * -0.5 * absDifference(radius, xRatio), strength * -0.5 * absDifference(radius, yRatio), strength * -0.5 * absDifference(radius, zRatio));
+        }
+    }
+
+    public double absDifference(int radius, double ratio){
+        double value = 0;
+
+        if(ratio >= 0){
+            value = radius - ratio;
+        }
+        else{
+            value = (radius + ratio) * -1;
+        }
+        return value;
     }
 
     @Override

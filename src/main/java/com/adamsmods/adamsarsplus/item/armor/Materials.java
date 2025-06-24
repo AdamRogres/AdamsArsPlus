@@ -1,16 +1,19 @@
 package com.adamsmods.adamsarsplus.item.armor;
 
 import com.hollingsworth.arsnouveau.common.items.ModItem;
+import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Supplier;
 
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.MAGE_FIBER;
 
 public class Materials {
     public static final ANArmorMaterial CADE;
@@ -24,12 +27,12 @@ public class Materials {
     }
 
     static {
-        CADE = new ANArmorMaterial("an_cade", 80,  new int[]{2, 5, 6, 3}, 30, SoundEvents.ARMOR_EQUIP_LEATHER,   2.0F, FROST_SOUL);
-        RYAN = new ANArmorMaterial("an_ryan", 80,  new int[]{3, 6, 8, 3}, 30, SoundEvents.ARMOR_EQUIP_CHAIN,     3.0F, FLAME_SOUL);
-        NICK = new ANArmorMaterial("an_nick", 80,  new int[]{3, 7, 10,4}, 30, SoundEvents.ARMOR_EQUIP_IRON,      4.0F, EARTH_SOUL);
-        CAMR = new ANArmorMaterial("an_camr", 120, new int[]{3, 7, 10,4}, 30, SoundEvents.ARMOR_EQUIP_LEATHER,   4.0F, LIGHTNING_SOUL);
-        MATT = new ANArmorMaterial("an_matt", 120, new int[]{5, 8, 11,6}, 30, SoundEvents.ARMOR_EQUIP_GOLD,      5.0F, HERO_SOUL);
-        ADAM = new ANArmorMaterial("an_adam", 160, new int[]{6, 9, 12,7}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 6.0F, VOID_SOUL);
+        CADE = new ANArmorMaterial("an_cade", 80,  new int[]{2, 5, 6, 3}, 30, SoundEvents.ARMOR_EQUIP_LEATHER,   2.0F, () -> Ingredient.of(new ItemLike[]{ItemsRegistry.MAGE_FIBER}));
+        RYAN = new ANArmorMaterial("an_ryan", 80,  new int[]{3, 6, 8, 3}, 30, SoundEvents.ARMOR_EQUIP_CHAIN,     3.0F, () -> Ingredient.of(new ItemLike[]{ItemsRegistry.MAGE_FIBER}));
+        NICK = new ANArmorMaterial("an_nick", 80,  new int[]{3, 7, 10,4}, 30, SoundEvents.ARMOR_EQUIP_IRON,      4.0F, () -> Ingredient.of(new ItemLike[]{ItemsRegistry.MAGE_FIBER}));
+        CAMR = new ANArmorMaterial("an_camr", 120, new int[]{3, 7, 10,4}, 30, SoundEvents.ARMOR_EQUIP_LEATHER,   4.0F, () -> Ingredient.of(new ItemLike[]{ItemsRegistry.MAGE_FIBER}));
+        MATT = new ANArmorMaterial("an_matt", 120, new int[]{5, 8, 11,6}, 30, SoundEvents.ARMOR_EQUIP_GOLD,      5.0F, () -> Ingredient.of(new ItemLike[]{ItemsRegistry.MAGE_FIBER}));
+        ADAM = new ANArmorMaterial("an_adam", 160, new int[]{6, 9, 12,7}, 30, SoundEvents.ARMOR_EQUIP_NETHERITE, 6.0F, () -> Ingredient.of(new ItemLike[]{ItemsRegistry.MAGE_FIBER}));
     }
 
     public static class ANArmorMaterial implements ArmorMaterial {
@@ -42,7 +45,7 @@ public class Materials {
         private final float toughness;
         private final LazyLoadedValue<Ingredient> repairMaterial;
 
-        public ANArmorMaterial(String name, int maxDamageFactor, int[] damageReductionAmountArray, int enchantability, SoundEvent soundEvent, float toughness, Supplier<ModItem> supplier) {
+        public ANArmorMaterial(String name, int maxDamageFactor, int[] damageReductionAmountArray, int enchantability, SoundEvent soundEvent, float toughness, Supplier<Ingredient> supplier) {
             this.name = name;
             this.maxDamageFactor = maxDamageFactor;
             this.damageReductionAmountArray = damageReductionAmountArray;

@@ -128,6 +128,8 @@ public class EntityDivineSmite extends LightningBolt {
                             if (!this.level().isClientSide && !this.hitEntities.contains(entity.getId()) && entity instanceof LivingEntity livingEntity && livingEntity.getEffect((MobEffect) SHOCKED_EFFECT.get())  != null) {
                                 MobEffectInstance effectInstance = ((LivingEntity)entity).getEffect((MobEffect) SHOCKED_EFFECT.get());
                                 int amp = effectInstance != null ? effectInstance.getAmplifier() : -1;
+                                entity.invulnerableTime = 0;
+
                                 if(amp == 0){
                                     ((LivingEntity) entity).removeEffect((MobEffect) SHOCKED_EFFECT.get());
                                 } else{

@@ -23,9 +23,7 @@ import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.GlyphRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.ImbuementRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
+import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectExchange;
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
@@ -116,13 +114,19 @@ public class ArsProviders {
 
             Path output = this.generator.getPackOutput().getOutputFolder();
 
+            recipes.add(get(AugmentAmplifyThree.INSTANCE).withItem(AugmentAmplifyTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
+            recipes.add(get(AugmentAmplifyTwo.INSTANCE).withItem(AugmentAmplify.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
+            recipes.add(get(AugmentDampenThree.INSTANCE).withItem(AugmentDampenTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
+            recipes.add(get(AugmentDampenTwo.INSTANCE).withItem(AugmentDampen.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
             recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
             recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
             recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
             recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
+            recipes.add(get(AugmentLesserAOE.INSTANCE).withItem(GUNPOWDER,2).withItem(QUARTZ));
             recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
             recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
-
+            recipes.add(get(AugmentDurationDownThree.INSTANCE).withItem(AugmentDurationDownTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
+            recipes.add(get(AugmentDurationDownTwo.INSTANCE).withItem(AugmentDurationDown.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
             recipes.add(get(AugmentOpenDomain.INSTANCE).withItem(VOID_SOUL, 8).withItem(NETHER_STAR));
 
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
@@ -137,6 +141,7 @@ public class ArsProviders {
             recipes.add(get(EffectRaiseEarth.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
             recipes.add(get(EffectDivineSmite.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(AIR_ESSENCE,2).withItem(LIGHTNING_ROD));
             recipes.add(get(EffectMeteorSwarm.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE,2).withItem(FIRE_CHARGE));
+            recipes.add(get(EffectSummonUndead_boss.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE).withItem(WITHER_SKELETON_SKULL).withItem(ItemsRegistry.ENCHANTERS_SWORD));
 
             recipes.add(get(EffectAnnihilate.INSTANCE).withItem(VOID_SOUL,3).withItem(ItemsRegistry.ABJURATION_ESSENCE,2).withItem(CHORUS_FRUIT));
 

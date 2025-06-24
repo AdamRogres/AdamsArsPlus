@@ -7,6 +7,7 @@ import com.adamsmods.adamsarsplus.entities.client.*;
 import com.adamsmods.adamsarsplus.events.AdamsEvents;
 import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
+import com.adamsmods.adamsarsplus.util.SetInterval;
 import com.hollingsworth.arsnouveau.client.registry.ClientHandler;
 import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
 import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
@@ -26,6 +27,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.function.Supplier;
 
 import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
 
@@ -99,6 +102,9 @@ public class AdamsArsPlus {
     @SubscribeEvent
     public void doCapabilities(RegisterCapabilitiesEvent event){
 
+    }
+    public static void setInterval(Runnable method, int tickInterval, int timeToLive, Supplier<Boolean> end){
+        MinecraftForge.EVENT_BUS.register(new SetInterval(method, tickInterval, timeToLive, end));
     }
 }
 

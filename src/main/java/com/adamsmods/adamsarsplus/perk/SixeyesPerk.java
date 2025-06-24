@@ -38,7 +38,7 @@ public class SixeyesPerk extends Perk implements ITickablePerk {
     public void tick(ItemStack itemStack, Level level, Player player, PerkInstance perkInstance) {
         if(!player.hasEffect(SIX_EYES_EFFECT.get())){
             player.addEffect(new MobEffectInstance(SIX_EYES_EFFECT.get(), 100, 0, false, false));
-            player.addEffect(new MobEffectInstance(NIGHT_VISION, 300, 0, false, false));
+            player.addEffect(new MobEffectInstance(NIGHT_VISION, 600, 0, false, false));
             player.addEffect(new MobEffectInstance(MAGIC_FIND_EFFECT.get(), 300, 0, false, false));
         }
     }

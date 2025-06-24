@@ -166,12 +166,13 @@ public class ModRegistry {
     }
 
     public static final RegistryObject<MobEffect> DOMAIN_BURNOUT_EFFECT = EFFECTS.register(DOMAIN_BURNOUT, DEburnoutEffect::new);
+    public static final RegistryObject<MobEffect> LIMITLESS_EFFECT = EFFECTS.register(LIMITLESS, LimitlessEffect::new);
     public static final RegistryObject<MobEffect> MANA_EXHAUST_EFFECT = EFFECTS.register(MANA_EXHAUST, ManaExhaustEffect::new);
     public static final RegistryObject<MobEffect> SIMPLE_DOMAIN_EFFECT = EFFECTS.register(SIMPLE_DOMAIN, simpleDomainEffect::new);
     public static final RegistryObject<MobEffect> ERUPTION_EFFECT = EFFECTS.register(ERUPTION, eruptionEffect::new);
     public static final RegistryObject<MobEffect> SIX_EYES_EFFECT = EFFECTS.register(SIX_EYES, SixEyesEffect::new);
     public static final RegistryObject<MobEffect> MANA_HEALTH_EFFECT = EFFECTS.register(MANA_HEALTH, ManaHealthEffect::new);
-
+    public static final RegistryObject<MobEffect> ICEBURST_EFFECT = EFFECTS.register(ICEBURST, IceBurstEffect::new);
 
     public static void registerPerk(IPerk perk) {
         PerkRegistry.registerPerk(perk);

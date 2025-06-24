@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -41,7 +42,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.ICEBURST_EFFECT;
 import static com.hollingsworth.arsnouveau.client.particle.ParticleSparkleData.random;
+import static com.hollingsworth.arsnouveau.setup.registry.ModPotions.SHOCKED_EFFECT;
 
 public class EffectIceburst extends AbstractEffect implements IDamageEffect {
     public static EffectIceburst INSTANCE = new EffectIceburst(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effecticeburst"), "Iceburst");
@@ -54,53 +57,55 @@ public class EffectIceburst extends AbstractEffect implements IDamageEffect {
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         double aoe = spellStats.getAoeMultiplier();
         int radius = (int) aoe;
+        int MAX_DAMAGE_PROCS = (int) spellStats.getAmpMultiplier() * 2 + 1;
+
+        if(shooter.getEffect((MobEffect) ICEBURST_EFFECT.get()) == null) {
+            shooter.addEffect(new MobEffectInstance(ICEBURST_EFFECT.get(), 20, MAX_DAMAGE_PROCS));
+        }
+
         Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
 
         BlockPos pos = rayTraceResult.getBlockPos();
 
-        int MAX_DAMAGE_PROCS = (int) spellStats.getAmpMultiplier() * 2 + 1;
-
         for (BlockPos p : BlockPos.withinManhattan(pos, radius, radius, radius)) {
             if (Sphere.test(BlockUtil.distanceFromCenter(p, pos))) {
-                MAX_DAMAGE_PROCS = this.iceBurst(world, p, spellStats, spellContext, resolver, shooter, MAX_DAMAGE_PROCS);
+                this.iceBurst(world, p, spellStats, spellContext, resolver, shooter, MAX_DAMAGE_PROCS);
             }
         }
     }
 
     @Nullable
-    public int iceBurst(Level world, BlockPos p, SpellStats spellStats, SpellContext context, SpellResolver resolver, LivingEntity shooter, int max_procs) {
+    public void iceBurst(Level world, BlockPos p, SpellStats spellStats, SpellContext context, SpellResolver resolver, LivingEntity shooter, int max_procs) {
         BlockState hitState = world.getBlockState(p);
 
         if (hitState.getBlock() == Blocks.ICE) {
             world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             playIceParticle(p,world);
 
-            return iceBurstDamage(world, p, spellStats, context, resolver, shooter,1, max_procs);
+            iceBurstDamage(world, p, spellStats, context, resolver, shooter,1, max_procs);
 
         } else if (hitState.getBlock() == Blocks.FROSTED_ICE){
             world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             playIceParticle(p,world);
 
-            return iceBurstDamage(world, p, spellStats, context, resolver, shooter,1.5f, max_procs);
+            iceBurstDamage(world, p, spellStats, context, resolver, shooter,1.5f, max_procs);
 
         } else if (hitState.getBlock() == Blocks.PACKED_ICE) {
             world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             playIceParticle(p,world);
 
-            return iceBurstDamage(world, p, spellStats, context, resolver, shooter,2, max_procs);
+            iceBurstDamage(world, p, spellStats, context, resolver, shooter,2, max_procs);
 
         } else if (hitState.getBlock() == Blocks.BLUE_ICE) {
             world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             playIceParticle(p,world);
 
-            return iceBurstDamage(world, p, spellStats, context, resolver, shooter,2.5f, max_procs);
+            iceBurstDamage(world, p, spellStats, context, resolver, shooter,2.5f, max_procs);
 
-        } else {
-            return max_procs;
         }
     }
 
-    public int iceBurstDamage(Level world, BlockPos p, SpellStats spellStats, SpellContext context, SpellResolver resolver, LivingEntity shooter, float bonus, int max_procs){
+    public void iceBurstDamage(Level world, BlockPos p, SpellStats spellStats, SpellContext context, SpellResolver resolver, LivingEntity shooter, float bonus, int max_procs){
         double range = 1 + spellStats.getAoeMultiplier();
         float damage = (float) 2 * bonus;
 
@@ -110,19 +115,24 @@ public class EffectIceburst extends AbstractEffect implements IDamageEffect {
             if (!e.equals(shooter)) {
                 attemptDamage(world, shooter, spellStats, context, resolver, e, damageType, damage);
 
-                if(max_procs > 0) {
-                    e.invulnerableTime = 0;
-                    max_procs--;
+                if(shooter.getEffect((MobEffect) ICEBURST_EFFECT.get())  != null) {
+                    MobEffectInstance effectInstance = ((LivingEntity)shooter).getEffect((MobEffect) ICEBURST_EFFECT.get());
+                    int amp = effectInstance != null ? effectInstance.getAmplifier() : -1;
+
+                    if (amp != 0) {
+                        ((LivingEntity)shooter).removeEffect((MobEffect) ICEBURST_EFFECT.get());
+                        ((LivingEntity)shooter).addEffect(new MobEffectInstance((MobEffect) ICEBURST_EFFECT.get(), 20, amp - 1));
+
+                        e.invulnerableTime = 0;
+                    }
                 }
             }
         }
-
-        return max_procs;
     }
 
     public void playIceParticle(BlockPos p, Level world) {
 
-        if (world instanceof ServerLevel level) {
+        if (world instanceof ServerLevel level && level.isClientSide) {
 
             double x = p.getX();
             double y = p.getY();

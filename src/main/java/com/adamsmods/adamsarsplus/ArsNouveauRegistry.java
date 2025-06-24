@@ -42,17 +42,25 @@ public class ArsNouveauRegistry {
     public static final RegistryObject<MobEffect> ERUPTION_EFFECT = EFFECTS.register(ERUPTION, eruptionEffect::new);
     public static final RegistryObject<MobEffect> SIX_EYES_EFFECT = EFFECTS.register(SIX_EYES, SixEyesEffect::new);
     public static final RegistryObject<MobEffect> MANA_HEALTH_EFFECT = EFFECTS.register(MANA_HEALTH, ManaHealthEffect::new);
+    public static final RegistryObject<MobEffect> ICEBURST_EFFECT = EFFECTS.register(ICEBURST, IceBurstEffect::new);
 
     public static List<AbstractSpellPart> registeredSpells = new ArrayList<>(); //this will come handy for datagen
 
     public static void registerGlyphs() {
         //Augments
+        register(AugmentAmplifyThree.INSTANCE);
+        register(AugmentAmplifyTwo.INSTANCE);
+        register(AugmentDampenThree.INSTANCE);
+        register(AugmentDampenTwo.INSTANCE);
         register(AugmentAccelerateThree.INSTANCE);
         register(AugmentAccelerateTwo.INSTANCE);
         register(AugmentAOEThree.INSTANCE);
         register(AugmentAOETwo.INSTANCE);
+        register(AugmentLesserAOE.INSTANCE);
         register(AugmentExtendTimeThree.INSTANCE);
         register(AugmentExtendTimeTwo.INSTANCE);
+        register(AugmentDurationDownThree.INSTANCE);
+        register(AugmentDurationDownTwo.INSTANCE);
         register(AugmentOpenDomain.INSTANCE);
 
         //Effects
@@ -435,6 +443,19 @@ public class ArsNouveauRegistry {
 
     public static void addAugments(){
         for(AbstractSpellPart part : GlyphRegistry.getSpellpartMap().values()){
+            if(part.compatibleAugments.contains(AugmentAmplify.INSTANCE)&&!part.compatibleAugments.contains(AugmentAmplifyThree.INSTANCE)){
+                part.compatibleAugments.add(AugmentAmplifyThree.INSTANCE);
+            }
+            if(part.compatibleAugments.contains(AugmentAmplify.INSTANCE)&&!part.compatibleAugments.contains(AugmentAmplifyTwo.INSTANCE)){
+                part.compatibleAugments.add(AugmentAmplifyTwo.INSTANCE);
+            }
+            if(part.compatibleAugments.contains(AugmentAmplify.INSTANCE)&&!part.compatibleAugments.contains(AugmentDampenThree.INSTANCE)){
+                part.compatibleAugments.add(AugmentDampenThree.INSTANCE);
+            }
+            if(part.compatibleAugments.contains(AugmentAmplify.INSTANCE)&&!part.compatibleAugments.contains(AugmentDampenTwo.INSTANCE)){
+                part.compatibleAugments.add(AugmentDampenTwo.INSTANCE);
+            }
+
             if(part.compatibleAugments.contains(AugmentAccelerate.INSTANCE)&&!part.compatibleAugments.contains(AugmentAccelerateThree.INSTANCE)){
                 part.compatibleAugments.add(AugmentAccelerateThree.INSTANCE);
             }
@@ -448,12 +469,21 @@ public class ArsNouveauRegistry {
             if(part.compatibleAugments.contains(AugmentExtendTime.INSTANCE)&&!part.compatibleAugments.contains(AugmentExtendTimeTwo.INSTANCE)){
                 part.compatibleAugments.add(AugmentExtendTimeTwo.INSTANCE);
             }
+            if(part.compatibleAugments.contains(AugmentExtendTime.INSTANCE)&&!part.compatibleAugments.contains(AugmentDurationDownThree.INSTANCE)){
+                part.compatibleAugments.add(AugmentDurationDownThree.INSTANCE);
+            }
+            if(part.compatibleAugments.contains(AugmentExtendTime.INSTANCE)&&!part.compatibleAugments.contains(AugmentDurationDownTwo.INSTANCE)){
+                part.compatibleAugments.add(AugmentDurationDownTwo.INSTANCE);
+            }
 
             if(part.compatibleAugments.contains(AugmentAOE.INSTANCE)&&!part.compatibleAugments.contains(AugmentAOEThree.INSTANCE)){
                 part.compatibleAugments.add(AugmentAOEThree.INSTANCE);
             }
             if(part.compatibleAugments.contains(AugmentAOE.INSTANCE)&&!part.compatibleAugments.contains(AugmentAOETwo.INSTANCE)){
                 part.compatibleAugments.add(AugmentAOETwo.INSTANCE);
+            }
+            if(part.compatibleAugments.contains(AugmentAOE.INSTANCE)&&!part.compatibleAugments.contains(AugmentLesserAOE.INSTANCE)){
+                part.compatibleAugments.add(AugmentLesserAOE.INSTANCE);
             }
         }
     }

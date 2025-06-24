@@ -29,11 +29,4 @@ public class LimitlessEffect extends MobEffect {
         return true;
     }
 
-    @Override
-    public void applyEffectTick(LivingEntity livingEntity, int p_76394_2_) {
-
-        livingEntity.setDeltaMovement(livingEntity.getDeltaMovement().scale(0));
-        livingEntity.hurtMarked = true;
-    }
-
 }
