@@ -57,6 +57,9 @@
 	"adamsarsplus.glyph_name.glyph_effectsummonundead_m": 	"Summon Undead Mage",
 	"adamsarsplus.glyph_desc.glyph_effectsummonundead_m": 	"Summons undead mages that cast the remainder of the spell when they strike.",
 
+	"adamsarsplus.glyph_name.glyph_effecttenshadows": 	"Ten Shadows",
+	"adamsarsplus.glyph_desc.glyph_effecttenshadows": 	"Summons forth various shikigami from the bottomless well. Shikigami beyond the divine dogs must first be tamed through the ritual of taming.",
+
 	"adamsarsplus.glyph_name.glyph_effectmeteorswarm": 	"Meteor Swarm",
 	"adamsarsplus.glyph_desc.glyph_effectmeteorswarm": 	"Summons a meteor that falls at the spot where the spell is resolved. The meteor propagates the rest of the spell upon crashing. The greater the height the meteor falls from the remaining spell will have amplify augments added.",
 

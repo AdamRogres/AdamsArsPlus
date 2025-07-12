@@ -23,6 +23,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.MATT_LAYER, MattModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ADAM_LAYER, AdamModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MAGE_LAYER, MageModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.DDOG_LAYER, DDogModel::createBodyLayer);
     }
 
 }

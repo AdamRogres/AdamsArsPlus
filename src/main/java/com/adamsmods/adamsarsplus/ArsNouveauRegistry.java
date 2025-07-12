@@ -76,6 +76,7 @@ public class ArsNouveauRegistry {
         register(EffectSummonUndead_boss.INSTANCE);
         register(EffectMeteorSwarm.INSTANCE);
         register(EffectAnnihilate.INSTANCE);
+        register(EffectTenShadows.INSTANCE);
 
         //Methods
         register(MethodDetonate.INSTANCE);

@@ -16,6 +16,9 @@ public class AdamsLibEntityNames {
 
     public static final String MAGE = "mage";
 
+    // Ten Shadows
+    public static final String DIVINEDOG = "divine_dog";
+
     public static String appendFamiliar(String fam) {
         return "familiar_" + fam;
     }

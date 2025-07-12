@@ -18,6 +18,10 @@ public class ModModelLayers {
     public static final ModelLayerLocation ADAM_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "adam_layer"), "main");
 
+    public static final ModelLayerLocation DDOG_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "ddog_layer"), "main");
+
+
     public static final ModelLayerLocation MAGE_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "mage_layer"), "main");
 }

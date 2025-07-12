@@ -72,6 +72,7 @@ public class AdamsArsPlus {
     private void doClientStuff(final FMLClientSetupEvent event) {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(AdamClientHandler::registerRenderers);
 
+        // Mages
         EntityRenderers.register(AdamsModEntities.RYAN_ENTITY.get(), RyanRenderer::new);
         EntityRenderers.register(AdamsModEntities.CADE_ENTITY.get(), CadeRenderer::new);
         EntityRenderers.register(AdamsModEntities.NICK_ENTITY.get(), NickRenderer::new);
@@ -81,6 +82,8 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.ADAM_ENTITY.get(), AdamRenderer::new);
         EntityRenderers.register(AdamsModEntities.MAGE_ENTITY.get(), MageRenderer::new);
 
+        // Ten Shadows
+        EntityRenderers.register(AdamsModEntities.DIVINE_DOG.get(), DDogRenderer::new);
 
     }
 

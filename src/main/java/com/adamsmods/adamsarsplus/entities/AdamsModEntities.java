@@ -115,6 +115,13 @@ public class AdamsModEntities {
                     .sized(0.7f, 1.8f)
                     .clientTrackingRange(10));
 
+    // Ten Shadows
+    public static final RegistryObject<EntityType<DivineDogEntity>> DIVINE_DOG = registerEntity(
+            AdamsLibEntityNames.DIVINEDOG,
+            EntityType.Builder.<DivineDogEntity>of(DivineDogEntity::new, MobCategory.CREATURE)
+                    .sized(0.7f, 0.7f)
+                    .clientTrackingRange(10));
+
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistrationHandler {
 
@@ -128,6 +135,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().build());
             event.put(AdamsModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());
             event.put(AdamsModEntities.SUMMON_SKELETON_M.get(), SummonSkeleton_m.createAttributes().build());
+            event.put(AdamsModEntities.DIVINE_DOG.get(), DivineDogEntity.createAttributes().build());
         }
     }
 
