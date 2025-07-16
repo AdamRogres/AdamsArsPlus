@@ -2,6 +2,7 @@ package com.adamsmods.adamsarsplus.glyphs.effect_glyph;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.custom.DivineDogEntity;
+import com.adamsmods.adamsarsplus.entities.custom.NueEntity;
 import com.adamsmods.adamsarsplus.entities.custom.SummonSkeleton_m;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.entity.SummonSkeleton;
@@ -11,9 +12,11 @@ import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectSummonUndead;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
+import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -34,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
 
 public class EffectTenShadows extends AbstractEffect{
@@ -45,57 +49,60 @@ public class EffectTenShadows extends AbstractEffect{
 
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
 
-        if (canSummonM(shooter)) {
-            int ticks = (int)((double)20.0F * ((double)(Integer)this.GENERIC_INT.get() + (double)(Integer)this.EXTEND_TIME.get() * spellStats.getDurationMultiplier()));
-
+        if (canSummonTS(shooter)) {
             Vec3 vector3d = this.safelyGetHitPos(rayTraceResult);
             BlockPos pos = BlockPos.containing(vector3d);
             BlockPos blockpos = pos.offset(-2 + shooter.getRandom().nextInt(5), 2, -2 + shooter.getRandom().nextInt(5));
 
-            switch(tenShadowsRank(shooter)){
+            switch(tenShadowsRank(shooter, spellStats)){
                 case 4 -> {
+                    // Mahoraga
 
                 }
                 case 3 -> {
+                    // Round Deer
 
                 }
                 case 2 -> {
+                    //
 
                 }
                 case 1 -> {
-
+                    // Nue
+                    NueEntity tsentity = new NueEntity(world, shooter, true);
+                    tsentity.moveTo(blockpos, 0.0F, 0.0F);
+                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    tsentity.setOwner(shooter);
+                    this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
                 }
                 default -> {
+                    // Divine Dogs
                     String[] ddColor = {"white","black"};
 
                     for(int i = 0; i < 2; ++i) {
-                        DivineDogEntity tsentity = new DivineDogEntity(world, shooter, ddColor[i]);
+                        DivineDogEntity tsentity = new DivineDogEntity(world, shooter, ddColor[i], true);
                         tsentity.moveTo(blockpos, 0.0F, 0.0F);
                         tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                         tsentity.setOwner(shooter);
-                        tsentity.setLimitedLife(ticks);
                         this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
                     }
                 }
             }
 
-            shooter.addEffect(new MobEffectInstance((MobEffect) ModPotions.SUMMONING_SICKNESS_EFFECT.get(), ticks));
+            shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
+        } else if(shooter.hasEffect(TENSHADOWS_EFFECT.get())){
+            shooter.removeEffect(TENSHADOWS_EFFECT.get());
+            shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), 200));
         }
+
     }
 
-    public boolean canSummonM(LivingEntity playerEntity) {
+    public boolean canSummonTS(LivingEntity playerEntity) {
         boolean var10000;
         label25: {
             if (this.isRealPlayer(playerEntity)) {
-                if (playerEntity.getEffect((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get()) == null) {
+                if (playerEntity.getEffect((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get()) == null && playerEntity.getEffect((MobEffect)TENSHADOWS_EFFECT.get()) == null) {
                     break label25;
-                }
-
-                if (playerEntity instanceof Player) {
-                    Player player = (Player)playerEntity;
-                    if (player.isCreative()) {
-                        break label25;
-                    }
                 }
             } else {
                 break label25;
@@ -109,12 +116,16 @@ public class EffectTenShadows extends AbstractEffect{
         return var10000;
     }
 
-    public int tenShadowsRank(LivingEntity entity){
-        int Rank = 0;
+    public int tenShadowsRank(LivingEntity entity, SpellStats spell){
+
+        int Rank = (int) Math.min(spell.getAmpMultiplier(),1);
 
         if(entity instanceof Player){
             Player player = (Player)entity;
 
+            if(spell.getAmpMultiplier() > 1){
+                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.rankinvalid"));
+            }
         } else {
             Rank = 0;
         }
@@ -140,8 +151,6 @@ public class EffectTenShadows extends AbstractEffect{
 
     public @NotNull Set<AbstractAugment> getCompatibleAugments() {
         return this.setOf(new AbstractAugment[]{
-                AugmentExtendTime.INSTANCE,
-                AugmentDurationDown.INSTANCE,
                 AugmentAmplify.INSTANCE
         });
     }

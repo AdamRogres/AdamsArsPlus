@@ -121,6 +121,11 @@ public class AdamsModEntities {
             EntityType.Builder.<DivineDogEntity>of(DivineDogEntity::new, MobCategory.CREATURE)
                     .sized(0.7f, 0.7f)
                     .clientTrackingRange(10));
+    public static final RegistryObject<EntityType<NueEntity>> NUE = registerEntity(
+            AdamsLibEntityNames.NUE,
+            EntityType.Builder.<NueEntity>of(NueEntity::new, MobCategory.CREATURE)
+                    .sized(0.7f, 0.7f)
+                    .clientTrackingRange(10));
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistrationHandler {
@@ -136,6 +141,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());
             event.put(AdamsModEntities.SUMMON_SKELETON_M.get(), SummonSkeleton_m.createAttributes().build());
             event.put(AdamsModEntities.DIVINE_DOG.get(), DivineDogEntity.createAttributes().build());
+            event.put(AdamsModEntities.NUE.get(), NueEntity.createAttributes().build());
         }
     }
 

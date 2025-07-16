@@ -84,7 +84,7 @@ public class AdamsArsPlus {
 
         // Ten Shadows
         EntityRenderers.register(AdamsModEntities.DIVINE_DOG.get(), DDogRenderer::new);
-
+        EntityRenderers.register(AdamsModEntities.NUE.get(), NueRenderer::new);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

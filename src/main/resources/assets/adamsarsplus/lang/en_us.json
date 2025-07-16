@@ -121,6 +121,7 @@
 	"effect.adamsarsplus.six_eyes": 					"Six Eyes",
 	"effect.adamsarsplus.mana_health": 					"Immortal Shield",
 	"effect.adamsarsplus.ice_burst": 					"Iceburst Frost",
+	"effect.adamsarsplus.ten_shadows": 					"Ten Shadows Summon",
 
 	"entity.adamsarsplus.ryan": 						"Ryan: Slayer of Dragons",
 	"entity.adamsarsplus.cade": 						"Cade: The Immutable Frost",
@@ -189,6 +190,8 @@
 	"item.adamsarsplus.adam_leggings_a": 				"Awakened Void Archmage Leggings",
 	"item.adamsarsplus.adam_robes_a": 					"Awakened Void Archmage Chestplate",
 	"item.adamsarsplus.adam_hood_a": 					"Awakened Void Archmage Helmet",
+
+	"adamsarsplus.tenshadows.rankinvalid": 				"You have not yet tamed this shikigami.",
 
 	"ars_nouveau.page.adamsarsplus_tweaks": 			"Ars Plus",
 	"adamsarsplus.page.adamsarsplus_tweaks": 			"To begin the content of Ars Plus you'll want to hunt the Mysterious Mages that have appeared across your world and obtain their Mage Cloth. Once you're ready, craft a ritual of Mage Summoning to challenge the strongest of mages and obtain their magecraft.",

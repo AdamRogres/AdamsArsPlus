@@ -6,8 +6,10 @@ import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.client.particle.ParticleUtil;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
+import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -38,6 +40,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
+
 public class DivineDogEntity extends Monster implements IFollowingSummon, ISummon {
     private LivingEntity owner;
     private @Nullable BlockPos boundOrigin;
@@ -60,13 +64,14 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
 
     public int sprintCooldown;
 
-    public DivineDogEntity(Level level, LivingEntity owner, String color) {
+    public DivineDogEntity(Level level, LivingEntity owner, String color, boolean summon) {
         super((EntityType) AdamsModEntities.DIVINE_DOG.get(), level);
 
         this.owner = owner;
         this.limitedLifespan = true;
         this.setOwnerID(owner.getUUID());
         this.setColor(color);
+        this.isSummon = summon;
     }
 
     public DivineDogEntity(EntityType<? extends Monster> type, Level worldIn) {
@@ -105,9 +110,10 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     public void tick() {
         super.tick();
 
-        if (--this.limitedLifeTicks <= 0 && !this.limitedLifespan) {
-            this.limitedLifeTicks = 20;
-            //this.hurt(this.level().damageSources().starve(), 20.0F);
+        if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+            spawnShadowPoof((ServerLevel)this.level(), this.blockPosition());
+            this.remove(RemovalReason.DISCARDED);
+            this.onSummonDeath(this.level(), (DamageSource)null, true);
         }
 
         if(this.level().isClientSide()) {
@@ -325,11 +331,13 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     protected void registerGoals(){
         this.goalSelector.addGoal(2, new DDogLungeAttackGoal(this, 1.4, false, () -> this.isLunging()));
         this.goalSelector.addGoal(3, new DDogSprintGoal(this, 1.4, false, () -> sprintCooldown > 70));
-        this.goalSelector.addGoal(4, new DDogAttackGoal(this, 0.9, false, () -> true));
+        this.goalSelector.addGoal(4, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 25.0F, 3.0F));
+        this.goalSelector.addGoal(6, new DDogAttackGoal(this, 0.9, false, () -> true));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, (double) 1.0F));
+        this.goalSelector.addGoal(8, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 9.0F, 3.0F));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-        this.goalSelector.addGoal(2, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 9.0F, 3.0F));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, (double) 1.0F));
+
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this, new Class[]{DivineDogEntity.class}) {
             protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
                 return pPotentialTarget != null && super.canAttack(pPotentialTarget, pTargetPredicate) && !pPotentialTarget.getUUID().equals(DivineDogEntity.this.getOwnerUUID());
@@ -384,5 +392,15 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
 
     protected float getSoundVolume() {
         return 0.4F;
+    }
+
+    public static void spawnShadowPoof(ServerLevel world, BlockPos pos) {
+        for(int i = 0; i < 10; ++i) {
+            double d0 = (double)pos.getX() + (double)0.5F;
+            double d1 = (double)pos.getY() + 1.2;
+            double d2 = (double)pos.getZ() + (double)0.5F;
+            world.sendParticles(ParticleTypes.SQUID_INK, d0, d1, d2, 2, ((double)(world.random.nextFloat() * 1.0F) - (double)0.5F) / (double)3.0F, ((double)(world.random.nextFloat() * 1.0F) - (double)0.5F) / (double)3.0F, ((double)(world.random.nextFloat() * 1.0F) - (double)0.5F) / (double)3.0F, (double)0.1F);
+        }
+
     }
 }
