@@ -39,6 +39,7 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
     public static final TagKey<Item> MAGE_BOOT_B = ItemTags.create(new ResourceLocation(AdamsArsPlus.MOD_ID, "boot_b"));
 
     public static final TagKey<Item> MAGE_RITUAL = ItemTags.create(new ResourceLocation(AdamsArsPlus.MOD_ID, "mage_r"));
+    public static final TagKey<Item> TS_RITUAL = ItemTags.create(new ResourceLocation(AdamsArsPlus.MOD_ID, "ts_r"));
 
     public AdamsItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
         super(output, Registries.ITEM, future, (item) -> item.builtInRegistryHolder().key(), MOD_ID, helper);
@@ -64,6 +65,7 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
         tag(MAGE_BOOT_B).add(CAMR_BOOTS_A.get(),MATT_BOOTS_A.get());
 
         tag(MAGE_RITUAL).add(ItemsRegistry.FIRE_ESSENCE.get(), ItemsRegistry.WATER_ESSENCE.get(), ItemsRegistry.EARTH_ESSENCE.get(), ItemsRegistry.AIR_ESSENCE.get(), ItemsRegistry.CONJURATION_ESSENCE.get(), ItemsRegistry.ABJURATION_ESSENCE.get(), ELEMENTAL_SOUL.get(), TRUE_ELEMENTAL_SOUL.get());
+        tag(TS_RITUAL).add(MANA_DIAMOND.get());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.datagen;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
 import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
+import com.adamsmods.adamsarsplus.ritual.RitualTenShadows;
 import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.perk.IPerk;
 import com.hollingsworth.arsnouveau.api.registry.PerkRegistry;
@@ -45,6 +46,7 @@ public class AdamPatchouliProvider extends PatchouliProvider {
                 , getPath(GETTING_STARTED, "adamsarsplus_tweaks"));
 
         addRitualPage(new RitualMageSummon());
+        addRitualPage(new RitualTenShadows());
 
         addBasicItem(ELEMENTAL_SOUL, RESOURCES, new ApparatusPage(ELEMENTAL_SOUL.get()));
         addBasicItem(TRUE_ELEMENTAL_SOUL, RESOURCES, new ApparatusPage(TRUE_ELEMENTAL_SOUL.get()));

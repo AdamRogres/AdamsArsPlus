@@ -9,6 +9,7 @@ import com.adamsmods.adamsarsplus.glyphs.method_glyph.MethodDetonate;
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
 import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
+import com.adamsmods.adamsarsplus.ritual.RitualTenShadows;
 import com.adamsmods.api.APerkSlot;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.perk.ArmorPerkHolder;
@@ -85,6 +86,7 @@ public class ArsNouveauRegistry {
 
         // Rituals
         registerRitual(new RitualMageSummon());
+        registerRitual(new RitualTenShadows());
 
         // Perks
         registerPerk(SixeyesPerk.INSTANCE);

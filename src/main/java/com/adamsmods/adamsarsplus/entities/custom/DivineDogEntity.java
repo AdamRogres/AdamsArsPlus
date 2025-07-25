@@ -110,10 +110,12 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     public void tick() {
         super.tick();
 
-        if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
-            spawnShadowPoof((ServerLevel)this.level(), this.blockPosition());
-            this.remove(RemovalReason.DISCARDED);
-            this.onSummonDeath(this.level(), (DamageSource)null, true);
+        if(this.getSummoner() != null) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+                spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
+                this.remove(RemovalReason.DISCARDED);
+                this.onSummonDeath(this.level(), (DamageSource) null, true);
+            }
         }
 
         if(this.level().isClientSide()) {
@@ -217,14 +219,6 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         return super.hurt(pSource, pAmount);
     }
 
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("left", ticksLeft);
-        compound.putBoolean("Summon", isSummon);
-        compound.putString("color", this.color);
-    }
-
     public void setOwner(LivingEntity owner) {
         this.owner = owner;
     }
@@ -273,30 +267,25 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         return 0;
     }
 
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        if (this.getOwnerUUID() == null) {
+            compound.putUUID("OwnerUUID", Util.NIL_UUID);
+        } else {
+            compound.putUUID("OwnerUUID", this.getOwnerUUID());
+        }
+
+        compound.putInt("left", ticksLeft);
+        compound.putBoolean("Summon", isSummon);
+        compound.putString("color", this.getColor());
+    }
+
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        if (compound.contains("BoundX")) {
-            this.boundOrigin = new BlockPos(compound.getInt("BoundX"), compound.getInt("BoundY"), compound.getInt("BoundZ"));
-        }
 
-        if (compound.contains("LifeTicks")) {
-            this.setLimitedLife(compound.getInt("LifeTicks"));
-        }
-
-        UUID s;
-        if (compound.contains("OwnerUUID", 8)) {
-            s = compound.getUUID("OwnerUUID");
-        } else {
-            String s1 = compound.getString("Owner");
-            s = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s1);
-        }
-
-        if (s != null) {
-            try {
-                this.setOwnerID(s);
-            } catch (Throwable var4) {
-            }
-        }
+        this.setOwnerID(compound.getUUID("OwnerUUID"));
+        this.owner = this.getOwnerFromID();
 
         this.ticksLeft = compound.getInt("left");
         this.isSummon = compound.getBoolean("Summon");

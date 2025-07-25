@@ -5,6 +5,8 @@ import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.client.*;
 import com.adamsmods.adamsarsplus.events.AdamsEvents;
+import com.adamsmods.adamsarsplus.network.AdamNetworking;
+import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
 import com.adamsmods.adamsarsplus.util.SetInterval;
@@ -62,6 +64,8 @@ public class AdamsArsPlus {
         ArsNouveauRegistry.registerSounds();
         ArsNouveauRegistry.addAugments();
         ArsNouveauRegistry.registerPerks();
+
+        AdamNetworking.registerMessages();
 
         event.enqueueWork(AdamsModEntities::registerPlacements);
 

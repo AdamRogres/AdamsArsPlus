@@ -3,14 +3,10 @@ package com.adamsmods.adamsarsplus.glyphs.effect_glyph;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.custom.DivineDogEntity;
 import com.adamsmods.adamsarsplus.entities.custom.NueEntity;
-import com.adamsmods.adamsarsplus.entities.custom.SummonSkeleton_m;
+import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.spell.*;
-import com.hollingsworth.arsnouveau.common.entity.SummonSkeleton;
-import com.hollingsworth.arsnouveau.common.items.EnchantersSword;
-import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectSummonUndead;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
@@ -24,9 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.HitResult;
@@ -36,9 +29,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
-import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 
 public class EffectTenShadows extends AbstractEffect{
     public static EffectTenShadows INSTANCE = new EffectTenShadows(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effecttenshadows"), "Ten Shadows");
@@ -117,20 +110,25 @@ public class EffectTenShadows extends AbstractEffect{
     }
 
     public int tenShadowsRank(LivingEntity entity, SpellStats spell){
-
-        int Rank = (int) Math.min(spell.getAmpMultiplier(),1);
+        AtomicInteger Rank = new AtomicInteger();
 
         if(entity instanceof Player){
             Player player = (Player)entity;
 
-            if(spell.getAmpMultiplier() > 1){
+            AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
+                Rank.set(pRank.getTsTier());
+            });
+
+            if(spell.getAmpMultiplier() > Rank.get()){
                 PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.rankinvalid"));
             }
         } else {
-            Rank = 0;
+            Rank.set(0);
         }
 
-        return Rank;
+        int RetRank = (int) Math.min(spell.getAmpMultiplier(), Rank.get());
+
+        return RetRank;
     }
 
     public void buildConfig(ForgeConfigSpec.Builder builder) {

@@ -10,6 +10,7 @@ import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
 import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.recipe.jei.AArmorRecipe;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
+import com.adamsmods.adamsarsplus.ritual.RitualTenShadows;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.registry.RitualRegistry;
@@ -76,32 +77,20 @@ public class ArsProviders {
 
         @Override
         protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
-//          shapelessBuilder(getRitualItem(new ResourceLocation(ArsNouveau.MODID,LevelingRitual.ID)))
-//                  .requires(GOLD_ESSENCE.get(),2)
-//                  .requires(NETHERITE_INGOT,2)
-//                  .requires(NETHER_STAR)
-//                  .save(consumer, prefix("tablet_"+LevelingRitual.ID))
-//          ;
 
             shapelessBuilder(getRitualItem(new ResourceLocation(AdamsArsPlus.MOD_ID, RitualMageSummon.ID)))
                     .requires(BlockRegistry.CASCADING_LOG)
                     .requires(MAGE_CLOTH.get(),2)
                     .requires(MANA_DIAMOND.get())
                     .save(consumer, prefix("tablet_" + RitualMageSummon.ID));
-            /*
-            this.shapelessBuilder(getRitualItem(RitualLib.MOONFALL))
+
+            shapelessBuilder(getRitualItem(new ResourceLocation(AdamsArsPlus.MOD_ID, RitualTenShadows.ID)))
                     .requires(BlockRegistry.CASCADING_LOG)
-                    .requires(net.minecraft.world.item.Items.INK_SAC)
-                    .requires(Tags.Items.STORAGE_BLOCKS_COAL)
-                    .requires(net.minecraft.world.item.Items.CLOCK)
-                    .save(this.consumer);
-
-             */
+                    .requires(MAGE_CLOTH.get(),2)
+                    .requires(MANA_DIAMOND.get())
+                    .save(consumer, prefix("tablet_" + RitualTenShadows.ID));
         }
-
-
     }
-
 
     public static class GlyphProvider extends GlyphRecipeProvider {
 

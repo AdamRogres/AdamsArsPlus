@@ -89,9 +89,11 @@ public class NueModel<T extends Entity> extends HierarchicalModel<T> {
 	}
 
 	@Override
-	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
+
+		this.body.xRot = -1 * Mth.clamp(entity.getXRot(), -25, 25) * ((float)Math.PI / 180F);
 
 		//this.animateWalk(ModAnimationsDefinition.DDOG_WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
 		this.animate(((NueEntity) entity).idleAnimationState, ModAnimationsDefinition.NUE_IDLE, ageInTicks, 1f);

@@ -79,6 +79,7 @@
 	"adamsarsplus.glyph_desc.glyph_propdetonate": 		"Summons a projectile where the spell resolves that applies spell effects when this projectile hits a target or block. The projectile will resolve in the air after traveling for a set time. This time can be altered with extend time. Pierce will cause this time to reset on spell resolve.",
 
 	"adamsarsplus.ritual_desc.ritual_mage_summon": 		"Without augments, this ritual will summon a random variety of Mysterious Mages. When augmented with a fire/water/earth essence a powerful mage will be summoned. Using an air or conjuration essence requires an elemental soul and abjuration essence requires a true elemental soul. Note: Mages can be highly destructive.",
+	"adamsarsplus.ritual_desc.ritual_ten_shadows": 		"Grants the Ten Shadows Glyph. When augmented with mana diamonds more powerful shikigami can be summoned. If the challenger defeats the shikigami alone they gain the right to summon them through the Ten Shadows Glyph.",
 
 	"item.adamsarsplus.thread_sixeyes": 				"Thread of Six Eyes",
 	"adamsarsplus.perk_desc.thread_sixeyes":			"Grants the user the Six Eyes. Granting superior vision and legendary mana efficiency.",
@@ -110,6 +111,7 @@
 	"item.adamsarsplus.void_soul": 						"Void Soul",
 
 	"item.adamsarsplus.ritual_mage_summon": 			"Summon Mage",
+	"item.adamsarsplus.ritual_ten_shadows": 			"Challenge Shikigami",
 
 	"block.adamsarsplus.domain_shell_block": 			"Domain Shell",
 
@@ -192,6 +194,7 @@
 	"item.adamsarsplus.adam_hood_a": 					"Awakened Void Archmage Helmet",
 
 	"adamsarsplus.tenshadows.rankinvalid": 				"You have not yet tamed this shikigami.",
+	"adamsarsplus.tenshadows.nue_tamed": 				"You have now tamed: Nue",
 
 	"ars_nouveau.page.adamsarsplus_tweaks": 			"Ars Plus",
 	"adamsarsplus.page.adamsarsplus_tweaks": 			"To begin the content of Ars Plus you'll want to hunt the Mysterious Mages that have appeared across your world and obtain their Mage Cloth. Once you're ready, craft a ritual of Mage Summoning to challenge the strongest of mages and obtain their magecraft.",

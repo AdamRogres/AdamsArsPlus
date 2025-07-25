@@ -1,4 +1,4 @@
-// 1.20.1	2025-01-11T19:26:57.2390327	ArsPlus Item Tags
+// 1.20.1	2025-07-24T23:36:30.2446943	ArsPlus Item Tags
 e7241a5ac9a859df2cd4d9c45acdfdc46c53efcb data/adamsarsplus/tags/items/boot_a.json
 7fe5cc48631d7a079ec6ff5dae1cf49d9f5aaf34 data/adamsarsplus/tags/items/boot_b.json
 aeedd1907c248907edef848b6d3a950ca92e7459 data/adamsarsplus/tags/items/hood_a.json
@@ -8,6 +8,7 @@ aeedd1907c248907edef848b6d3a950ca92e7459 data/adamsarsplus/tags/items/hood_a.jso
 fbee6c6975ed8dfbdcdec7de06b75fca604e4a8c data/adamsarsplus/tags/items/mage_r.json
 ae94a81b7b0e56d9a41d47fd5b5b3fe7c893b1eb data/adamsarsplus/tags/items/robe_a.json
 1af82638ec06a898d7c17db706eebdd5adb9b0b5 data/adamsarsplus/tags/items/robe_b.json
+55da1538debebfc09a865d79d512b39b010701a8 data/adamsarsplus/tags/items/ts_r.json
 f4df44c664b9190c5385bc3d96382af26add802b data/ars_nouveau/tags/items/boot.json
 a6f57b5698003165658cebac60702657955e2733 data/ars_nouveau/tags/items/hood.json
 0c442262894975c5a4a45bf93b6d70503c166856 data/ars_nouveau/tags/items/legs.json

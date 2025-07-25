@@ -1,18 +1,28 @@
 package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
+import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
+import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
+import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
+import com.hollingsworth.arsnouveau.api.spell.Spell;
+import com.hollingsworth.arsnouveau.api.spell.SpellContext;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
-import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
+import com.hollingsworth.arsnouveau.common.spell.augment.*;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectDelay;
+import com.hollingsworth.arsnouveau.common.spell.effect.EffectLightning;
+import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -25,9 +35,6 @@ import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -47,10 +54,16 @@ import net.minecraft.world.entity.monster.Phantom;
 import java.util.*;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
+import static java.lang.Math.PI;
 
-public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
+public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     private LivingEntity owner;
+    // Ten Shadows Reward
+    public boolean ritualStatus;
+    public UUID[] attackersList;
 
+    public static final EntityDataAccessor<Boolean> IDLE =
+            SynchedEntityData.defineId(NueEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FLYING =
             SynchedEntityData.defineId(NueEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> ATTACKING =
@@ -69,6 +82,7 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         this.owner = owner;
         this.setOwnerID(owner.getUUID());
         this.isSummon = summon;
+        this.ritualStatus = false;
 
         this.moveTargetPoint = Vec3.ZERO;
         this.anchorPoint = BlockPos.ZERO;
@@ -77,7 +91,20 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         this.lookControl = new NueLookControl(this);
     }
 
-    public NueEntity(EntityType<? extends Phantom> type, Level worldIn) {
+    public NueEntity(Level level, boolean summon) {
+        super((EntityType) AdamsModEntities.NUE.get(), level);
+
+        this.isSummon = summon;
+        this.ritualStatus = false;
+
+        this.moveTargetPoint = Vec3.ZERO;
+        this.anchorPoint = BlockPos.ZERO;
+        this.attackPhase = NueEntity.AttackPhase.CIRCLE;
+        this.moveControl = new NueMoveControl(this);
+        this.lookControl = new NueLookControl(this);
+    }
+
+    public NueEntity(EntityType<? extends FlyingMob> type, Level worldIn) {
         super(type, worldIn);
 
         this.moveTargetPoint = Vec3.ZERO;
@@ -100,6 +127,9 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
     public final AnimationState attackAnimationState = new AnimationState();
     public int attackAnimationTimeout = 0;
 
+    public void setIdle(boolean idle) { this.entityData.set(IDLE, idle); }
+    public boolean isIdle(){ return this.entityData.get(IDLE); }
+
     public void setFlying(boolean flying) { this.entityData.set(FLYING, flying); }
     public boolean isFlying(){ return this.entityData.get(FLYING); }
 
@@ -110,63 +140,60 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
     public void tick() {
         super.tick();
 
-        if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
-            spawnShadowPoof((ServerLevel)this.level(), this.blockPosition());
-            this.remove(RemovalReason.DISCARDED);
-            this.onSummonDeath(this.level(), (DamageSource)null, true);
+        if(this.getSummoner() != null) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+                spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
+                this.remove(RemovalReason.DISCARDED);
+                this.onSummonDeath(this.level(), (DamageSource) null, true);
+            }
         }
 
         if(this.level().isClientSide()) {
             setupAnimationStates();
         }
+
     }
 
     private void setupAnimationStates() {
 
-        if (this.idleAnimationTimeout <= 0) {
+        this.setIdle(false);
+
+        if (this.isIdle() && this.idleAnimationTimeout <= 0) {
             this.idleAnimationTimeout = this.random.nextInt(40) + 80;
             this.idleAnimationState.start(this.tickCount);
         } else {
             --this.idleAnimationTimeout;
         }
+        if(!this.isIdle()){
+            this.idleAnimationState.stop();
+        }
         //Attack Animation control
         if(this.isAttacking() && attackAnimationTimeout <= 0) {
-            attackAnimationTimeout = 20;
+            attackAnimationTimeout = 25;
             attackAnimationState.start(this.tickCount);
         } else {
             --this.attackAnimationTimeout;
+
+            if(this.isAttacking() && attackAnimationTimeout <= 0){
+                this.setAttacking(false);
+            }
         }
         if(!this.isAttacking()) {
             attackAnimationState.stop();
         }
 
-        // Sprint Animation control
+        // Flying Animation control
         if(this.isFlying()) {
             if(this.flyAnimationTimeout <= 0){
-                this.flyAnimationTimeout = 10;
+                this.flyAnimationTimeout = 20;
                 flyAnimationState.start(this.tickCount);
             } else {
                 this.flyAnimationTimeout--;
             }
+
         } else {
             flyAnimationState.stop();
         }
-
-    }
-
-    @Override
-    protected void updateWalkAnimation(float pPartialTick) {
-        float f;
-        if(this.getPose() == Pose.STANDING) {
-            f = Math.min(pPartialTick * 6F, 1F);
-        } else {
-            f = 0f;
-        }
-        if(this.isFlying()){
-            f = 0f;
-        }
-
-        this.walkAnimation.update(f, 0.2f);
 
     }
 
@@ -178,15 +205,32 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
         this.entityData.define(FLYING, false);
         this.entityData.define(ATTACKING, false);
+        this.entityData.define(IDLE, false);
     }
 
     @Override
     public void die(DamageSource cause) {
         super.die(cause);
         onSummonDeath(level(), cause, false);
+
+        if(!this.ritualStatus && !this.isSummon){
+            if(this.level().getPlayerByUUID(this.attackersList[0]) != null){
+                Player player = this.level().getPlayerByUUID(this.attackersList[0]);
+
+                AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
+                    pRank.setTsTier(Math.max(1, pRank.getTsTier()));
+                });
+
+                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.nue_tamed"));
+            }
+        }
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {
+        if(pSource.is(DamageTypes.LIGHTNING_BOLT)){
+            return false;
+        }
+
         if (pSource.is(DamageTypes.MOB_ATTACK)) {
             Entity var4 = pSource.getEntity();
             if (var4 instanceof ISummon) {
@@ -195,16 +239,10 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
                     return false;
                 }
             }
+            if(!this.ritualStatus){ this.ritualStatus = isRitualFailed(var4); }
         }
 
         return super.hurt(pSource, pAmount);
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("left", ticksLeft);
-        compound.putBoolean("Summon", isSummon);
     }
 
     public void setOwner(LivingEntity owner) {
@@ -255,26 +293,28 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         return 0;
     }
 
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("left", ticksLeft);
+        compound.putBoolean("Summon", isSummon);
+        compound.putBoolean("Failed", ritualStatus);
+
+        if (this.getOwnerUUID() == null) {
+            compound.putUUID("OwnerUUID", Util.NIL_UUID);
+        } else {
+            compound.putUUID("OwnerUUID", this.getOwnerUUID());
+        }
+    }
+
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
 
-        UUID s;
-        if (compound.contains("OwnerUUID", 8)) {
-            s = compound.getUUID("OwnerUUID");
-        } else {
-            String s1 = compound.getString("Owner");
-            s = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s1);
-        }
-
-        if (s != null) {
-            try {
-                this.setOwnerID(s);
-            } catch (Throwable var4) {
-            }
-        }
-
+        this.setOwnerID(compound.getUUID("OwnerUUID"));
+        this.owner = this.getOwnerFromID();
         this.ticksLeft = compound.getInt("left");
         this.isSummon = compound.getBoolean("Summon");
+        this.ritualStatus = compound.getBoolean("Failed");
     }
 
     public LivingEntity getOwnerFromID() {
@@ -300,20 +340,10 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
     protected void registerGoals(){
         this.goalSelector.addGoal(1, new NueAttackStrategyGoal());
         this.goalSelector.addGoal(2, new NueSweepAttackGoal());
-        this.goalSelector.addGoal(3, new NueCircleAroundAnchorGoal());
+        this.goalSelector.addGoal(3, new NueFollowSummonerGoal());
+        this.goalSelector.addGoal(4, new NueCircleAroundAnchorGoal());
+
         this.targetSelector.addGoal(1, new NueAttackPlayerTargetGoal());
-
-        /*
-        this.goalSelector.addGoal(4, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 25.0F, 3.0F));
-        this.goalSelector.addGoal(8, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 9.0F, 3.0F));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-
-        /*this.targetSelector.addGoal(3, new HurtByTargetGoal(this, new Class[]{NueEntity.class}) {
-            protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
-                return pPotentialTarget != null && super.canAttack(pPotentialTarget, pTargetPredicate) && !pPotentialTarget.getUUID().equals(NueEntity.this.getOwnerUUID());
-            }
-        });*/
         this.targetSelector.addGoal(1, new CopyOwnerTargetGoalFlying<>(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Villager.class, true));
@@ -341,19 +371,19 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
     }
 
     protected void playStepSound(BlockPos pPos, BlockState pBlock) {
-        this.playSound(SoundEvents.WOLF_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.PHANTOM_FLAP, 0.15F, 1.0F);
     }
 
     protected SoundEvent getAmbientSound() {
-            return this.isSummon && this.getHealth() < 10.0F ? SoundEvents.WOLF_WHINE : SoundEvents.WOLF_PANT;
+            return SoundEvents.PHANTOM_AMBIENT;
     }
 
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-        return SoundEvents.WOLF_HURT;
+        return SoundEvents.PHANTOM_HURT;
     }
 
     protected SoundEvent getDeathSound() {
-        return SoundEvents.WOLF_DEATH;
+        return SoundEvents.PHANTOM_DEATH;
     }
 
     protected float getSoundVolume() {
@@ -370,7 +400,22 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
 
     }
 
-    public static class CopyOwnerTargetGoalFlying<I extends Phantom & IFollowingSummon> extends TargetGoal {
+    protected BodyRotationControl createBodyControl() {
+        return new NueBodyRotationControl(this);
+    }
+
+    class NueBodyRotationControl extends BodyRotationControl {
+        public NueBodyRotationControl(Mob pMob) {
+            super(pMob);
+        }
+
+        public void clientTick() {
+            NueEntity.this.yHeadRot = NueEntity.this.yBodyRot;
+            NueEntity.this.yBodyRot = NueEntity.this.getYRot();
+        }
+    }
+
+    public static class CopyOwnerTargetGoalFlying<I extends FlyingMob & IFollowingSummon> extends TargetGoal {
         public CopyOwnerTargetGoalFlying(I creature) {
             super(creature, false);
         }
@@ -430,7 +475,7 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
                 float $$6 = NueEntity.this.getYRot();
                 float $$7 = (float) Mth.atan2($$2, $$0);
                 float $$8 = Mth.wrapDegrees(NueEntity.this.getYRot() + 90.0F);
-                float $$9 = Mth.wrapDegrees($$7 * (180F / (float)Math.PI));
+                float $$9 = Mth.wrapDegrees($$7 * (180F / (float) PI));
                 NueEntity.this.setYRot(Mth.approachDegrees($$8, $$9, 4.0F) - 90.0F);
                 NueEntity.this.yBodyRot = NueEntity.this.getYRot();
                 if (Mth.degreesDifferenceAbs($$6, NueEntity.this.getYRot()) < 3.0F) {
@@ -439,27 +484,16 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
                     this.speed = Mth.approach(this.speed, 0.2F, 0.025F);
                 }
 
-                float $$10 = (float)(-(Mth.atan2(-$$1, $$3) * (double)(180F / (float)Math.PI)));
+                float $$10 = (float)(-(Mth.atan2(-$$1, $$3) * (double)(180F / (float) PI)));
                 NueEntity.this.setXRot($$10);
                 float $$11 = NueEntity.this.getYRot() + 90.0F;
-                double $$12 = (double)(this.speed * Mth.cos($$11 * ((float)Math.PI / 180F))) * Math.abs($$0 / $$5);
-                double $$13 = (double)(this.speed * Mth.sin($$11 * ((float)Math.PI / 180F))) * Math.abs($$2 / $$5);
-                double $$14 = (double)(this.speed * Mth.sin($$10 * ((float)Math.PI / 180F))) * Math.abs($$1 / $$5);
+                double $$12 = (double)(this.speed * Mth.cos($$11 * ((float) PI / 180F))) * Math.abs($$0 / $$5);
+                double $$13 = (double)(this.speed * Mth.sin($$11 * ((float) PI / 180F))) * Math.abs($$2 / $$5);
+                double $$14 = (double)(this.speed * Mth.sin($$10 * ((float) PI / 180F))) * Math.abs($$1 / $$5);
                 Vec3 $$15 = NueEntity.this.getDeltaMovement();
                 NueEntity.this.setDeltaMovement($$15.add((new Vec3($$12, $$14, $$13)).subtract($$15).scale(0.2)));
             }
 
-        }
-    }
-
-    class NueBodyRotationControl extends BodyRotationControl {
-        public NueBodyRotationControl(Mob pMob) {
-            super(pMob);
-        }
-
-        public void clientTick() {
-            NueEntity.this.yHeadRot = NueEntity.this.yBodyRot;
-            NueEntity.this.yBodyRot = NueEntity.this.getYRot();
         }
     }
 
@@ -482,6 +516,42 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         }
     }
 
+    class NueFollowSummonerGoal extends NueEntity.NueCircleAroundAnchorGoal{
+
+        private int height;
+
+        NueFollowSummonerGoal() {
+        }
+
+        public boolean canUse(){
+            return NueEntity.this.getOwner() != null;
+        }
+
+        public void start(){
+            super.start();
+
+            this.height = NueEntity.this.random.nextInt(5);
+            NueEntity.this.setFlying(true);
+        }
+
+        public void stop(){
+            super.stop();
+
+            NueEntity.this.setFlying(false);
+        }
+
+        public void tick(){
+            super.tick();
+
+            this.setAnchorAboveTarget();
+        }
+
+        private void setAnchorAboveTarget() {
+            NueEntity.this.anchorPoint = NueEntity.this.getOwner().blockPosition().above(7 + this.height);
+        }
+
+    }
+
     class NueCircleAroundAnchorGoal extends NueEntity.NueMoveTargetGoal {
         private float angle;
         private float distance;
@@ -500,6 +570,14 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
             this.height = -4.0F + NueEntity.this.random.nextFloat() * 9.0F;
             this.clockwise = NueEntity.this.random.nextBoolean() ? 1.0F : -1.0F;
             this.selectNext();
+
+            NueEntity.this.setFlying(true);
+        }
+
+        public void stop(){
+            super.stop();
+
+            NueEntity.this.setFlying(false);
         }
 
         public void tick() {
@@ -516,7 +594,7 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
             }
 
             if (NueEntity.this.random.nextInt(this.adjustedTickDelay(450)) == 0) {
-                this.angle = NueEntity.this.random.nextFloat() * 2.0F * (float)Math.PI;
+                this.angle = NueEntity.this.random.nextFloat() * 2.0F * (float) PI;
                 this.selectNext();
             }
 
@@ -541,13 +619,12 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
                 NueEntity.this.anchorPoint = NueEntity.this.blockPosition();
             }
 
-            this.angle += this.clockwise * 15.0F * ((float)Math.PI / 180F);
+            this.angle += this.clockwise * 15.0F * ((float) PI / 180F);
             NueEntity.this.moveTargetPoint = Vec3.atLowerCornerOf(NueEntity.this.anchorPoint).add((double)(this.distance * Mth.cos(this.angle)), (double)(-4.0F + this.height), (double)(this.distance * Mth.sin(this.angle)));
         }
     }
 
     class NueSweepAttackGoal extends NueEntity.NueMoveTargetGoal {
-        private static final int CAT_SEARCH_TICK_DELAY = 20;
         private boolean isScaredOfCat;
         private int catSearchTick;
 
@@ -592,6 +669,7 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         }
 
         public void start() {
+
         }
 
         public void stop() {
@@ -602,14 +680,17 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         public void tick() {
             LivingEntity $$0 = NueEntity.this.getTarget();
             if ($$0 != null) {
-                NueEntity.this.moveTargetPoint = new Vec3($$0.getX(), $$0.getY((double)0.5F), $$0.getZ());
-                if (NueEntity.this.getBoundingBox().inflate((double)0.2F).intersects($$0.getBoundingBox())) {
-                    NueEntity.this.doHurtTarget($$0);
+                NueEntity.this.moveTargetPoint = new Vec3($$0.getX(), $$0.getY((double)0.5F) + 1.5, $$0.getZ());
+
+                if (NueEntity.this.getBoundingBox().inflate((double)3.0F).intersects($$0.getBoundingBox())) {
+                    NueEntity.this.setAttacking(true);
+                    NueEntity.this.performCastAttack(NueEntity.this, NueEntity.this.getTarget(), nueCastSpell, nueColor);
                     NueEntity.this.attackPhase = NueEntity.AttackPhase.CIRCLE;
                     if (!NueEntity.this.isSilent()) {
                         NueEntity.this.level().levelEvent(1039, NueEntity.this.blockPosition(), 0);
                     }
-                } else if (NueEntity.this.horizontalCollision || NueEntity.this.hurtTime > 0) {
+                }
+                else if (NueEntity.this.horizontalCollision || NueEntity.this.hurtTime > 0) {
                     NueEntity.this.attackPhase = NueEntity.AttackPhase.CIRCLE;
                 }
 
@@ -635,7 +716,7 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         }
 
         public void stop() {
-            NueEntity.this.anchorPoint = NueEntity.this.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, NueEntity.this.anchorPoint).above(10 + NueEntity.this.random.nextInt(20));
+            NueEntity.this.anchorPoint = NueEntity.this.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, NueEntity.this.anchorPoint).above(7 + NueEntity.this.random.nextInt(5));
         }
 
         public void tick() {
@@ -652,10 +733,7 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
         }
 
         private void setAnchorAboveTarget() {
-            NueEntity.this.anchorPoint = NueEntity.this.getTarget().blockPosition().above(20 + NueEntity.this.random.nextInt(20));
-            if (NueEntity.this.anchorPoint.getY() < NueEntity.this.level().getSeaLevel()) {
-                NueEntity.this.anchorPoint = new BlockPos(NueEntity.this.anchorPoint.getX(), NueEntity.this.level().getSeaLevel() + 1, NueEntity.this.anchorPoint.getZ());
-            }
+            NueEntity.this.anchorPoint = NueEntity.this.getTarget().blockPosition().above(7 + NueEntity.this.random.nextInt(5));
 
         }
     }
@@ -693,5 +771,60 @@ public class NueEntity extends Phantom implements IFollowingSummon, ISummon {
             LivingEntity $$0 = NueEntity.this.getTarget();
             return $$0 != null ? NueEntity.this.canAttack($$0, TargetingConditions.DEFAULT) : false;
         }
+    }
+
+    void performCastAttack(LivingEntity entity, LivingEntity target, Spell spell, ParticleColor color){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+        DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
+        projectileSpell.setColor(color);
+
+        projectileSpell.shoot(entity,Mth.clamp(entity.getXRot() + 45, 45, 90), entity.getYRot(), 0.0F, 1.0f, 0.9f);
+
+        entity.level().addFreshEntity(projectileSpell);
+    }
+
+    private ParticleColor nueColor = new ParticleColor(200, 200, 255);
+
+    public Spell nueCastSpell = new Spell()
+            .add(AugmentDurationDown.INSTANCE,2)
+
+            .add(EffectDelay.INSTANCE)
+            .add(AugmentExtendTime.INSTANCE, 2)
+
+            .add(EffectLightning.INSTANCE)
+            .add(AugmentDampen.INSTANCE)
+            .add(AugmentExtendTime.INSTANCE, 3)
+
+            .withColor(nueColor);
+
+    // Ten Shadows Ritual Reward Control
+    public boolean isRitualFailed(Entity attacker){
+        boolean isFailed = false;
+
+        if (attacker instanceof ISummon) {
+            ISummon summon = (ISummon)attacker;
+            if(checkDupes(summon.getOwnerUUID())){
+                this.attackersList[this.attackersList.length] = summon.getOwnerUUID();
+            }
+        } else {
+            if(checkDupes(attacker.getUUID())){
+                this.attackersList[this.attackersList.length] = attacker.getUUID();
+            }
+        }
+
+        if(this.attackersList.length > 1){
+            isFailed = true;
+        }
+
+        return isFailed;
+    }
+
+    public boolean checkDupes(UUID newUUID){
+        for(int i = 0; i < this.attackersList.length; i++){
+            if(this.attackersList[i] == newUUID){
+                return false;
+            }
+        }
+        return true;
     }
 }
