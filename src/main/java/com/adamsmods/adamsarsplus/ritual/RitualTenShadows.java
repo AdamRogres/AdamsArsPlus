@@ -48,7 +48,7 @@ public class RitualTenShadows extends AbstractRitual {
                     // Summon Nue
                     case 1 -> {
                         NueEntity boss = new NueEntity(this.getWorld(), false);
-                        this.summon(boss, this.getPos().above());
+                        this.summon(boss, this.getPos().above(7));
 
                         for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
                             if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {

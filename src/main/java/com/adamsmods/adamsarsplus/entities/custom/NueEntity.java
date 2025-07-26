@@ -60,7 +60,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     private LivingEntity owner;
     // Ten Shadows Reward
     public boolean ritualStatus;
-    public UUID[] attackersList;
+    public LivingEntity[] attackersList = {null, null};
 
     public static final EntityDataAccessor<Boolean> IDLE =
             SynchedEntityData.defineId(NueEntity.class, EntityDataSerializers.BOOLEAN);
@@ -214,9 +214,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         onSummonDeath(level(), cause, false);
 
         if(!this.ritualStatus && !this.isSummon){
-            if(this.level().getPlayerByUUID(this.attackersList[0]) != null){
-                Player player = this.level().getPlayerByUUID(this.attackersList[0]);
-
+            if(this.attackersList[0] instanceof Player player){
                 AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
                     pRank.setTsTier(Math.max(1, pRank.getTsTier()));
                 });
@@ -239,8 +237,10 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
                     return false;
                 }
             }
-            if(!this.ritualStatus){ this.ritualStatus = isRitualFailed(var4); }
         }
+
+
+        if(!this.ritualStatus){ this.ritualStatus = isRitualFailed(pSource.getEntity()); }
 
         return super.hurt(pSource, pAmount);
     }
@@ -801,30 +801,26 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     public boolean isRitualFailed(Entity attacker){
         boolean isFailed = false;
 
-        if (attacker instanceof ISummon) {
-            ISummon summon = (ISummon)attacker;
-            if(checkDupes(summon.getOwnerUUID())){
-                this.attackersList[this.attackersList.length] = summon.getOwnerUUID();
-            }
-        } else {
-            if(checkDupes(attacker.getUUID())){
-                this.attackersList[this.attackersList.length] = attacker.getUUID();
+        if(attacker instanceof LivingEntity leAttacker) {
+            if (leAttacker instanceof ISummon) {
+                ISummon summon = (ISummon) attacker;
+                    this.attackersList[checkDupes(summon.getOwner())] = summon.getOwner();
+            } else {
+                    this.attackersList[checkDupes(leAttacker)] = leAttacker;
             }
         }
 
-        if(this.attackersList.length > 1){
+        if(this.attackersList[1] != null){
             isFailed = true;
         }
 
         return isFailed;
     }
 
-    public boolean checkDupes(UUID newUUID){
-        for(int i = 0; i < this.attackersList.length; i++){
-            if(this.attackersList[i] == newUUID){
-                return false;
-            }
+    public int checkDupes(LivingEntity newEntity) {
+        if(this.attackersList[0] == null || this.attackersList[0] == newEntity){
+            return 0;
         }
-        return true;
+        return 1;
     }
 }

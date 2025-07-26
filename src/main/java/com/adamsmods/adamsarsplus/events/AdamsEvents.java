@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus.events;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import com.adamsmods.adamsarsplus.command.TSrankCommand;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.SpellEfficiency;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.event.*;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -51,6 +53,11 @@ public class AdamsEvents {
        if(!(e.getEntity().getEffect(MANA_EXHAUST_EFFECT.get()) == null)){
         e.setRegen(0);
        }
+    }
+
+    @SubscribeEvent
+    public static void commandRegister(RegisterCommandsEvent event) {
+        TSrankCommand.register(event.getDispatcher());
     }
 
 }
