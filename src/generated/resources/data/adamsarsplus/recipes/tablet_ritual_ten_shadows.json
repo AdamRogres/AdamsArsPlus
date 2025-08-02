@@ -3,16 +3,31 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "ars_nouveau:blue_archwood_log"
+      "item": "ars_nouveau:purple_archwood_log"
     },
     {
-      "item": "adamsarsplus:mage_cloth"
+      "item": "minecraft:sculk"
     },
     {
-      "item": "adamsarsplus:mage_cloth"
+      "item": "minecraft:sculk"
     },
     {
-      "item": "adamsarsplus:mana_diamond"
+      "item": "minecraft:sculk"
+    },
+    {
+      "item": "minecraft:feather"
+    },
+    {
+      "item": "minecraft:bone"
+    },
+    {
+      "item": "minecraft:rabbit_foot"
+    },
+    {
+      "item": "minecraft:beef"
+    },
+    {
+      "item": "minecraft:rotten_flesh"
     }
   ],
   "result": {

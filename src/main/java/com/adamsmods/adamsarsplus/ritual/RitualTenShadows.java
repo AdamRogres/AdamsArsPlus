@@ -38,8 +38,8 @@ public class RitualTenShadows extends AbstractRitual {
                 }
             }
             if(this.getProgress() >= 8){
-                switch(Rank){
-                    // Give Glyph
+                switch(Math.min(Rank, 4)){
+                    // Give Glyph (Divine Dogs are free)
                     default -> {
                         this.getWorld().addFreshEntity(new ItemEntity(this.getWorld(), this.getPos().getX(), this.getPos().getY() + 0.5, this.getPos().getZ(), new ItemStack(EffectTenShadows.INSTANCE.getGlyph().asItem()) ));
 
@@ -57,9 +57,26 @@ public class RitualTenShadows extends AbstractRitual {
                         }
                         this.setFinished();
                     }
-                    // Summon _
+                    // Summon Rabbit Escape
+                    case 2 -> {
+                        RabbitEEntity boss = new RabbitEEntity(this.getWorld(), false, "main");
+                        this.summon(boss, this.getPos().above());
 
+                        for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                            if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                            }
+                        }
+                        this.setFinished();
+                    }
+                    // Summon Round Deer
+                    case 3 -> {
 
+                    }
+                    // Summon Mahoraga
+                    case 4 -> {
+
+                    }
                 }
             }
         }

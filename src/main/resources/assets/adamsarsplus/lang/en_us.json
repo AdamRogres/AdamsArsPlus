@@ -195,6 +195,10 @@
 
 	"adamsarsplus.tenshadows.rankinvalid": 				"You have not yet tamed this shikigami.",
 	"adamsarsplus.tenshadows.nue_tamed": 				"You have now tamed: Nue",
+	"adamsarsplus.tenshadows.rabbit_tamed": 			"You have now tamed: Rabbit Escape",
+	"adamsarsplus.tenshadows.deer_tamed": 				"You have now tamed: Round Deer",
+	"adamsarsplus.tenshadows.maho_tamed": 				"You have now tamed: Mahoraga",
+	"adamsarsplus.tenshadows.tame_failed": 				"Failed to tame. You must first tame the proceeding shikigami",
 	"adamsarsplus.command.rankchange": 					"Ten Shadows rank changed to: ",
 
 	"ars_nouveau.page.adamsarsplus_tweaks": 			"Ars Plus",

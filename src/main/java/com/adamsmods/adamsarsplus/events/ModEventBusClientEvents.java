@@ -25,6 +25,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.MAGE_LAYER, MageModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.DDOG_LAYER, DDogModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.NUE_LAYER, NueModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.RABE_LAYER, RabbitEModel::createBodyLayer);
     }
 
 }

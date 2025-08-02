@@ -43,6 +43,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 
+import net.minecraft.world.level.block.SkullBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -85,9 +86,13 @@ public class ArsProviders {
                     .save(consumer, prefix("tablet_" + RitualMageSummon.ID));
 
             shapelessBuilder(getRitualItem(new ResourceLocation(AdamsArsPlus.MOD_ID, RitualTenShadows.ID)))
-                    .requires(BlockRegistry.CASCADING_LOG)
-                    .requires(MAGE_CLOTH.get(),2)
-                    .requires(MANA_DIAMOND.get())
+                    .requires(BlockRegistry.VEXING_LOG)
+                    .requires(SCULK,3)
+                    .requires(FEATHER)
+                    .requires(BONE)
+                    .requires(RABBIT_FOOT)
+                    .requires(BEEF)
+                    .requires(ROTTEN_FLESH)
                     .save(consumer, prefix("tablet_" + RitualTenShadows.ID));
         }
     }

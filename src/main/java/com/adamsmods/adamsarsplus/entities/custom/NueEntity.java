@@ -14,6 +14,7 @@ import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectDelay;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLightning;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
+import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -28,6 +29,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -168,22 +171,24 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
             this.idleAnimationState.stop();
         }
         //Attack Animation control
-        if(this.isAttacking() && attackAnimationTimeout <= 0) {
-            attackAnimationTimeout = 25;
-            attackAnimationState.start(this.tickCount);
-        } else {
-            --this.attackAnimationTimeout;
+        if(this.isAttacking()){
+            if(this.attackAnimationTimeout <= 0){
+                attackAnimationState.start(this.tickCount);
+                this.attackAnimationTimeout = 25;
+            } else {
+                this.attackAnimationTimeout = Math.max(1, this.attackAnimationTimeout - 1);
 
-            if(this.isAttacking() && attackAnimationTimeout <= 0){
-                this.setAttacking(false);
+                if(this.attackAnimationTimeout == 1){
+                    this.setAttacking(false);
+                    this.attackAnimationTimeout = 0;
+                }
             }
-        }
-        if(!this.isAttacking()) {
+        } else {
             attackAnimationState.stop();
         }
 
         // Flying Animation control
-        if(this.isFlying()) {
+        if(this.isFlying() && !this.isAttacking()) {
             if(this.flyAnimationTimeout <= 0){
                 this.flyAnimationTimeout = 20;
                 flyAnimationState.start(this.tickCount);
@@ -226,6 +231,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
 
     public boolean hurt(DamageSource pSource, float pAmount) {
         if(pSource.is(DamageTypes.LIGHTNING_BOLT)){
+            this.clearFire();
             return false;
         }
 
@@ -787,9 +793,6 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
 
     public Spell nueCastSpell = new Spell()
             .add(AugmentDurationDown.INSTANCE,2)
-
-            .add(EffectDelay.INSTANCE)
-            .add(AugmentExtendTime.INSTANCE, 2)
 
             .add(EffectLightning.INSTANCE)
             .add(AugmentDampen.INSTANCE)
