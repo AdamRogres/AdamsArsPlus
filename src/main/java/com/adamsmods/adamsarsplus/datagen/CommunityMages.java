@@ -27,11 +27,13 @@ public class CommunityMages {
 
             for(JsonElement element : object.getAsJsonArray("mageOwner")) {
                 JsonObject jsonObject = element.getAsJsonObject();
-                String name = jsonObject.get("name").getAsString();
+                String name  = jsonObject.get("name").getAsString();
                 String color = jsonObject.get("color").getAsString();
                 String spell = jsonObject.get("spell").getAsString();
                 String coold = jsonObject.get("coold").getAsString();
-                mages.add(new ComMages(name, color, spell, coold));
+                String type  = jsonObject.get("type").getAsString();
+                String tier  = jsonObject.get("tier").getAsString();
+                mages.add(new ComMages(name, color, spell, coold, type, tier));
             }
         } catch (IOException var2) {
             var2.printStackTrace();
@@ -45,25 +47,25 @@ public class CommunityMages {
     public static void initAlt(){
         mages.add(new ComMages("Flame Mage","red",
                 "ignite-aoe-delay-flare-explosion-burst-aoe-sensitive-ignite"
-                ,"medium"));
+                ,"medium", "projectile", "one"));
         mages.add(new ComMages("Water Mage","blue",
                 "freeze-cold_snap-burst-sensitive-conjure_water-freeze"
-                ,"medium"));
+                ,"medium", "projectile", "one"));
         mages.add(new ComMages("Earth Mage","green",
                 "burst-sensitive-raise_earth"
-                ,"medium"));
+                ,"medium", "projectile", "one"));
         mages.add(new ComMages("Air Mage","white",
                 "launch-slowfall-delay-duration_down-windshear"
-                ,"medium"));
+                ,"medium", "projectile", "one"));
         mages.add(new ComMages("Abjuration Mage","purple",
                 "harm-amp-extend-hex-swap_target-heal"
-                ,"short"));
+                ,"short", "projectile", "one"));
         mages.add(new ComMages("Conjuration Mage","gray",
                 "summon_undead"
-                ,"long"));
+                ,"long", "projectile", "one"));
         mages.add(new ComMages("Manipulation Mage","orange",
                 "harm-amp-swap_target-craft"
-                ,"short"));
+                ,"short", "projectile", "one"));
     }
 
     public static String readUrl(URL url) throws IOException {
@@ -85,12 +87,16 @@ public class CommunityMages {
         public String color;
         public String spell;
         public String coold;
+        public String type;
+        public String tier;
 
-        public ComMages(String name, String color, String spell, String coold) {
+        public ComMages(String name, String color, String spell, String coold, String type, String tier) {
             this.name = name;
             this.color = color;
             this.spell = spell;
             this.coold = coold;
+            this.type = type;
+            this.tier = tier;
 
             if (!FMLEnvironment.production) {
                 if (name == null) {
@@ -107,6 +113,14 @@ public class CommunityMages {
 
                 if(coold == null){
                     throw new RuntimeException("Cooldown is null");
+                }
+
+                if(type == null){
+                    throw new RuntimeException("Type is null");
+                }
+
+                if(tier == null){
+                    throw new RuntimeException("Tier is null");
                 }
 
                 boolean foundColor = Arrays.stream(DyeColor.values()).anyMatch((dye) -> dye.getName().equals(color));

@@ -69,7 +69,6 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
 
                 performSpellAttack(this.mob, 1.0F, spell.getSpell(), spell.getColors(), pEnemy);
             }
-
         }
 
         public void stop() {
@@ -103,7 +102,6 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
         resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
-
     }
 
     public EntityType<?> getType() {
@@ -145,7 +143,6 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         this.targetSelector.addGoal(1, new IFollowingSummon.CopyOwnerTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, IronGolem.class, true));
-
     }
 
     public void setOwner(LivingEntity owner) {
@@ -175,7 +172,6 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
                 this.goalSelector.addGoal(4, this.meleeGoal);
             }
         }
-
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {

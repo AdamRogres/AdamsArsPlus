@@ -4,25 +4,33 @@
        "name":  "MistakeMaker",
       "color":  "purple",
       "spell":  "exchange-rotate-leap-delay-pull-amp-launch-launch",
-      "coold":  "short"
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
     },
     {
        "name":  "Lyrloch the Dark",
       "color":  "black",
       "spell":  "wither-amp-amp-amp-hex-amp-amp-amp-amp",
-      "coold":  "medium"
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "one"
     },
     {
        "name":  "Pointy",
       "color":  "pink",
       "spell":  "linger-accelerate_three-harm-swap_target-heal-amp-amp-amp-amp-dispel",
-      "coold":  "medium"
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "one"
     },
     {
        "name":  "Gojo",
       "color":  "light_blue",
       "spell":  "limitless-aoe_three-amp-amp-pierce-dampen",
-      "coold":  "medium"
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "one"
     }
 
   ]

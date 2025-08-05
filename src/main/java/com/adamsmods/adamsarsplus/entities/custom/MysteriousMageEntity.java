@@ -2,6 +2,8 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
+import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Det;
+import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Self;
 import com.adamsmods.adamsarsplus.util.SpellString;
 
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -37,6 +39,8 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public String coold = "";
     public String spell = "";
     public String name  = "";
+    public String type = "";
+    public String tier = "";
 
     public Spell mageSpell;
     public int spellCooldown;
@@ -84,7 +88,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         if(this.level().isClientSide()) {
             setupAnimationStates();
         }
-
     }
 
     private void setupAnimationStates() {
@@ -105,8 +108,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         if(!this.isCasting()) {
             castAnimationState.stop();
         }
-
-
     }
 
     @Override
@@ -120,7 +121,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
         this.walkAnimation.update(f, 0.2f);
     }
-
 
     public void setCasting(boolean casting) { this.entityData.set(CASTING, casting); }
     public boolean isCasting(){ return this.entityData.get(CASTING); }
@@ -156,7 +156,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
             case "medium"   -> this.spellCooldown = 50;
             case "long"     -> this.spellCooldown = 200;
         }
-
     }
 
     @Override
@@ -174,6 +173,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         tag.putString("name",   name);
         tag.putString("spell",  spell);
         tag.putString("coold",  coold);
+        tag.putString("type",   type);
 
     }
 
@@ -186,6 +186,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         this.setName(tag.getString(     "name"));
         this.setCooldown(tag.getString( "coold"));
         this.setSpellData(tag.getString("spell"), tag.getString("color"));
+        this.type = tag.getString("type");
 
     }
 
@@ -206,9 +207,19 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
         this.goalSelector.addGoal(1, new MageCastingGoal<>(this, 1.0D, 40f,
-                () -> castCooldown <= 0,         0, 15,
+                () -> this.type.equals("projectile") && (castCooldown <= 0),         0, 15,
                 () -> Math.max(spellCooldown,1),
                 () -> mageSpell));
+        this.goalSelector.addGoal(1, new MageCastingGoal_Det<>(this, 1.0D, 40f,
+                () -> this.type.equals("detonate") && (castCooldown <= 0),         0, 15,
+                () -> Math.max(spellCooldown,1),
+                () -> mageSpell));
+        this.goalSelector.addGoal(1, new MageCastingGoal_Self<>(this, 1.0D, 8f,
+                () -> this.type.equals("self") && (castCooldown <= 0),         0, 15,
+                () -> Math.max(spellCooldown,1),
+                () -> mageSpell));
+
+
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,Player.class,10,1.3D,1.0D));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,IronGolem.class,10,1.3D,1.0D));
 
@@ -220,7 +231,6 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[0])).setAlertOthers(new Class[0]));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, IronGolem.class, true));
-
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -267,6 +277,8 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                 this.setName(communityMage.name);
                 this.setCooldown(communityMage.coold);
                 this.setSpellData(communityMage.spell, communityMage.color);
+                this.type = communityMage.type;
+                this.tier = communityMage.tier;
 
             } catch (Exception e) {
                 e.printStackTrace();
