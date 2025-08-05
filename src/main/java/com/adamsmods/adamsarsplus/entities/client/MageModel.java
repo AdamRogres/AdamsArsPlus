@@ -80,6 +80,8 @@ public class MageModel<T extends Entity> extends HierarchicalModel<T> {
 		this.animateWalk(ModAnimationsDefinition.MAGE_WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
 		this.animate(((MysteriousMageEntity) entity).idleAnimationState, ModAnimationsDefinition.MAGE_IDLE, ageInTicks, 1f);
 		this.animate(((MysteriousMageEntity) entity).castAnimationState, ModAnimationsDefinition.MAGE_CAST, ageInTicks, 1f);
+		this.animate(((MysteriousMageEntity) entity).selfcastAnimationState, ModAnimationsDefinition.MAGE_SELF, ageInTicks, 1f);
+		this.animate(((MysteriousMageEntity) entity).attackAnimationState, ModAnimationsDefinition.MAGE_ATTACK, ageInTicks, 1f);
 	}
 
 	private void applyHeadRotation(float pNetHeadYaw, float pHeadPitch, float pAgeInTicks) {

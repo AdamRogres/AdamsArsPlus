@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.entities.custom;
 import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Det;
+import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Melee;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Self;
 import com.adamsmods.adamsarsplus.util.SpellString;
 
@@ -48,6 +49,11 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public static final EntityDataAccessor<Boolean> CASTING =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> SELF_CASTING =
+            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> ATTACKING =
+            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+
     public static final EntityDataAccessor<Integer> INDEX =
             SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.INT);
 
@@ -67,6 +73,11 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public final AnimationState castAnimationState = new AnimationState();
     public int castAnimationTimeout = 0;
 
+    public final AnimationState selfcastAnimationState = new AnimationState();
+    public int selfcastAnimationTimeout = 0;
+
+    public final AnimationState attackAnimationState = new AnimationState();
+    public int attackAnimationTimeout = 0;
 
     @Override
     public void tick() {
@@ -98,7 +109,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
             --this.idleAnimationTimeout;
         }
 
-        //Cast A Animation control
+        //Cast Animation control
         if(this.isCasting() && castAnimationTimeout <= 0) {
             castAnimationTimeout = 20;
             castAnimationState.start(this.tickCount);
@@ -107,6 +118,28 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isCasting()) {
             castAnimationState.stop();
+        }
+
+        //Self Cast Animation control
+        if(this.isSelfCasting() && selfcastAnimationTimeout <= 0) {
+            selfcastAnimationTimeout = 20;
+            selfcastAnimationState.start(this.tickCount);
+        } else {
+            --this.selfcastAnimationTimeout;
+        }
+        if(!this.isSelfCasting()) {
+            selfcastAnimationState.stop();
+        }
+
+        //Attack Animation control
+        if(this.isAttacking() && attackAnimationTimeout <= 0) {
+            attackAnimationTimeout = 20;
+            attackAnimationState.start(this.tickCount);
+        } else {
+            --this.attackAnimationTimeout;
+        }
+        if(!this.isAttacking()) {
+            attackAnimationState.stop();
         }
     }
 
@@ -124,6 +157,12 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public void setCasting(boolean casting) { this.entityData.set(CASTING, casting); }
     public boolean isCasting(){ return this.entityData.get(CASTING); }
+
+    public void setSelfCasting(boolean scasting) { this.entityData.set(SELF_CASTING, scasting); }
+    public boolean isSelfCasting(){ return this.entityData.get(SELF_CASTING); }
+
+    public void setAttacking(boolean attacking) { this.entityData.set(ATTACKING, attacking); }
+    public boolean isAttacking(){ return this.entityData.get(ATTACKING); }
 
     public void setIndex(Integer index) { this.entityData.set(INDEX, index, true); }
     public Integer getIndex(){ return this.entityData.get(INDEX); }
@@ -162,6 +201,8 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(CASTING, false);
+        this.entityData.define(SELF_CASTING, false);
+        this.entityData.define(ATTACKING, false);
         this.entityData.define(INDEX, 0);
     }
 
@@ -218,7 +259,10 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                 () -> this.type.equals("self") && (castCooldown <= 0),         0, 15,
                 () -> Math.max(spellCooldown,1),
                 () -> mageSpell));
-
+        this.goalSelector.addGoal(1, new MageCastingGoal_Melee(this, 1.2D, false,
+                () -> this.type.equals("melee") && (castCooldown <= 0),
+                () -> Math.max(spellCooldown,1),
+                () -> mageSpell));
 
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,Player.class,10,1.3D,1.0D));
         this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this,IronGolem.class,10,1.3D,1.0D));

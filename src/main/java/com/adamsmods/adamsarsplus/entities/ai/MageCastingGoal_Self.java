@@ -98,7 +98,7 @@ public class MageCastingGoal_Self<T extends Mob & RangedAttackMob> extends Goal 
 
     public void stop() {
         super.stop();
-        this.mageEntity.setCasting(false);
+        this.mageEntity.setSelfCasting(false);
         this.mageEntity.setAggressive(false);
         this.seeTime = 0;
         this.animatedTicks = 0;
@@ -179,19 +179,19 @@ public class MageCastingGoal_Self<T extends Mob & RangedAttackMob> extends Goal 
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
-                    mageEntity.setCasting(true);
+                    mageEntity.setSelfCasting(true);
                 }
 
                 if(isTimeToAttack()) {
                     performCastAttack(this.mageEntity, 1.0F, this.mageSpell.get());
-                    mageEntity.setCasting(false);
+                    mageEntity.setSelfCasting(false);
                     this.done = true;
                 }
 
             } else {
                 resetAttackCooldown();
                 shouldCountTillNextAttack = false;
-                mageEntity.setCasting(false);
+                mageEntity.setSelfCasting(false);
                 mageEntity.castAnimationTimeout = 0;
             }
 
