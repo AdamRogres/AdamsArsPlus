@@ -22,7 +22,7 @@ public class CommunityMages {
     public static void init() {
         try {
 
-            JsonObject object = JsonParser.parseString(readUrl(new URL("https://raw.githubusercontent.com/AdamRogres/AdamsArsPlus/refs/heads/master/src/main/resources/data/adamsarsplus/mysterious_mage_spells/spell_list.json"))).getAsJsonObject();
+            JsonObject object = JsonParser.parseString(readUrl(new URL("https://raw.githubusercontent.com/AdamRogres/AdamsArsPlus/refs/heads/master/src/main/resources/data/adamsarsplus/mysterious_mage_spells/spell_list_new.json"))).getAsJsonObject();
 
 
             for(JsonElement element : object.getAsJsonArray("mageOwner")) {
@@ -122,13 +122,7 @@ public class CommunityMages {
                 if(tier == null){
                     throw new RuntimeException("Tier is null");
                 }
-
-                boolean foundColor = Arrays.stream(DyeColor.values()).anyMatch((dye) -> dye.getName().equals(color));
-                if (!foundColor) {
-                    throw new RuntimeException("Color is not a valid dye color");
-                }
             }
-
         }
     }
 }
