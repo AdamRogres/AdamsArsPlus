@@ -11,6 +11,7 @@ import com.hollingsworth.arsnouveau.api.spell.Spell;
 
 import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MAGE_ENTITY;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,6 +21,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -33,6 +35,9 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Attr;
+
+import java.util.Objects;
 
 public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
@@ -92,9 +97,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
             setColor(CommunityMages.mages.get(this.getIndex()).color);
         }
 
-        if(castCooldown > 0) {
-            castCooldown--;
-        }
+        if(castCooldown > 0){ castCooldown--; }
 
         if(this.level().isClientSide()) {
             setupAnimationStates();
@@ -215,6 +218,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         tag.putString("spell",  spell);
         tag.putString("coold",  coold);
         tag.putString("type",   type);
+        tag.putString("tier",   tier);
 
     }
 
@@ -228,7 +232,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         this.setCooldown(tag.getString( "coold"));
         this.setSpellData(tag.getString("spell"), tag.getString("color"));
         this.type = tag.getString("type");
-
+        this.tier = tag.getString("tier");
     }
 
     public void setName(String name){
@@ -241,6 +245,12 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public void setCustomName(@javax.annotation.Nullable Component pName) {
         super.setCustomName(pName);
+    }
+
+    protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance pDifficulty) {
+    }
+
+    protected void dropEquipment() {
     }
 
     @Override
@@ -259,7 +269,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                 () -> this.type.equals("self") && (castCooldown <= 0),         0, 15,
                 () -> Math.max(spellCooldown,1),
                 () -> mageSpell));
-        this.goalSelector.addGoal(1, new MageCastingGoal_Melee(this, 1.2D, false,
+        this.goalSelector.addGoal(1, new MageCastingGoal_Melee(this, 1.8D, false,
                 () -> this.type.equals("melee") && (castCooldown <= 0),
                 () -> Math.max(spellCooldown,1),
                 () -> mageSpell));
@@ -281,7 +291,9 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         return Monster.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, (double)0.2F)
-                .add(Attributes.FOLLOW_RANGE, (double)40.0F);
+                .add(Attributes.FOLLOW_RANGE, (double)40.0F)
+                .add(Attributes.ATTACK_DAMAGE, 6D)
+                .add(Attributes.ATTACK_KNOCKBACK, 1.0F);
     }
 
     @Override

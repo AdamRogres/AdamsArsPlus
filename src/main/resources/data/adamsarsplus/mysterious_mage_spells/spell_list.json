@@ -34,7 +34,7 @@
     },
     {
       "name":  "Glow",
-      "color":  "yellow",
+      "color":  "yellow_sword",
       "spell":  "rune-snare-extend-light",
       "coold":  "short",
       "type":   "melee",

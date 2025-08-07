@@ -59,7 +59,11 @@ public class MageModel<T extends Entity> extends HierarchicalModel<T> {
 
 		PartDefinition rightArm = body.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
-		PartDefinition rightItem = rightArm.addOrReplaceChild("rightItem", CubeListBuilder.create(), PartPose.offset(-1.0F, 7.0F, 1.0F));
+		PartDefinition rightItem = rightArm.addOrReplaceChild("rightItem", CubeListBuilder.create().texOffs(0, 32).addBox(0.0F, -1.0F, -17.0F, 1.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(10, 32).addBox(0.0F, -2.0F, -13.0F, 1.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(20, 32).addBox(0.0F, 1.0F, -9.0F, 1.0F, 2.0F, 4.0F, new CubeDeformation(0.0F))
+				.texOffs(0, 40).addBox(-0.5F, 0.0F, -5.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
+				.texOffs(3, 41).addBox(0.0F, 0.9F, -3.0F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.0F, 7.0F, 1.0F));
 
 		PartDefinition leftArm = body.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(40, 16).mirror().addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(5.0F, 2.0F, 0.0F));
 

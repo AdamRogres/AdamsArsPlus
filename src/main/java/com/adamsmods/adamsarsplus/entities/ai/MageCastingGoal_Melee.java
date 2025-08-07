@@ -110,7 +110,7 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
     }
 
     protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-        return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth());
+        return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 1.0F);
     }
 
     protected void performAttack(LivingEntity pEnemy) {
