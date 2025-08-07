@@ -62,7 +62,7 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
 
         resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
 
-        this.mageEntity.castCooldown = this.spellCooldown.get() + random.nextInt(this.spellCooldown.get());
+        this.mageEntity.castCooldown = 10 + random.nextInt(this.spellCooldown.get());
     }
 
     @Override

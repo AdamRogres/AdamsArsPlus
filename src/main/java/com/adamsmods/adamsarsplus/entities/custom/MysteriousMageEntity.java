@@ -292,7 +292,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                 .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, (double)0.2F)
                 .add(Attributes.FOLLOW_RANGE, (double)40.0F)
-                .add(Attributes.ATTACK_DAMAGE, 6D)
+                .add(Attributes.ATTACK_DAMAGE, 8D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0F);
     }
 

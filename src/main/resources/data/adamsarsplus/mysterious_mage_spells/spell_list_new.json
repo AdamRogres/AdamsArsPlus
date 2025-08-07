@@ -39,6 +39,110 @@
       "coold":  "short",
       "type":   "melee",
       "tier":   "one"
+    },
+    {
+      "name":  "Bailey",
+      "color":  "white",
+      "spell":  "launch-amp-amp-delay-explosion-amp",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Arachne",
+      "color":  "light_gray",
+      "spell":  "split-split-snare-extend-extend-harm-extend",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Warp",
+      "color":  "magenta",
+      "spell":  "pierce-blink-explosion-aoe",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "one"
+    },
+    {
+      "name":  "Farfalla",
+      "color":  "blue",
+      "spell":  "accelerate_three-ignite-delay-conjure_water-freeze",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Gootastic",
+      "color":  "green",
+      "spell":  "launch-amp-amp-delay-pull-amp-amp",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Toxin",
+      "color":  "lime_sword",
+      "spell":  "hex-harm-extend",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "one"
+    },
+    {
+      "name":  "Shadow",
+      "color":  "black_sword",
+      "spell":  "intangible-aoe-aoe-pierce-pierce-pierce-pierce-pierce-extend",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "one"
+    },
+    {
+      "name":  "Vault",
+      "color":  "self",
+      "spell":  "launch-delay-leap-slowfall-burst-windshear",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "one"
+    },
+    {
+      "name":  "Fireball!",
+      "color":  "red",
+      "spell":  "ignite-explosion-amp-amp-aoe-aoe",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "one"
+    },
+    {
+      "name":  "Renew",
+      "color":  "pink_sword",
+      "spell":  "swap_target-rune-dispel-heal-amp",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "one"
+    },
+    {
+      "name":  "Yeet",
+      "color":  "gray",
+      "spell":  "orbit-launch-amp-amp-delay-knockback-amp-amp",
+      "coold":  "medium",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Takeoff",
+      "color":  "light_blue_sword",
+      "spell":  "launch-launch-glide",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Kirin",
+      "color":  "yellow",
+      "spell":  "orbit-blink-amp-summon_undead",
+      "coold":  "long",
+      "type":   "self",
+      "tier":   "one"
     }
 
   ]
