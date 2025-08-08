@@ -3,6 +3,8 @@ package com.adamsmods.adamsarsplus.util;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
 
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
+import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
+import com.hollingsworth.arsnouveau.api.event.EffectResolveEvent;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
@@ -294,6 +296,9 @@ public class SpellString {
             }
             case "wall" -> {
                 retPart = EffectWall.INSTANCE;
+            }
+            case "detonate" -> {
+                retPart = PropagateDetonate.INSTANCE;
             }
         }
 

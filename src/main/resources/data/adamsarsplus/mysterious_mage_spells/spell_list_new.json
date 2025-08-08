@@ -143,6 +143,166 @@
       "coold":  "long",
       "type":   "self",
       "tier":   "one"
+    },
+    {
+      "name":  "Xacris",
+      "color":  "gray",
+      "spell":  "burst-aoe-sensitive-dampen-mageblock",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Xacris",
+      "color":  "gray",
+      "spell":  "linger-sensitive-extend_three-aoe_three-firework-amp",
+      "coold":  "medium",
+      "type":   "detonate",
+      "tier":   "one"
+    },
+    {
+      "name":  "Othy",
+      "color":  "red",
+      "spell":  "burst-aoe_three-meteor_swarm-ignite-flare",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Aurellia",
+      "color":  "white",
+      "spell":  "linger-sensitive-fangs-lightning-amp-amp-extend_three",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "one"
+    },
+    {
+      "name":  "Alex",
+      "color":  "orange",
+      "spell":  "domain-extract-aoe_three-accelerate_two-snare-harm",
+      "coold":  "long",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Poseidon",
+      "color":  "light_blue",
+      "spell":  "light-burst-aoe_two-sensitive-conjure_water-freeze-ice_burst-conjure_water",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Chem",
+      "color":  "lime",
+      "spell":  "domain-extract-aoe_two-rune-launch-launch-launch-launch",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Ivy",
+      "color":  "pink",
+      "spell":  "burst-sensitive-animate-extend_three-extend_three",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Darkfira",
+      "color":  "cyan",
+      "spell":  "burst-sensitive-aoe_three-conjure_water-freeze-lightning-amp",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "one"
+    },
+    {
+      "name":  "Spinoftw",
+      "color":  "magenta",
+      "spell":  "conjure_water-heal-amp_two-mage_block-aoe_three",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Lyrellion",
+      "color":  "black",
+      "spell":  "wall-sensitive-mageblock-pierce-amp-limitless-pierce-amp",
+      "coold":  "medium",
+      "type":   "detonate",
+      "tier":   "one"
+    },
+    {
+      "name":  "Silvanus",
+      "color":  "blue",
+      "spell":  "glow-extend_three-ignite-extend_three",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Uni",
+      "color":  "cyan",
+      "spell":  "orbit-split-aoe_three-knockback-amp_three-harm-amp_three",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Crowdrone",
+      "color":  "black",
+      "spell":  "domain-aoe_three-extract-snare-wither",
+      "coold":  "long",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Chosen Architect",
+      "color":  "white",
+      "spell":  "split-split-break-aoe-aoe-pierce-pierce",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Lufia",
+      "color":  "purple",
+      "spell":  "accelerate_three-pierce-pierce-pierce-intangible-aoe_three",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Mystifi",
+      "color":  "gray",
+      "spell":  "linger-sensitive-extend_two-intangible-pierce-pierce-extend_two",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "one"
+    },
+    {
+      "name":  "Plauged",
+      "color":  "red",
+      "spell":  "explosion-amp_two-aoe_three-aoe_three",
+      "coold":  "medium",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Bugcolez",
+      "color":  "yellow",
+      "spell":  "orbit-aoe_three-orbit-aoe_two-orbit-fangs",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "one"
+    },
+    {
+      "name":  "Sloppybox",
+      "color":  "red",
+      "spell":  "ignite-flare-rune-smelt-pierce-pierce-pierce-pierce-aoe_two",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "one"
     }
 
   ]
