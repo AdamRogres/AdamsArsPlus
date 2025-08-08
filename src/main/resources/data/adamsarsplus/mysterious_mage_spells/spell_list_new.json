@@ -98,7 +98,7 @@
     },
     {
       "name":  "Vault",
-      "color":  "self",
+      "color":  "white",
       "spell":  "launch-delay-leap-slowfall-burst-windshear",
       "coold":  "short",
       "type":   "melee",
