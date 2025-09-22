@@ -20,6 +20,7 @@ public class AdamsLibEntityNames {
     public static final String DIVINEDOG = "divine_dog";
     public static final String NUE = "nue";
     public static final String RABBITE = "rabbit_escape";
+    public static final String RDEER = "round_deer";
 
     public static String appendFamiliar(String fam) {
         return "familiar_" + fam;

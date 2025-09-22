@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.glyphs.effect_glyph;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.custom.DivineDogEntity;
 import com.adamsmods.adamsarsplus.entities.custom.NueEntity;
+import com.adamsmods.adamsarsplus.entities.custom.RDeerEntity;
 import com.adamsmods.adamsarsplus.entities.custom.RabbitEEntity;
 import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.spell.*;
@@ -55,7 +56,11 @@ public class EffectTenShadows extends AbstractEffect{
                 }
                 case 3 -> {
                     // Round Deer
-
+                    RDeerEntity tsentity = new RDeerEntity(world, shooter, true);
+                    tsentity.moveTo(blockpos, 0.0F, 0.0F);
+                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    tsentity.setOwner(shooter);
+                    this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
                 }
                 case 2 -> {
                     // Rabbit Escape

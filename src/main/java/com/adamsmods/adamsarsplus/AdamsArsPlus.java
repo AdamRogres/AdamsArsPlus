@@ -90,6 +90,7 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.DIVINE_DOG.get(), DDogRenderer::new);
         EntityRenderers.register(AdamsModEntities.NUE.get(), NueRenderer::new);
         EntityRenderers.register(AdamsModEntities.RABBIT_ESCAPE.get(), RabbitERenderer::new);
+        EntityRenderers.register(AdamsModEntities.ROUND_DEER.get(), RDeerRenderer::new);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

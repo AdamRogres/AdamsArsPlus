@@ -131,6 +131,11 @@ public class AdamsModEntities {
             EntityType.Builder.<RabbitEEntity>of(RabbitEEntity::new, MobCategory.CREATURE)
                     .sized(1.2f, 1.7f)
                     .clientTrackingRange(10));
+    public static final RegistryObject<EntityType<RDeerEntity>> ROUND_DEER = registerEntity(
+            AdamsLibEntityNames.RDEER,
+            EntityType.Builder.<RDeerEntity>of(RDeerEntity::new, MobCategory.CREATURE)
+                    .sized(1.5f, 1.5f)
+                    .clientTrackingRange(10));
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistrationHandler {
@@ -148,6 +153,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.DIVINE_DOG.get(), DivineDogEntity.createAttributes().build());
             event.put(AdamsModEntities.NUE.get(), NueEntity.createAttributes().build());
             event.put(AdamsModEntities.RABBIT_ESCAPE.get(), RabbitEEntity.createAttributes().build());
+            event.put(AdamsModEntities.ROUND_DEER.get(), RDeerEntity.createAttributes().build());
         }
     }
 

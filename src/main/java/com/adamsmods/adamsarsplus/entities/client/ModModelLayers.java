@@ -24,6 +24,8 @@ public class ModModelLayers {
             new ResourceLocation(AdamsArsPlus.MOD_ID, "nue_layer"), "main");
     public static final ModelLayerLocation RABE_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "rabe_layer"), "main");
+    public static final ModelLayerLocation RDEER_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "rdeer_layer"), "main");
 
     public static final ModelLayerLocation MAGE_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "mage_layer"), "main");

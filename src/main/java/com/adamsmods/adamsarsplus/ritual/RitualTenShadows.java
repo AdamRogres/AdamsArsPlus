@@ -71,7 +71,15 @@ public class RitualTenShadows extends AbstractRitual {
                     }
                     // Summon Round Deer
                     case 3 -> {
+                        RDeerEntity boss = new RDeerEntity(this.getWorld(), false);
+                        this.summon(boss, this.getPos().above());
 
+                        for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                            if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                            }
+                        }
+                        this.setFinished();
                     }
                     // Summon Mahoraga
                     case 4 -> {

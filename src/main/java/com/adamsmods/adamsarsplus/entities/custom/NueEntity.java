@@ -245,7 +245,6 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
             }
         }
 
-
         if(!this.ritualStatus){ this.ritualStatus = isRitualFailed(pSource.getEntity()); }
 
         return super.hurt(pSource, pAmount);
