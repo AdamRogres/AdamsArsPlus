@@ -60,7 +60,7 @@ public class RDeerModel<T extends Entity> extends HierarchicalModel<T> {
 
 		PartDefinition waist = partdefinition.addOrReplaceChild("waist", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition body = waist.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 24).addBox(-5.0F, -6.0F, -6.0F, 10.0F, 11.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -17.0F, 2.0F));
+		PartDefinition body = waist.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 24).addBox(-5.0F, -6.0F, -6.0F, 10.0F, 11.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -17.0F, -5.0F));
 
 		PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(44, 24).addBox(-3.0F, -3.0F, -5.0F, 6.0F, 6.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.0F, -6.0F));
 
@@ -122,8 +122,8 @@ public class RDeerModel<T extends Entity> extends HierarchicalModel<T> {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		this.applyHeadRotation(netHeadYaw, headPitch, ageInTicks);
 
+		this.animateWalk(ModAnimationsDefinition.RDEER_WALK, limbSwing, limbSwingAmount, 2f, 2.5f);
 		this.animate(((RDeerEntity) entity).idleAnimationState, ModAnimationsDefinition.RDEER_IDLE, ageInTicks, 1f);
-		this.animate(((RDeerEntity) entity).walkAnimationState, ModAnimationsDefinition.RDEER_WALK, ageInTicks, 1f);
 		this.animate(((RDeerEntity) entity).attackAnimationState, ModAnimationsDefinition.RDEER_ATTACK, ageInTicks, 1f);
 	}
 
@@ -132,7 +132,7 @@ public class RDeerModel<T extends Entity> extends HierarchicalModel<T> {
 		pHeadPitch 	= Mth.clamp(pHeadPitch, -25.0F, 45.0F);
 
 		this.head.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
-		this.head.xRot = pHeadPitch	 * -1 * ((float)Math.PI / 180F);
+		this.head.xRot = pHeadPitch	 * ((float)Math.PI / 180F);
 	}
 
 	@Override

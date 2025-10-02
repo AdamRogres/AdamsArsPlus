@@ -134,7 +134,7 @@ public class AdamsModEntities {
     public static final RegistryObject<EntityType<RDeerEntity>> ROUND_DEER = registerEntity(
             AdamsLibEntityNames.RDEER,
             EntityType.Builder.<RDeerEntity>of(RDeerEntity::new, MobCategory.CREATURE)
-                    .sized(1.5f, 1.5f)
+                    .sized(2.2f, 2.1f)
                     .clientTrackingRange(10));
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

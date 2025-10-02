@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 public class RDeerRenderer extends MobRenderer<RDeerEntity, RDeerModel<RDeerEntity>> {
     public RDeerRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new RDeerModel<>(pContext.bakeLayer(ModModelLayers.RDEER_LAYER)), 0.7f);
-
     }
 
     @Override
@@ -22,7 +21,9 @@ public class RDeerRenderer extends MobRenderer<RDeerEntity, RDeerModel<RDeerEnti
 
     @Override
     public void render(RDeerEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
+        pMatrixStack.pushPose();
+        pMatrixStack.scale(1.5F, 1.5F, 1.5F);
         super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
-
+        pMatrixStack.popPose();
     }
 }

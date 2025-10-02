@@ -1,6 +1,8 @@
 package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
+import com.adamsmods.adamsarsplus.entities.ai.DDogAttackGoal;
+import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
@@ -21,6 +23,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -42,6 +47,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +58,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static com.adamsmods.adamsarsplus.Config.MAX_DOMAIN_ENTITIES;
+import static java.lang.Math.*;
+import static java.lang.Math.toRadians;
 
 public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     // Ten Shadows Reward
@@ -85,7 +95,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     }
 
     public EntityType<?> getType() {
-        return (EntityType) AdamsModEntities.RABBIT_ESCAPE.get();
+        return (EntityType) AdamsModEntities.ROUND_DEER.get();
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -120,6 +130,24 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
         if (this.level().isClientSide()) {
             setupAnimationStates();
+        } else {
+            if(this.level().getRandom().nextInt(0,10) > 5){
+                spawnAuraParticles(this, (ServerLevel) this.level(), 20.0D, 6);
+            }
+
+            for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(20,6,20))) {
+                if (entity instanceof LivingEntity){
+                    if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
+                        continue;
+                    }
+
+                    if(entity == this || entity == this.getSummoner()){
+                        ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 3, false, false));
+                    } else {
+                        ((LivingEntity) entity).addEffect(new MobEffectInstance((MobEffect) MANA_EXHAUST_EFFECT.get(), 60, 0, false, false));
+                    }
+                }
+            }
         }
 
     }
@@ -134,7 +162,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
         //Attack Animation control
         if(this.isAttacking() && attackAnimationTimeout <= 0) {
-            attackAnimationTimeout = 20;
+            attackAnimationTimeout = 25;
             attackAnimationState.start(this.tickCount);
         } else {
             --this.attackAnimationTimeout;
@@ -297,7 +325,12 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
 
-        this.goalSelector.addGoal(4, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 25.0F, 3.0F));
+        this.goalSelector.addGoal(4, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 30.0F, 3.0F));
+        this.goalSelector.addGoal(4, new RDeerHealSummoner(this, this.owner, (double) 1.0F, 9.0F, 3.0F, () -> (this.getSummoner().getHealth() < this.getSummoner().getMaxHealth() * 0.5)));
+        this.goalSelector.addGoal(5, new RDeerAvoidEntityGoal(this, LivingEntity.class, 15, () -> this.getHealth() < this.getMaxHealth() * 0.5, 1.2, 1.2));
+        this.goalSelector.addGoal(6, new RDeerAttackGoal(this, 1, false, () -> true));
+
+        this.goalSelector.addGoal(8, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 9.0F, 3.0F));
 
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, (double) 1.0F));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
@@ -315,9 +348,9 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 40D)
-                .add(Attributes.ATTACK_DAMAGE, (double) 5.0F)
-                .add(Attributes.MOVEMENT_SPEED, (double) 1.0F)
+                .add(Attributes.MAX_HEALTH, 85D)
+                .add(Attributes.ATTACK_DAMAGE, (double) 10.0F)
+                .add(Attributes.MOVEMENT_SPEED, (double) 0.35F)
                 .add(Attributes.FOLLOW_RANGE, (double) 70.0F)
                 .add(Attributes.ATTACK_KNOCKBACK, (double) 1.0F);
     }
@@ -375,5 +408,169 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
     // Round Deer Stuff
 
+    public void spawnAuraParticles(LivingEntity living, ServerLevel level, double radius, int height) {
+        Vec3 livingEyes = living.getEyePosition();
+        double x = livingEyes.x;
+        double y = livingEyes.y;
+        double z = livingEyes.z;
 
+        double xOff = 0;
+        double yOff = -1;
+        double zOff = 0;
+
+        double radiusFactor = 360 / radius;
+        double iOff = Math.random() * radiusFactor;
+        float radiusRandom = 0;
+        float heightRandom = 0;
+
+        for (int i = 0; i < 360; i = i + (int)radiusFactor) {
+            radiusRandom = (float)getRandom().nextInt(0,32) / 32;
+            heightRandom = (float)getRandom().nextInt(0, 32)/ 32;
+
+            xOff = radius * radiusRandom * cos(toRadians(i + iOff));
+            zOff = radius * radiusRandom * sin(toRadians(i + iOff));
+
+            level.sendParticles(ParticleTypes.END_ROD, x + xOff, y + yOff + height * heightRandom, z + zOff, 1, 0, 0, 0, 0);
+
+        }
+    }
+
+    public class RDeerAttackGoal extends MeleeAttackGoal {
+        private final RDeerEntity entity;
+
+        private int attackDelay = 15;
+        private int ticksUntilNextAttack = 25;
+        private boolean shouldCountTillNextAttack = false;
+
+        Supplier<Boolean> canUse;
+        boolean done;
+
+        public RDeerAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen, Supplier<Boolean> canUse) {
+            super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
+            entity = ((RDeerEntity) pMob);
+            this.canUse = canUse;
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            attackDelay = 15;
+            ticksUntilNextAttack = 25;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+        }
+
+        @Override
+        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+                shouldCountTillNextAttack = true;
+
+                if(isTimeToStartAttackAnimation()) {
+                    entity.setAttacking(true);
+                }
+
+                if(isTimeToAttack()) {
+                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+
+                    performAttack(pEnemy);
+                }
+            } else {
+                if(ticksUntilNextAttack == 0 && this.done){
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    entity.setAttacking(false);
+                    entity.attackAnimationTimeout = 0;
+                } else if (!this.done){
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    entity.setAttacking(false);
+                    entity.attackAnimationTimeout = 0;
+                }
+
+            }
+        }
+
+        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
+            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 10);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay + 10;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        protected double getAttackReachSqr(LivingEntity pAttackTarget) {
+            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 3.5F);
+        }
+
+        protected void performAttack(LivingEntity pEnemy) {
+            this.resetAttackCooldown();
+            this.mob.swing(InteractionHand.MAIN_HAND);
+            this.mob.doHurtTarget(pEnemy);
+            this.done = true;
+
+        }
+
+
+        @Override
+        public void tick() {
+            super.tick();
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+
+        }
+
+        @Override
+        public void stop() {
+            entity.setAttacking(false);
+            this.done = false;
+            super.stop();
+        }
+    }
+
+    static class RDeerAvoidEntityGoal<T extends RDeerEntity> extends AvoidEntityGoal<T> {
+        private final RDeerEntity deer;
+        Supplier<Boolean> canUse;
+
+        public RDeerAvoidEntityGoal(RDeerEntity Entity, Class<T> pEntityClassToAvoid, float pMaxDist, Supplier<Boolean> canUse, double pWalkSpeedModifier, double pSprintSpeedModifier) {
+            super(Entity, pEntityClassToAvoid, pMaxDist, pWalkSpeedModifier, pSprintSpeedModifier);
+            this.deer = Entity;
+            this.canUse = canUse;
+        }
+
+        public boolean canUse() {
+            return super.canUse() && this.canUse.get();
+        }
+    }
+
+    static class RDeerHealSummoner extends FollowSummonerGoal {
+        Supplier<Boolean> canUse;
+
+        RDeerHealSummoner(IFollowingSummon mobEntity, LivingEntity owner, double followSpeedIn, float minDistIn, float maxDistIn,  Supplier<Boolean> canUse) {
+            super(mobEntity, owner, followSpeedIn, minDistIn, maxDistIn);
+            this.canUse = canUse;
+        }
+
+        public boolean canUse() {
+            return super.canUse() && this.canUse.get();
+        }
+    }
 }
