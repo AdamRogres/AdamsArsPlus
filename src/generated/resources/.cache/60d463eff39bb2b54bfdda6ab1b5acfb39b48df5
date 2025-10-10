@@ -1,4 +1,4 @@
-// 1.20.1	2025-06-20T22:05:43.939963	Example Glyph Recipes
+// 1.20.1	2025-10-08T20:41:58.7744923	Example Glyph Recipes
 45a6547297d4ee52a7712a8f25901d6c7be18311 data/adamsarsplus/recipes/glyph_accelerate_three.json
 b9a3c9ba0fc6c9621702c298bd35a6e3b0a7ef8d data/adamsarsplus/recipes/glyph_accelerate_two.json
 7618289e4537f021750ad6f107642bbc615c69f2 data/adamsarsplus/recipes/glyph_amplify_three.json
@@ -13,6 +13,7 @@ e75ba9b1960333393df96b27feac36bfd73da24b data/adamsarsplus/recipes/glyph_dampen_
 4fa23371170bffbc0012e4155c6c24c5ae97ea5a data/adamsarsplus/recipes/glyph_effectdivinesmite.json
 bd30761b1270418e4f5ee2f545e12b0570ef1e1d data/adamsarsplus/recipes/glyph_effectdomain.json
 4b6d72bc893cab2d07e9beab8dcf02d6f45ac4a2 data/adamsarsplus/recipes/glyph_effecteruption.json
+ca4611729ebe86c45135aa81cd0248a16e84e798 data/adamsarsplus/recipes/glyph_effectfracture.json
 4533e452d5a46755b80168b6a3919f1d108848ad data/adamsarsplus/recipes/glyph_effecticeburst.json
 8c94a1bb0f99dd90a08eca5df599483d1f6809f6 data/adamsarsplus/recipes/glyph_effectlimitless.json
 4799d56d4593d6d0ae15eb2a851faccb7fd6af91 data/adamsarsplus/recipes/glyph_effectmeteorswarm.json

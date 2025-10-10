@@ -51,6 +51,9 @@
 	"adamsarsplus.glyph_name.glyph_effectraiseearth": 	"Raise Earth",
 	"adamsarsplus.glyph_desc.glyph_effectraiseearth": 	"Raises a pillar of earth, pushing away any nearby entities. Can be augmented with AOE, pierce, and amplify. (Credit to ArsOmega)",
 
+	"adamsarsplus.glyph_name.glyph_effectfracture": 	"Fracture",
+	"adamsarsplus.glyph_desc.glyph_effectfracture": 	"Inflicts the target with Fracture. Entities with this effect take damage when they make impact with blocks.",
+
 	"adamsarsplus.glyph_name.glyph_effectdivinesmite": 	"Divine Smite",
 	"adamsarsplus.glyph_desc.glyph_effectdivinesmite": 	"Upgraded version of lightning that deals increased damage by consuming levels of 'shocked'",
 
@@ -120,6 +123,7 @@
 	"effect.adamsarsplus.mana_exhaust": 				"Mana Exhaustion",
 	"effect.adamsarsplus.simple_domain": 				"Simple Domain",
 	"effect.adamsarsplus.eruption": 					"Eruption",
+	"effect.adamsarsplus.fracture": 					"Fracture",
 	"effect.adamsarsplus.six_eyes": 					"Six Eyes",
 	"effect.adamsarsplus.mana_health": 					"Immortal Shield",
 	"effect.adamsarsplus.ice_burst": 					"Iceburst Frost",
@@ -132,6 +136,12 @@
 	"entity.adamsarsplus.matt": 						"Matthew: King of Heroes",
 	"entity.adamsarsplus.adam": 						"Adam: Emperor Archmage",
 	"entity.adamsarsplus.mage": 						"Mysterious Mage",
+
+	"entity.adamsarsplus.divine_dog": 					"Divine Dog",
+	"entity.adamsarsplus.nue": 							"Nue",
+	"entity.adamsarsplus.rabbit_escape": 				"Rabbit Escape",
+	"entity.adamsarsplus.round_deer": 					"Round Deer",
+	"entity.adamsarsplus.mahoraga": 					"Mahoraga",
 
 	"item.adamsarsplus.cade_boots": 					"Frost Boots",
 	"item.adamsarsplus.cade_leggings": 					"Frost Leggings",

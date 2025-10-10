@@ -156,6 +156,9 @@ public class SpellString {
             case "eruption" -> {
                 retPart = EffectEruption.INSTANCE;
             }
+            case "fracture" -> {
+                retPart = EffectFracture.INSTANCE;
+            }
             case "summon_undead" -> {
                 retPart = EffectSummonUndead_boss.INSTANCE;
             }

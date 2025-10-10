@@ -52,7 +52,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 
 public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon {
     // Ten Shadows Reward
@@ -150,7 +150,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
             }
         }
 
-        if (!this.level().isClientSide && this.isSummon && this.isCopy && this.ticksLeft <= 0) {
+        if (!this.level().isClientSide && this.isCopy && this.ticksLeft <= 0) {
             spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
             this.remove(RemovalReason.DISCARDED);
             this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -162,7 +162,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
 
         if (summonCooldown > 0) {
             summonCooldown--;
-        } else if (!this.level().isClientSide && !this.isCopy) {
+        } else if (!this.level().isClientSide && !this.isCopy && !this.hasEffect(MANA_EXHAUST_EFFECT.get())) {
             RabbitEEntity tsentity = new RabbitEEntity(this.level(), this, this.isSummon, "copy", true);
             if (this.isSummon && this.getOwner() != null) {
                 tsentity = new RabbitEEntity(this.level(), this.getOwner(), this.isSummon, "copy", true);
@@ -381,7 +381,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 40D)
-                .add(Attributes.ATTACK_DAMAGE, (double) 5.0F)
+                .add(Attributes.ATTACK_DAMAGE, (double) 2.0F)
                 .add(Attributes.MOVEMENT_SPEED, (double) 1.0F)
                 .add(Attributes.FOLLOW_RANGE, (double) 70.0F)
                 .add(Attributes.ATTACK_KNOCKBACK, (double) 1.0F);

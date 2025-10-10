@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.adamsmods.adamsarsplus.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "adamsarsplus.mixin-refmap.json",
+
+  "mixins": [
+    "MixinLivingEntity"
+  ],
+  "minVersion": "0.8"
+}

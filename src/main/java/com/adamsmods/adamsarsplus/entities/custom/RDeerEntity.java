@@ -2,11 +2,21 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.ai.DDogAttackGoal;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectAnnihilate;
 import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
+import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
+import com.hollingsworth.arsnouveau.api.spell.Spell;
+import com.hollingsworth.arsnouveau.api.spell.SpellContext;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
+import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -41,6 +51,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -137,14 +148,25 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
             for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(20,6,20))) {
                 if (entity instanceof LivingEntity){
-                    if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
-                        continue;
-                    }
-
                     if(entity == this || entity == this.getSummoner()){
-                        ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.REGENERATION, 60, 3, false, false));
+                        if(((LivingEntity) entity).hasEffect(MobEffects.REGENERATION)){
+                            continue;
+                        }
+                        if(entity == this){
+                            if(this.getHealth() < this.getMaxHealth() * 0.25){
+                                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 4, false, true));
+                                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 0, false, true));
+                            } else {
+                                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 3, false, true));
+                            }
+                        } else {
+                            ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 2, false, true));
+                        }
                     } else {
-                        ((LivingEntity) entity).addEffect(new MobEffectInstance((MobEffect) MANA_EXHAUST_EFFECT.get(), 60, 0, false, false));
+                        if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
+                            continue;
+                        }
+                        ((LivingEntity) entity).addEffect(new MobEffectInstance((MobEffect) MANA_EXHAUST_EFFECT.get(), 60, 0, false, true));
                     }
                 }
             }
@@ -213,13 +235,21 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {
+        Entity var4 = pSource.getEntity();
+
         if (pSource.is(DamageTypes.MOB_ATTACK)) {
-            Entity var4 = pSource.getEntity();
             if (var4 instanceof ISummon) {
                 ISummon summon = (ISummon) var4;
                 if (summon.getOwnerUUID() != null && summon.getOwnerUUID().equals(this.getOwnerUUID())) {
                     return false;
                 }
+            }
+        }
+
+        if(var4 instanceof Player && this.isSummon){
+            Player summoner = (Player) var4;
+            if(summoner.getUUID() == this.getOwnerUUID()){
+                return false;
             }
         }
 
@@ -325,9 +355,9 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
 
-        this.goalSelector.addGoal(4, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 30.0F, 3.0F));
-        this.goalSelector.addGoal(4, new RDeerHealSummoner(this, this.owner, (double) 1.0F, 9.0F, 3.0F, () -> (this.getSummoner().getHealth() < this.getSummoner().getMaxHealth() * 0.5)));
-        this.goalSelector.addGoal(5, new RDeerAvoidEntityGoal(this, LivingEntity.class, 15, () -> this.getHealth() < this.getMaxHealth() * 0.5, 1.2, 1.2));
+        this.goalSelector.addGoal(3, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 30.0F, 3.0F));
+        this.goalSelector.addGoal(4, new RDeerHealSummoner(this, this.owner, (double) 1.0F, 9.0F, 3.0F, () -> (this.getSummoner().getHealth() < (this.getSummoner().getMaxHealth() * 0.5)) ));
+        this.goalSelector.addGoal(5, new RDeerAvoidEntityGoal(this, LivingEntity.class, 8, () -> (this.getHealth() < (this.getMaxHealth() * 0.5)), 1.2, 1.2));
         this.goalSelector.addGoal(6, new RDeerAttackGoal(this, 1, false, () -> true));
 
         this.goalSelector.addGoal(8, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 9.0F, 3.0F));
@@ -338,7 +368,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this, new Class[]{RDeerEntity.class}) {
             protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
-                return pPotentialTarget != null && super.canAttack(pPotentialTarget, pTargetPredicate) && !pPotentialTarget.getUUID().equals(RDeerEntity.this.getOwnerUUID());
+                return pPotentialTarget != null && super.canAttack(pPotentialTarget, pTargetPredicate) && !pPotentialTarget.getUUID().equals(RDeerEntity.this.getOwnerUUID()) && !pPotentialTarget.getUUID().equals(RDeerEntity.this.getUUID());
             }
         });
         this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
@@ -349,10 +379,12 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 85D)
-                .add(Attributes.ATTACK_DAMAGE, (double) 10.0F)
+                .add(Attributes.ATTACK_DAMAGE, (double) 13.0F)
                 .add(Attributes.MOVEMENT_SPEED, (double) 0.35F)
                 .add(Attributes.FOLLOW_RANGE, (double) 70.0F)
-                .add(Attributes.ATTACK_KNOCKBACK, (double) 1.0F);
+                .add(Attributes.ATTACK_KNOCKBACK, (double) 1.0F)
+                .add(Attributes.ARMOR, 15)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.7);
     }
 
     @Nullable
@@ -439,7 +471,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         private final RDeerEntity entity;
 
         private int attackDelay = 15;
-        private int ticksUntilNextAttack = 25;
+        private int ticksUntilNextAttack = 10;
         private boolean shouldCountTillNextAttack = false;
 
         Supplier<Boolean> canUse;
@@ -455,7 +487,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         public void start() {
             super.start();
             attackDelay = 15;
-            ticksUntilNextAttack = 25;
+            ticksUntilNextAttack = 10;
         }
 
         public boolean canUse() {
@@ -479,20 +511,21 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
                     performAttack(pEnemy);
+                    if(pEnemy.isBlocking()){
+                        if(pEnemy instanceof Player playerEnemy){
+                            playerEnemy.getCooldowns().addCooldown(Items.SHIELD, 60);
+                            playerEnemy.disableShield(false);
+                        }
+                    }
+                    else {
+                        performSpellAttack(this.mob, deerAttackSpell, deerColor, pEnemy);
+                    }
                 }
             } else {
-                if(ticksUntilNextAttack == 0 && this.done){
-                    resetAttackCooldown();
-                    shouldCountTillNextAttack = false;
-                    entity.setAttacking(false);
-                    entity.attackAnimationTimeout = 0;
-                } else if (!this.done){
-                    resetAttackCooldown();
-                    shouldCountTillNextAttack = false;
-                    entity.setAttacking(false);
-                    entity.attackAnimationTimeout = 0;
-                }
-
+                resetAttackCooldown();
+                shouldCountTillNextAttack = false;
+                entity.setAttacking(false);
+                entity.attackAnimationTimeout = 0;
             }
         }
 
@@ -505,11 +538,11 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.ticksUntilNextAttack <= 0;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay + 10;
+            return this.ticksUntilNextAttack <= attackDelay;
         }
 
         public int getTicksUntilNextAttack() {
@@ -517,7 +550,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 3.5F);
+            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 4.5F);
         }
 
         protected void performAttack(LivingEntity pEnemy) {
@@ -527,6 +560,26 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             this.done = true;
 
         }
+
+        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
+        }
+
+        private ParticleColor deerColor = new ParticleColor(255, 255, 255);
+
+        public Spell deerAttackSpell = new Spell()
+                .add(EffectBurst.INSTANCE)
+                .add(AugmentAOE.INSTANCE)
+                .add(EffectLaunch.INSTANCE)
+                .add(AugmentAmplify.INSTANCE)
+                .add(EffectKnockback.INSTANCE)
+
+                .add(EffectHarm.INSTANCE)
+                .add(AugmentAmplify.INSTANCE,4)
+
+                .withColor(deerColor);
 
 
         @Override
@@ -558,6 +611,13 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
         public boolean canUse() {
             return super.canUse() && this.canUse.get();
+        }
+
+        @Override
+        public void start() {
+            super.start();
+
+            deer.setAttacking(false);
         }
     }
 
