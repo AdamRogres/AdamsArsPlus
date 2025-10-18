@@ -136,6 +136,11 @@ public class AdamsModEntities {
             EntityType.Builder.<RDeerEntity>of(RDeerEntity::new, MobCategory.CREATURE)
                     .sized(2.2f, 2.1f)
                     .clientTrackingRange(10));
+    public static final RegistryObject<EntityType<MahoragaEntity>> MAHORAGA = registerEntity(
+            AdamsLibEntityNames.MAHO,
+            EntityType.Builder.<MahoragaEntity>of(MahoragaEntity::new, MobCategory.CREATURE)
+                    .sized(1.5f, 3.8f)
+                    .clientTrackingRange(10));
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistrationHandler {
@@ -154,6 +159,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.NUE.get(), NueEntity.createAttributes().build());
             event.put(AdamsModEntities.RABBIT_ESCAPE.get(), RabbitEEntity.createAttributes().build());
             event.put(AdamsModEntities.ROUND_DEER.get(), RDeerEntity.createAttributes().build());
+            event.put(AdamsModEntities.MAHORAGA.get(), MahoragaEntity.createAttributes().build());
         }
     }
 

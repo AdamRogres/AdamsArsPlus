@@ -102,6 +102,8 @@
 	"item.adamsarsplus.thread_draconic": 				"Thread of Draconic Hex",
 	"adamsarsplus.perk_desc.thread_draconic":			"Inflicts a draconic curse upon spell targets when using a damaging spell.",
 
+
+
 	"item.adamsarsplus.mana_diamond": 					"Mana Diamond",
 	"item.adamsarsplus.mage_cloth": 					"Mage Cloth",
 	"item.adamsarsplus.flame_soul": 					"Flame Soul",
@@ -112,6 +114,8 @@
 	"item.adamsarsplus.elemental_soul": 				"Triune Elemental Soul",
 	"item.adamsarsplus.true_elemental_soul": 			"Awakened Elemental Soul",
 	"item.adamsarsplus.void_soul": 						"Void Soul",
+
+	"item.adamsarsplus.enchanters_stopwatch": 			"Enchanters Stopwatch",
 
 	"item.adamsarsplus.ritual_mage_summon": 			"Summon Mage",
 	"item.adamsarsplus.ritual_ten_shadows": 			"Challenge Shikigami",
@@ -128,6 +132,7 @@
 	"effect.adamsarsplus.mana_health": 					"Immortal Shield",
 	"effect.adamsarsplus.ice_burst": 					"Iceburst Frost",
 	"effect.adamsarsplus.ten_shadows": 					"Ten Shadows Summon",
+	"effect.adamsarsplus.disruption": 					"Disruption",
 
 	"entity.adamsarsplus.ryan": 						"Ryan: Slayer of Dragons",
 	"entity.adamsarsplus.cade": 						"Cade: The Immutable Frost",

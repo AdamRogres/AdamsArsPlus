@@ -91,6 +91,7 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.NUE.get(), NueRenderer::new);
         EntityRenderers.register(AdamsModEntities.RABBIT_ESCAPE.get(), RabbitERenderer::new);
         EntityRenderers.register(AdamsModEntities.ROUND_DEER.get(), RDeerRenderer::new);
+        EntityRenderers.register(AdamsModEntities.MAHORAGA.get(), MahoragaRenderer::new);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

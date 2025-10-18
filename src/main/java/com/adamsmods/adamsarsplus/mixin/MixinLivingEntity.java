@@ -1,6 +1,9 @@
 package com.adamsmods.adamsarsplus.mixin;
 
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.Vec3;
@@ -8,13 +11,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DISRUPTION_EFFECT;
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.FRACTURE_EFFECT;
 
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity {
-
-
     @Inject(at = @At(value = "TAIL"), method = "travel")
     public void travel0(Vec3 pTravelVector, CallbackInfo ci) {
         LivingEntity living = (LivingEntity) (Object) this;
@@ -40,7 +43,14 @@ public class MixinLivingEntity {
                 }
             }
         }
+    }
 
+    @Inject(at = @At(value = "RETURN"), cancellable = true, method = "canBeAffected")
+    public void canBeAffected0(MobEffectInstance pEffectInstance, CallbackInfoReturnable<Boolean> cir){
+        LivingEntity living = (LivingEntity) (Object) this;
+        if(living.hasEffect(DISRUPTION_EFFECT.get()) && pEffectInstance.getEffect().isBeneficial()){
+            cir.setReturnValue(false);
+        }
     }
 
 }

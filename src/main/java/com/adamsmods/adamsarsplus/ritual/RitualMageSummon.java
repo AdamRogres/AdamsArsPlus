@@ -49,7 +49,7 @@ public class RitualMageSummon extends AbstractRitual {
                     this.setFinished();
                 }
 
-                // Summon Ryan
+            // Summon Ryan
             } else if (this.getProgress() >= 8 && isRyanSpawn()) {
                 RyanEntity boss = new RyanEntity(this.getWorld());
                 this.summon(boss, this.getPos().above());
@@ -61,7 +61,7 @@ public class RitualMageSummon extends AbstractRitual {
                 }
                 this.setFinished();
 
-                // Summon Cade
+            // Summon Cade
             } else if (this.getProgress() >= 8 && isCadeSpawn()) {
                 CadeEntity boss = new CadeEntity(this.getWorld());
                 this.summon(boss, this.getPos().above());
@@ -73,7 +73,7 @@ public class RitualMageSummon extends AbstractRitual {
                 }
                 this.setFinished();
 
-                // Summon Nick
+            // Summon Nick
             } else if (this.getProgress() >= 8 && isNickSpawn()) {
                 NickEntity boss = new NickEntity(this.getWorld());
                 this.summon(boss, this.getPos().above());
@@ -85,7 +85,7 @@ public class RitualMageSummon extends AbstractRitual {
                 }
                 this.setFinished();
 
-                // Summon Cam
+            // Summon Cam
             } else if (this.getProgress() >= 8 && isCamrSpawn()) {
                 CamEntity boss = new CamEntity(this.getWorld());
                 this.summon(boss, this.getPos().above());
@@ -97,7 +97,7 @@ public class RitualMageSummon extends AbstractRitual {
                 }
                 this.setFinished();
 
-                // Summon Matt
+            // Summon Matt
             } else if (this.getProgress() >= 8 && isMattSpawn()) {
                 MattEntity boss = new MattEntity(this.getWorld());
                 this.summon(boss, this.getPos().above());
@@ -109,7 +109,7 @@ public class RitualMageSummon extends AbstractRitual {
                 }
                 this.setFinished();
 
-                // Summon Adam
+            // Summon Adam
             } else if (this.getProgress() >= 8 && isAdamSpawn()) {
                 AdamEntity boss = new AdamEntity(this.getWorld());
                 this.summon(boss, this.getPos().above());

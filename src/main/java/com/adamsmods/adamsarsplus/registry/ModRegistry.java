@@ -4,6 +4,7 @@ import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.effects.*;
+import com.adamsmods.adamsarsplus.item.EnchantersStopwatch;
 import com.adamsmods.adamsarsplus.item.MagicItems;
 import com.adamsmods.adamsarsplus.item.RegularItems;
 import com.adamsmods.adamsarsplus.block.ModBlocks.*;
@@ -27,6 +28,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -98,6 +100,8 @@ public class ModRegistry {
 
     public static final RegistryObject<ModItem> ELEMENTAL_SOUL;
     public static final RegistryObject<ModItem> TRUE_ELEMENTAL_SOUL;
+
+    public static final RegistryObject<EnchantersStopwatch> ENCHANTERS_STOPWATCH;
 
     public static final RegistryObject<MageMagicArmor> CADE_BOOTS;
     public static final RegistryObject<MageMagicArmor> CADE_LEGGINGS;
@@ -174,6 +178,7 @@ public class ModRegistry {
     public static final RegistryObject<MobEffect> SIX_EYES_EFFECT = EFFECTS.register(SIX_EYES, SixEyesEffect::new);
     public static final RegistryObject<MobEffect> MANA_HEALTH_EFFECT = EFFECTS.register(MANA_HEALTH, ManaHealthEffect::new);
     public static final RegistryObject<MobEffect> ICEBURST_EFFECT = EFFECTS.register(ICEBURST, IceBurstEffect::new);
+    public static final RegistryObject<MobEffect> DISRUPTION_EFFECT = EFFECTS.register(DISRUPTION, DisruptionEffect::new);
     public static final RegistryObject<MobEffect> TENSHADOWS_EFFECT = EFFECTS.register(TENSHADOWS, TenShadowsEffect::new);
 
     public static void registerPerk(IPerk perk) {
@@ -197,8 +202,11 @@ public class ModRegistry {
         HERO_SOUL           = ITEMS.register("hero_soul",       () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
         VOID_SOUL           = ITEMS.register("void_soul",       () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
 
-        ELEMENTAL_SOUL      = ITEMS.register("elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
-        TRUE_ELEMENTAL_SOUL = ITEMS.register("true_elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        ELEMENTAL_SOUL      = ITEMS.register("elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant().rarity(Rarity.RARE), false));
+        TRUE_ELEMENTAL_SOUL = ITEMS.register("true_elemental_soul",  () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant().rarity(Rarity.RARE), false));
+
+        // Other Items
+        ENCHANTERS_STOPWATCH = ITEMS.register("enchanters_stopwatch", () -> new EnchantersStopwatch(new Item.Properties().stacksTo(1)));
 
         // Armor Sets
         CADE_BOOTS          = ITEMS.register("cade_boots",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS));

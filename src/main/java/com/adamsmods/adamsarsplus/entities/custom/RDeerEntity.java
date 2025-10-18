@@ -588,7 +588,6 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             if(shouldCountTillNextAttack){
                 this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
             }
-
         }
 
         @Override
