@@ -57,7 +57,6 @@ public class EffectAnnihilate extends AbstractEffect implements IDamageEffect {
 
     public static final EffectAnnihilate INSTANCE = new EffectAnnihilate(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectannihilate"), "Annihilate");
 
-
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @Nonnull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         Entity entity = rayTraceResult.getEntity();
@@ -75,16 +74,18 @@ public class EffectAnnihilate extends AbstractEffect implements IDamageEffect {
             level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, 0.5, 0.5, 0, 1);
             level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, -0.5, 0.5, 0, 1);
 
-            level.sendParticles(ParticleTypes.ENCHANT, x, y, z, 1, 0, 0, 0.5, 0);
+            float damage = (float) (10 + (2 * (spellStats.getAmpMultiplier())));
 
-            //float damage = (float) ((this.DAMAGE.get() + ((this.AMP_VALUE.get())/1.5 * (spellStats.getAmpMultiplier()))));
-            float damage = (float) (10 + (5 * (spellStats.getAmpMultiplier())));
+            DamageSource dVoid = DamageUtil.source(level, DamageTypes.FELL_OUT_OF_WORLD, shooter);
 
-            DamageSource magic = DamageUtil.source(level, DamageTypes.MAGIC, shooter);
+            if(entity instanceof  Player player){
+                if(!player.isCreative() && !player.isSpectator()){
+                    attemptDamage(world, shooter, spellStats, spellContext, resolver, entity, dVoid, damage);
+                }
+            } else {
+                attemptDamage(world, shooter, spellStats, spellContext, resolver, entity, dVoid, damage);
+            }
 
-            attemptDamage(world, shooter, spellStats, spellContext, resolver, entity, magic, damage);
-
-            living.invulnerableTime = 0;
         }
     }
 
@@ -100,21 +101,20 @@ public class EffectAnnihilate extends AbstractEffect implements IDamageEffect {
     @Override
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         BlockPos pos = rayTraceResult.getBlockPos();
-        BlockState state;
+        BlockState state = world.getBlockState(pos);
 
         if (world instanceof ServerLevel level) {
             double x = pos.getX();
             double y = pos.getY();
             double z = pos.getZ();
 
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, 0, 0, 0, 0.1);
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, 0, 0, 0, 0.1);
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, -0.5, -0.5, 0, 0.1);
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, 0.5, -0.5, 0, 0.1);
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, 0.5, 0.5, 0, 0.1);
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, -0.5, 0.5, 0, 0.1);
-
-            level.sendParticles(ParticleTypes.ENCHANT, x, y, z, 1, 0, 0, 0.5, 0);
+            if(state.getBlock() == Blocks.AIR){
+                level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, 0.1);
+            } else {
+                level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, 0.1);
+                level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, 0.1);
+                level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, world.getRandom().nextFloat() - 0.5, 0.1);
+            }
         }
 
 
@@ -134,7 +134,7 @@ public class EffectAnnihilate extends AbstractEffect implements IDamageEffect {
             if (world.isOutsideBuildHeight(pos1) || world.random.nextFloat() < spellStats.getBuffCount(AugmentRandomize.INSTANCE) * 0.25F) {
                 continue;
             }
-            state = world.getBlockState(pos1);
+            //state = world.getBlockState(pos1);
 
             if (!canBlockBeHarvested(spellStats, world, pos1) || !BlockUtil.destroyRespectsClaim(getPlayer(shooter, (ServerLevel) world), world, pos1) ) {
                 continue; //|| state.is(BlockTagProvider.BREAK_BLACKLIST)

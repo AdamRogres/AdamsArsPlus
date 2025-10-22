@@ -85,6 +85,7 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.SUMMON_SKELETON_M.get(), RenderSummonedSkeletonM::new);
         EntityRenderers.register(AdamsModEntities.ADAM_ENTITY.get(), AdamRenderer::new);
         EntityRenderers.register(AdamsModEntities.MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.FIRE_ENTITY.get(), FireRenderer::new);
 
         // Ten Shadows
         EntityRenderers.register(AdamsModEntities.DIVINE_DOG.get(), DDogRenderer::new);

@@ -75,6 +75,18 @@
 	"adamsarsplus.glyph_name.glyph_effectsimpledomain": "Simple Domain",
 	"adamsarsplus.glyph_desc.glyph_effectsimpledomain": "Grants a simple domain that protects against the surehit of domains.",
 
+	"adamsarsplus.glyph_name.glyph_effectblueflame": 	"Cremation",
+	"adamsarsplus.glyph_desc.glyph_effectblueflame": 	"Creates a bonfire that burns anything in contact.",
+
+	"adamsarsplus.glyph_name.glyph_effectdismantle": 	"Dismantle",
+	"adamsarsplus.glyph_desc.glyph_effectdismantle": 	"Shreds the target with invisible blades. Augment with accelerate to lower the i-frames after each attack.",
+
+	"adamsarsplus.glyph_name.glyph_effectconjureblade": "Conjure Blade",
+	"adamsarsplus.glyph_desc.glyph_effectconjureblade": "Grants a simple domain that protects against the surehit of domains.",
+
+	"adamsarsplus.glyph_name.glyph_filternotself": 		"Filter: Not Self",
+	"adamsarsplus.glyph_desc.glyph_filternotself": 		"Ends spell if it attempts to target the caster.",
+
 	"adamsarsplus.glyph_name.glyph_methoddetonate": 	"Detonate",
 	"adamsarsplus.glyph_desc.glyph_methoddetonate": 	"Summons a projectile that applies spell effects when this projectile hits a target or block. The projectile will resolve in the air after traveling for a set time. This time can be altered with extend time. Pierce will cause this time to reset on spell resolve.",
 

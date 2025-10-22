@@ -41,6 +41,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.*;
@@ -128,7 +129,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     public void castSpells() {
         float aoe = getAoe();
         int flatAoe = Math.round(aoe);
-        int radius = 3 + flatAoe;
+        int radius = 4 + flatAoe;
         Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
 
         if (!level().isClientSide && age % (20 - 2 * getAccelerates()) == 0) {
@@ -136,7 +137,16 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                 for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
                     if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
                         if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
-                            spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                            if(level().getBlockState(p).getBlock() == Blocks.AIR){
+                                if(level().getRandom().nextIntBetweenInclusive(0, 100) > Math.min(5 * radius, 85)){
+                                    spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                                }
+                            } else {
+                                if(level().getRandom().nextIntBetweenInclusive(0, 100) > Math.min(3 * radius, 60)){
+                                    spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                                }
+                            }
+
                         }
                     }
                 }

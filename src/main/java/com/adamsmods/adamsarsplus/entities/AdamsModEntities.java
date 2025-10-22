@@ -64,6 +64,15 @@ public class AdamsModEntities {
                     .noSave()
                     .setUpdateInterval(120).setCustomClientFactory(MeteorProjectile::new));
 
+    public static final RegistryObject<EntityType<FireEntity>> FIRE_ENTITY = registerEntity(
+            AdamsLibEntityNames.FIRE,
+            EntityType.Builder.<FireEntity>of(FireEntity::new, MobCategory.MISC)
+                    .sized(0.1f, 0.1f)
+                    .setTrackingRange(20)
+                    .fireImmune()
+                    .setShouldReceiveVelocityUpdates(true)
+                    .noSave());
+
     public static final RegistryObject<EntityType<EntityDivineSmite>> DIVINE_SMITE = registerEntity(
             AdamsLibEntityNames.DIVINESMITE,
                     EntityType.Builder.<EntityDivineSmite>of(EntityDivineSmite::new, MobCategory.MISC)
@@ -160,6 +169,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.RABBIT_ESCAPE.get(), RabbitEEntity.createAttributes().build());
             event.put(AdamsModEntities.ROUND_DEER.get(), RDeerEntity.createAttributes().build());
             event.put(AdamsModEntities.MAHORAGA.get(), MahoragaEntity.createAttributes().build());
+            event.put(AdamsModEntities.FIRE_ENTITY.get(), FireEntity.createAttributes().build());
         }
     }
 

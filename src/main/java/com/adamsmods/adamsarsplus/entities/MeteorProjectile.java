@@ -1,9 +1,12 @@
 package com.adamsmods.adamsarsplus.entities;
 
+import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
+import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectMeteorSwarm;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.block.PortalBlock;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
+import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import net.minecraft.core.BlockPos;
@@ -31,6 +34,10 @@ public class MeteorProjectile extends EntityProjectileSpell {
     public MeteorProjectile(Level world, SpellResolver resolver) {
         super(AdamsModEntities.METEOR_SPELL.get(), world, resolver);
         this.spellResolver = resolver;
+
+        this.accelerates =    resolver.spell.getInstanceCount(AugmentAccelerate.INSTANCE)
+                + 2 * resolver.spell.getInstanceCount(AugmentAccelerateTwo.INSTANCE)
+                + 4 * resolver.spell.getInstanceCount(AugmentAccelerateThree.INSTANCE);
     }
 
     public MeteorProjectile(PlayMessages.SpawnEntity packet, Level world) {

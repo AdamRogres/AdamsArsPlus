@@ -82,6 +82,10 @@ public class ArsNouveauRegistry {
         register(EffectAnnihilate.INSTANCE);
         register(EffectTenShadows.INSTANCE);
         register(EffectFracture.INSTANCE);
+        register(EffectDismantle.INSTANCE);
+        register(EffectBlueFlame.INSTANCE);
+        register(EffectConjureBlade.INSTANCE);
+        register(FilterNotSelf.INSTANCE);
 
         //Methods
         register(MethodDetonate.INSTANCE);

@@ -5,7 +5,9 @@ import com.adamsmods.adamsarsplus.block.DomainShell;
 import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
+import com.adamsmods.adamsarsplus.entities.FireEntity;
 import com.adamsmods.adamsarsplus.entities.client.DivineSmiteRenderer;
+import com.adamsmods.adamsarsplus.entities.client.FireRenderer;
 import com.adamsmods.adamsarsplus.entities.client.MeteorRenderer;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.camera.ICameraMountable;
@@ -81,6 +83,8 @@ public class AdamClientHandler {
                 DivineSmiteRenderer::new);
         event.registerEntityRenderer(AdamsModEntities.METEOR_SPELL.get(),
                 MeteorRenderer::new);
+        event.registerEntityRenderer(AdamsModEntities.FIRE_ENTITY.get(),
+                FireRenderer::new);
     }
 
     public static void init(final FMLClientSetupEvent evt) {
