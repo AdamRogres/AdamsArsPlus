@@ -21,18 +21,21 @@ public class FireEntity extends Monster {
     public float size = 1;
     public int damage = 4;
     public int lifeTime = 0;
+    public boolean sensitive = false;
 
     public static final EntityDataAccessor<Float> SIZE =
             SynchedEntityData.defineId(FireEntity.class, EntityDataSerializers.FLOAT);
 
-    public FireEntity(Level world, float size, int damage, double accelerates, int lifeTime) {
+    public FireEntity(Level world, float size, int damage, double accelerates, int lifeTime, boolean sensitive) {
         super(AdamsModEntities.FIRE_ENTITY.get(), world);
 
         this.size = size;
         this.accelerates = accelerates;
         this.damage = damage;
         this.lifeTime = lifeTime;
+        this.sensitive = sensitive;
 
+        this.setNoGravity(this.sensitive);
     }
 
     public FireEntity(EntityType<? extends Monster> type, Level worldIn) {
@@ -74,7 +77,7 @@ public class FireEntity extends Monster {
                     entity.setSecondsOnFire(20);
                 }
             }
-
+            this.setSize(this.size);
         }
     }
 

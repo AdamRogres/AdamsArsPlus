@@ -29,6 +29,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.RDEER_LAYER, RDeerModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MAHO_LAYER, MahoragaModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.FIRE_LAYER, FireModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.BLADE_LAYER, BladeModel::createBodyLayer);
     }
 
 }

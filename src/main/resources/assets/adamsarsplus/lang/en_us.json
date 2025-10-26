@@ -82,7 +82,7 @@
 	"adamsarsplus.glyph_desc.glyph_effectdismantle": 	"Shreds the target with invisible blades. Augment with accelerate to lower the i-frames after each attack.",
 
 	"adamsarsplus.glyph_name.glyph_effectconjureblade": "Conjure Blade",
-	"adamsarsplus.glyph_desc.glyph_effectconjureblade": "Grants a simple domain that protects against the surehit of domains.",
+	"adamsarsplus.glyph_desc.glyph_effectconjureblade": "Conjures a weapon propelled towards a target. If a weapon is held a replica of that weapon will be created for this spell. Split will increase how many blades are created, AoE will greatly increase how many blades are created but also increases the distance between blades. Randomize will randomly select any weapons from the casters inventory.",
 
 	"adamsarsplus.glyph_name.glyph_filternotself": 		"Filter: Not Self",
 	"adamsarsplus.glyph_desc.glyph_filternotself": 		"Ends spell if it attempts to target the caster.",

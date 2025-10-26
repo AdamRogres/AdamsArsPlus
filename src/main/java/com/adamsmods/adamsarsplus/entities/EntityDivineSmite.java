@@ -80,7 +80,6 @@ public class EntityDivineSmite extends LightningBolt {
         this.effectOnly = effectOnly;
     }
 
-
     public SoundSource getSoundSource() {
         return SoundSource.WEATHER;
     }

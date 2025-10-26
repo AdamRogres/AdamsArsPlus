@@ -29,6 +29,8 @@ public class ModModelLayers {
     public static final ModelLayerLocation MAHO_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "maho_layer"), "main");
 
+    public static final ModelLayerLocation BLADE_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "blade_layer"), "main");
     public static final ModelLayerLocation MAGE_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "mage_layer"), "main");
     public static final ModelLayerLocation FIRE_LAYER = new ModelLayerLocation(

@@ -7,6 +7,7 @@ public class AdamsLibEntityNames {
     public static final String FIRE = "fire";
     public static final String DIVINESMITE = "divine_smite";
     public static final String SUMMONED_SKELETON_M = "summoned_skeleton_m";
+    public static final String BLADE = "blade";
 
     public static final String RYAN = "ryan";
     public static final String CADE = "cade";

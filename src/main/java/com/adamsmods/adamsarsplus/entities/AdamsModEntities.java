@@ -56,31 +56,28 @@ public class AdamsModEntities {
 
     public static final RegistryObject<EntityType<MeteorProjectile>> METEOR_SPELL = registerEntity(
             AdamsLibEntityNames.METEOR,
-            EntityType.Builder.<MeteorProjectile>of(MeteorProjectile::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f)
-                    .setTrackingRange(20)
-                    .fireImmune()
-                    .setShouldReceiveVelocityUpdates(true)
-                    .noSave()
-                    .setUpdateInterval(120).setCustomClientFactory(MeteorProjectile::new));
+                EntityType.Builder.<MeteorProjectile>of(MeteorProjectile::new, MobCategory.MISC)
+                        .sized(0.5f, 0.5f)
+                        .setTrackingRange(20)
+                        .fireImmune()
+                        .setShouldReceiveVelocityUpdates(true)
+                        .noSave()
+                        .setUpdateInterval(120).setCustomClientFactory(MeteorProjectile::new));
 
-    public static final RegistryObject<EntityType<FireEntity>> FIRE_ENTITY = registerEntity(
-            AdamsLibEntityNames.FIRE,
-            EntityType.Builder.<FireEntity>of(FireEntity::new, MobCategory.MISC)
-                    .sized(0.1f, 0.1f)
-                    .setTrackingRange(20)
-                    .fireImmune()
-                    .setShouldReceiveVelocityUpdates(true)
-                    .noSave());
+    public static final RegistryObject<EntityType<BladeProjectile>> BLADE_PROJ = registerEntity(
+            AdamsLibEntityNames.BLADE,
+                EntityType.Builder.<BladeProjectile>of(BladeProjectile::new, MobCategory.MISC)
+                        .sized(0.3f, 0.3f)
+                        .clientTrackingRange(20));
 
     public static final RegistryObject<EntityType<EntityDivineSmite>> DIVINE_SMITE = registerEntity(
             AdamsLibEntityNames.DIVINESMITE,
-                    EntityType.Builder.<EntityDivineSmite>of(EntityDivineSmite::new, MobCategory.MISC)
-                            .noSave()
-                            .sized(0.0F, 0.0F)
-                            .clientTrackingRange(16)
-                            .updateInterval(Integer.MAX_VALUE)
-                            .setShouldReceiveVelocityUpdates(true).setUpdateInterval(60));
+                EntityType.Builder.<EntityDivineSmite>of(EntityDivineSmite::new, MobCategory.MISC)
+                        .noSave()
+                        .sized(0.0F, 0.0F)
+                        .clientTrackingRange(16)
+                        .updateInterval(Integer.MAX_VALUE)
+                        .setShouldReceiveVelocityUpdates(true).setUpdateInterval(60));
 
     public static final RegistryObject<EntityType<SummonSkeleton_m>> SUMMON_SKELETON_M = registerEntity(
             AdamsLibEntityNames.SUMMONED_SKELETON_M,
@@ -88,6 +85,11 @@ public class AdamsModEntities {
                         .sized(1.0F, 1.8F)
                         .clientTrackingRange(10));
 
+    public static final RegistryObject<EntityType<FireEntity>> FIRE_ENTITY = registerEntity(
+            AdamsLibEntityNames.FIRE,
+                EntityType.Builder.<FireEntity>of(FireEntity::new, MobCategory.CREATURE)
+                    .sized(0.8f, 0.8f)
+                    .setShouldReceiveVelocityUpdates(true));
 
     public static final RegistryObject<EntityType<RyanEntity>> RYAN_ENTITY = registerEntity(
                 AdamsLibEntityNames.RYAN,

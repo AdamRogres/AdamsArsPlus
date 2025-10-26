@@ -14,12 +14,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class FireRenderer extends MobRenderer<FireEntity, FireModel<FireEntity>> {
     public FireRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext, new FireModel<>(pContext.bakeLayer(ModModelLayers.FIRE_LAYER)), 0.2f);
+        super(pContext, new FireModel<>(pContext.bakeLayer(ModModelLayers.FIRE_LAYER)), 0.0f);
     }
 
     @Override
     public ResourceLocation getTextureLocation(FireEntity fireEntity) {
-        return new ResourceLocation(AdamsArsPlus.MOD_ID, "textures/entity/fire/fire_texture_" + fireEntity.animation + ".png");
+        return new ResourceLocation(AdamsArsPlus.MOD_ID, "textures/entity/fire/blue_fire_texture_" + fireEntity.animation + ".png");
     }
 
     @Override
@@ -34,7 +34,6 @@ public class FireRenderer extends MobRenderer<FireEntity, FireModel<FireEntity>>
 
     protected void scale(FireEntity pLivingEntity, PoseStack pMatrixStack, float pPartialTickTime) {
         pMatrixStack.scale(pLivingEntity.getSize(), pLivingEntity.getSize(), pLivingEntity.getSize());
-        //super.scale(pLivingEntity, pMatrixStack, pPartialTickTime);
     }
 
 }

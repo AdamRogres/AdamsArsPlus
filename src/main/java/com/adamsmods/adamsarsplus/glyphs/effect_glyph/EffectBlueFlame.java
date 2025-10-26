@@ -2,31 +2,20 @@ package com.adamsmods.adamsarsplus.glyphs.effect_glyph;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.entities.FireEntity;
-import com.adamsmods.adamsarsplus.entities.MeteorProjectile;
-import com.adamsmods.adamsarsplus.entities.custom.RDeerEntity;
-import com.adamsmods.api.IPropagator;
 import com.hollingsworth.arsnouveau.api.spell.*;
-import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.TileCaster;
-import com.hollingsworth.arsnouveau.common.block.BasicSpellTurret;
-import com.hollingsworth.arsnouveau.common.block.tile.RotatingTurretTile;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class EffectBlueFlame extends AbstractEffect {
@@ -41,9 +30,12 @@ public class EffectBlueFlame extends AbstractEffect {
     }
 
     public void summonFlame(Level world, HitResult rayTraceResult, @Nullable LivingEntity shooter, SpellContext spellContext, SpellStats stats){
-        FireEntity flame = new FireEntity(world, (float) stats.getAoeMultiplier(), (int) stats.getAmpMultiplier(), (double) stats.getAccMultiplier(), (int)stats.getDurationMultiplier());
-        flame.setPos(rayTraceResult.getLocation());
-        flame.level().addFreshEntity(flame);
+        FireEntity flame = new FireEntity(world, (float) stats.getAoeMultiplier() + 1, (int) stats.getAmpMultiplier(), (double) stats.getAccMultiplier(), (int)stats.getDurationMultiplier(), stats.isSensitive());
+        Vec3 pos = new Vec3(rayTraceResult.getLocation().x, rayTraceResult.getLocation().y + 1.1, rayTraceResult.getLocation().z);
+        flame.setPos(pos);
+        if(!flame.level().isClientSide){
+            flame.level().addFreshEntity(flame);
+        }
     }
 
     @Override
@@ -63,7 +55,8 @@ public class EffectBlueFlame extends AbstractEffect {
                 AugmentAOE.INSTANCE,
                 AugmentAccelerate.INSTANCE,
                 AugmentAmplify.INSTANCE,
-                AugmentExtendTime.INSTANCE
+                AugmentExtendTime.INSTANCE,
+                AugmentSensitive.INSTANCE
         );
     }
 
