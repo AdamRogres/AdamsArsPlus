@@ -43,7 +43,6 @@ public class AdamsModEntities {
                         .noSave()
                         .setUpdateInterval(120).setCustomClientFactory(EntityDomainSpell::new));
 
-
         public static final RegistryObject<EntityType<DetonateProjectile>> DETONATE_SPELL = registerEntity(
                 AdamsLibEntityNames.DETONATE,
                 EntityType.Builder.<DetonateProjectile>of(DetonateProjectile::new, MobCategory.MISC)

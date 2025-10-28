@@ -6,6 +6,7 @@ import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.DamageUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
+import com.hollingsworth.arsnouveau.client.particle.*;
 import com.hollingsworth.arsnouveau.common.entity.EnchantedFallingBlock;
 import com.hollingsworth.arsnouveau.common.items.curios.ShapersFocus;
 import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
@@ -13,14 +14,19 @@ import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -31,13 +37,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 
 public class EffectLimitless extends AbstractEffect implements IDamageEffect {
     public static EffectLimitless INSTANCE = new EffectLimitless(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectlimitless"), "Limitless");
+    private static final String LIMITLESS_KEY = "adams_limitless_frozen";
+    private static final String LIMITLESS_VX = "adams_limitless_prev_vx";
+    private static final String LIMITLESS_VY = "adams_limitless_prev_vy";
+    private static final String LIMITLESS_VZ = "adams_limitless_prev_vz";
+    private static final ConcurrentHashMap<UUID, Vec3> savedVelocities = new ConcurrentHashMap();
 
     public EffectLimitless(ResourceLocation tag, String description) {
         super(tag, description);
@@ -46,11 +61,46 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         if (rayTraceResult.getEntity() instanceof LivingEntity living) {
-            if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
+            if(spellStats.getDurationMultiplier() > 0 && spellStats.hasBuff(AugmentPierce.INSTANCE)){
+                double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
+                int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
+                int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
+
+                BlockPos blockPos = rayTraceResult.getEntity().blockPosition();
+
+                AtomicInteger ticks = new AtomicInteger(0);
+                AdamsArsPlus.setInterval(() -> {
+                    int t = ticks.incrementAndGet();
+                    this.makeLSphere(blockPos, world, shooter, spellStats, spellContext, resolver);
+                    if (t >= time) {
+                        this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
+                    }
+                    if(t % 5 == 0){
+                        this.spawnParticles((ServerLevel) world, blockPos, radius, amp < 0);
+                    }
+                }, 1, time, () -> false);
+
+            } else if(spellStats.getDurationMultiplier() > 0){
+                int amp     = (int)(spellStats.getAmpMultiplier());
+                int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
+
+                shooter.addEffect(new MobEffectInstance((MobEffect)ArsNouveauRegistry.LIMITLESS_EFFECT.get(), time, amp));
+                int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
+
+                AtomicInteger ticks = new AtomicInteger(0);
+                AdamsArsPlus.setInterval(() -> {
+                    int t = ticks.incrementAndGet();
+                    this.makeLSphere(shooter.blockPosition(), world, shooter, spellStats, spellContext, resolver);
+                    if (t >= time) {
+                        this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
+                    }
+
+                }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT.get())));
+            } else if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
                 double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
                 int radius = (int) (1 + spellStats.getAoeMultiplier());
 
-                knockback(living, shooter, (float) amp * radius);
+                this.knockback(living, shooter, (float) amp * radius);
 
                 float damage = (float) (4 + (3 * (spellStats.getAmpMultiplier())));
                 DamageSource damageS = DamageUtil.source(world, DamageTypes.FLY_INTO_WALL, shooter);
@@ -59,40 +109,64 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 } else {
                     attemptDamage(world, shooter, spellStats, spellContext, resolver, living, damageS, damage);
                 }
+                this.spawnParticles((ServerLevel) world, living.blockPosition(), radius, amp < 0);
             } else {
-                makeLSphere(rayTraceResult.getEntity().blockPosition(), world, shooter, spellStats, spellContext, resolver);
+                this.makeLSphere(rayTraceResult.getEntity().blockPosition(), world, shooter, spellStats, spellContext, resolver);
             }
         }
     }
 
     @Override
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        if(spellStats.hasBuff(AugmentExtendTime.INSTANCE)){
+        if(spellStats.getDurationMultiplier() > 0 && spellStats.hasBuff(AugmentPierce.INSTANCE)){
+            double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
+            int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
+            int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
+
+            BlockPos blockPos = rayTraceResult.getBlockPos();
+
+            AtomicInteger ticks = new AtomicInteger(0);
+            AdamsArsPlus.setInterval(() -> {
+                int t = ticks.incrementAndGet();
+                this.makeLSphere(blockPos, world, shooter, spellStats, spellContext, resolver);
+                if (t >= time) {
+                    this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
+                }
+                if(t % 5 == 0 && !world.isClientSide){
+                    this.spawnParticles((ServerLevel) world, blockPos, radius, amp < 0);
+                }
+            }, 1, time, () -> false);
+
+        } else if(spellStats.getDurationMultiplier() > 0){
             int amp     = (int)(spellStats.getAmpMultiplier());
             int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
 
-            shooter.addEffect(new MobEffectInstance(LIMITLESS_EFFECT.get(), time, amp));
+            shooter.addEffect(new MobEffectInstance((MobEffect)ArsNouveauRegistry.LIMITLESS_EFFECT.get(), time, amp));
+            int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
 
+            AtomicInteger ticks = new AtomicInteger(0);
             AdamsArsPlus.setInterval(() -> {
-                makeLSphere(shooter.blockPosition(), world, shooter, spellStats, spellContext, resolver);
+                int t = ticks.incrementAndGet();
+                this.makeLSphere(shooter.blockPosition(), world, shooter, spellStats, spellContext, resolver);
+                if (t >= time) {
+                    this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
+                }
 
             }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT.get())));
-
         } else {
-            makeLSphere(rayTraceResult.getBlockPos(), world, shooter, spellStats, spellContext, resolver);
+            this.makeLSphere(rayTraceResult.getBlockPos(), world, shooter, spellStats, spellContext, resolver);
         }
 
     }
 
-    public double absDifference(int radius, double ratio){
-        double value = 0;
+    public double absDifference(int radius, double ratio) {
+        double value = (double)0.0F;
+        if (ratio >= (double)0.0F) {
+            value = (double)radius - ratio;
+        } else {
+            value = ((double)radius + ratio) * (double)-1.0F;
+        }
 
-        if(ratio >= 0){
-            value = radius - ratio;
-        }
-        else{
-            value = (radius + ratio) * -1;
-        }
         return value;
     }
 
@@ -105,7 +179,12 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
             strength *= 5.0;
         }
 
-        if (strength > (double)0.0F) {
+        if (strength >= (double)0.0F) {
+            entity.hasImpulse = true;
+            Vec3 vec3 = entity.getDeltaMovement();
+            Vec3 vec31 = (new Vec3(xRatio, (double)0.0F, zRatio)).normalize().scale(strength);
+            entity.setDeltaMovement(vec3.x / (double)2.0F - vec31.x, entity.onGround() ? Math.min(0.4, vec3.y / (double)2.0F + strength) : vec3.y, vec3.z / (double)2.0F - vec31.z);
+        } else {
             entity.hasImpulse = true;
             Vec3 vec3 = entity.getDeltaMovement();
             Vec3 vec31 = (new Vec3(xRatio, (double)0.0F, zRatio)).normalize().scale(strength);
@@ -142,46 +221,148 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
 
         Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
 
-            //Target non-living entities like arrows and spell projectiles
-            for (Entity entity : world.getEntities(shooter, new AABB(center).inflate(radius, radius, radius))) {
-                if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
-                    if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
-                        if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
-                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp, radius);
-                        }
-                        else {
-                            entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
-                            entity.hurtMarked = true;
-                        }
-                    }
+        //Target non-living entities like arrows and spell projectiles
+        for(Entity entity : world.getEntities(shooter, (new AABB(center)).inflate((double)radius, (double)radius, (double)radius))) {
+            if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center)) && (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !spellContext.getUnwrappedCaster().equals(entity))) {
+                if (spellStats.hasBuff(AugmentPierce.INSTANCE)) {
+                    this.knockback(entity, (double)center.getX(), (double)center.getY(), (double)center.getZ(), (float)amp, radius);
+                } else {
+                    this.applyFreezeOrScale(entity, amp);
                 }
             }
-            //Target living entities
-            for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, new AABB(center).inflate(radius, radius, radius))) {
-                if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center))) {
-                    if (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !(spellContext.getUnwrappedCaster().equals(entity))) {
-                        if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
-                            knockback(entity, center.getX(), center.getY(), center.getZ(), (float) amp, radius);
-
-                            if(shooter instanceof LivingEntity shooterL) {
-
-                                float damage = (float) (4 + (3 * (spellStats.getAmpMultiplier())));
-                                DamageSource damageS = DamageUtil.source(world, DamageTypes.FLY_INTO_WALL, shooter);
-
-                                if(spellStats.hasBuff(AugmentExtract.INSTANCE)){
-                                    attemptDamage(world, shooterL, spellStats, spellContext, resolver, entity, damageS, 0);
-                                } else {
-                                    attemptDamage(world, shooterL, spellStats, spellContext, resolver, entity, damageS, damage);
-                                }
+        }
+        //Target living entities
+        for(LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, (new AABB(center)).inflate((double)radius, (double)radius, (double)radius))) {
+            if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center)) && (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !spellContext.getUnwrappedCaster().equals(entity))) {
+                if (spellStats.hasBuff(AugmentPierce.INSTANCE)) {
+                    this.knockback(entity, (double)center.getX(), (double)center.getY(), (double)center.getZ(), (float)amp, radius);
+                    if (shooter instanceof LivingEntity) {
+                        LivingEntity shooterL = (LivingEntity)shooter;
+                        float damage = (float)((double)4.0F + (double)3.0F * spellStats.getAmpMultiplier());
+                        DamageSource damageS = DamageUtil.source(world, DamageTypes.FLY_INTO_WALL, shooter);
+                        if(spellStats.getDurationMultiplier() <= 0){
+                            if (spellStats.hasBuff(AugmentExtract.INSTANCE)) {
+                                this.attemptDamage(world, shooterL, spellStats, spellContext, resolver, entity, damageS, 0.0F);
+                            } else {
+                                this.attemptDamage(world, shooterL, spellStats, spellContext, resolver, entity, damageS, damage);
                             }
                         }
-                        else {
-                            entity.setDeltaMovement(entity.getDeltaMovement().scale(amp));
-                            entity.hurtMarked = true;
+                    }
+                } else {
+                    this.applyFreezeOrScale(entity, amp);
+                }
+            }
+        }
+    }
+
+    private void applyFreezeOrScale(Entity entity, double amp) {
+        Vec3 current = entity.getDeltaMovement();
+        CompoundTag pdata = entity.getPersistentData();
+        if (Math.abs(amp) < 1.0E-6) {
+            UUID id = entity.getUUID();
+            if (!savedVelocities.containsKey(id)) {
+                savedVelocities.put(id, current);
+                pdata.putDouble("adams_limitless_prev_vx", current.x);
+                pdata.putDouble("adams_limitless_prev_vy", current.y);
+                pdata.putDouble("adams_limitless_prev_vz", current.z);
+                pdata.putBoolean("adams_limitless_frozen", true);
+            }
+
+            entity.setDeltaMovement(Vec3.ZERO);
+            if (entity instanceof Projectile) {
+                try {
+                    entity.setNoGravity(true);
+                } catch (Throwable var8) {
+                }
+            }
+        } else if (!pdata.getBoolean("adams_limitless_frozen") && !savedVelocities.containsKey(entity.getUUID())) {
+            entity.setDeltaMovement(current.scale(amp));
+        }
+
+        entity.hurtMarked = true;
+    }
+
+    public void restoreLSphere(BlockPos center, Level world, Entity shooter, int radius) {
+        if (!(world instanceof ServerLevel)) {
+        }
+
+        AABB box = (new AABB(center)).inflate((double)Math.max(8, radius * 2), (double)Math.max(8, radius * 2), (double)Math.max(8, radius * 2));
+
+        for(Entity entity : world.getEntities(shooter, box)) {
+            UUID id = entity.getUUID();
+            if (savedVelocities.containsKey(id) || entity.getPersistentData().getBoolean("adams_limitless_frozen")) {
+                Vec3 prev = (Vec3)savedVelocities.get(id);
+                if (prev == null) {
+                    CompoundTag pdata = entity.getPersistentData();
+                    if (pdata.getBoolean("adams_limitless_frozen")) {
+                        double vx = pdata.getDouble("adams_limitless_prev_vx");
+                        double vy = pdata.getDouble("adams_limitless_prev_vy");
+                        double vz = pdata.getDouble("adams_limitless_prev_vz");
+                        prev = new Vec3(vx, vy, vz);
+                    }
+                }
+
+                if (prev != null) {
+                    entity.setDeltaMovement(prev);
+                    entity.hurtMarked = true;
+                    if (entity instanceof Projectile) {
+                        try {
+                            entity.setNoGravity(false);
+                        } catch (Throwable var19) {
+                        }
+                    }
+                }
+
+                savedVelocities.remove(id);
+                CompoundTag pdata = entity.getPersistentData();
+                pdata.remove("adams_limitless_prev_vx");
+                pdata.remove("adams_limitless_prev_vy");
+                pdata.remove("adams_limitless_prev_vz");
+                pdata.remove("adams_limitless_frozen");
+            }
+        }
+
+        if (!savedVelocities.isEmpty()) {
+            for(Entity e : world.getEntities((Entity)null, (new AABB(center)).inflate((double)Math.max(32, radius * 8), (double)Math.max(32, radius * 8), (double)Math.max(32, radius * 8)))) {
+                UUID id = e.getUUID();
+                if (savedVelocities.containsKey(id)) {
+                    Vec3 prev = (Vec3)savedVelocities.remove(id);
+                    if (prev != null) {
+                        e.setDeltaMovement(prev);
+                        e.hurtMarked = true;
+                        e.getPersistentData().remove("adams_limitless_prev_vx");
+                        e.getPersistentData().remove("adams_limitless_prev_vy");
+                        e.getPersistentData().remove("adams_limitless_prev_vz");
+                        e.getPersistentData().remove("adams_limitless_frozen");
+                        if (e instanceof Projectile) {
+                            try {
+                                e.setNoGravity(false);
+                            } catch (Throwable var18) {
+                            }
                         }
                     }
                 }
             }
+        }
+
+    }
+
+    public void spawnParticles(ServerLevel world, BlockPos pos, float aoe, boolean push) {
+        if(!push){
+            for(int i = 0; i < 1 + Math.min(1, aoe); ++i) {
+                double d0 = (double)pos.getX();
+                double d1 = (double)pos.getY();
+                double d2 = (double)pos.getZ();
+                world.sendParticles(GlowParticleData.createData(new ParticleColor(255, 0 , 0)), d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+            }
+        } else {
+            for(int i = 0; i < 1 + Math.min(1, aoe); ++i) {
+                double d0 = (double)pos.getX();
+                double d1 = (double)pos.getY();
+                double d2 = (double)pos.getZ();
+                world.sendParticles(GlowParticleData.createData(new ParticleColor(0, 0, 255)), d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+            }
+        }
     }
 
     @Override

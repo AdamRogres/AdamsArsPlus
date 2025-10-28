@@ -5,10 +5,7 @@ import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.BladeProjectile;
-import com.adamsmods.adamsarsplus.entities.client.BladeRenderer;
-import com.adamsmods.adamsarsplus.entities.client.DivineSmiteRenderer;
-import com.adamsmods.adamsarsplus.entities.client.MeteorRenderer;
-import com.adamsmods.adamsarsplus.entities.client.TempRenderer;
+import com.adamsmods.adamsarsplus.entities.client.*;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.client.renderer.entity.*;
 import com.hollingsworth.arsnouveau.client.renderer.entity.familiar.*;
@@ -41,6 +38,7 @@ public class AdamClientHandler {
         event.registerEntityRenderer(AdamsModEntities.METEOR_SPELL.get(), MeteorRenderer::new);
         event.registerEntityRenderer(AdamsModEntities.BLADE_PROJ.get(), BladeRenderer::new);
         //event.registerEntityRenderer(AdamsModEntities.BLADE_PROJ.get(), TempRenderer::new);
+        event.registerBlockEntityRenderer(ModBlocks.AUTO_TURRET_BLOCK_TILE.get(), AutoTurretRenderer::new);
     }
 
     public static void init(final FMLClientSetupEvent evt) {

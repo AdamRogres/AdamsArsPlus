@@ -5,34 +5,34 @@
   "inputItems": [
     {
       "item": {
-        "item": "adamsarsplus:void_soul"
+        "item": "adamsarsplus:flame_soul"
       }
     },
     {
       "item": {
-        "item": "adamsarsplus:void_soul"
+        "item": "adamsarsplus:flame_soul"
       }
     },
     {
       "item": {
-        "item": "adamsarsplus:void_soul"
+        "item": "adamsarsplus:flame_soul"
       }
     },
     {
       "item": {
-        "item": "ars_nouveau:abjuration_essence"
+        "item": "minecraft:soul_campfire"
       }
     },
     {
       "item": {
-        "item": "minecraft:end_crystal"
+        "item": "minecraft:lava_bucket"
       }
     },
     {
       "item": {
-        "item": "minecraft:dragon_head"
+        "item": "minecraft:soul_lantern"
       }
     }
   ],
-  "output": "adamsarsplus:glyph_effectannihilate"
+  "output": "adamsarsplus:glyph_effectblueflame"
 }

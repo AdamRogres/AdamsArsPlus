@@ -1,0 +1,39 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:enchanters_stopwatch"
+  },
+  "pedestalItems": [
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "minecraft:clock"
+    }
+  ],
+  "sourceCost": 7000
+}

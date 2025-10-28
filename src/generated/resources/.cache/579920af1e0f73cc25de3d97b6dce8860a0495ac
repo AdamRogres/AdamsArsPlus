@@ -1,4 +1,4 @@
-// 1.20.1	2025-01-14T21:54:31.5579346	Example Apparatus
+// 1.20.1	2025-10-27T20:20:59.8626167	Example Apparatus
 83b48f2ecc99dd5e7742a42fe87280523b1ec243 data/adamsarsplus/recipes/adam_boots.json
 03f39f867c175af62b12a77f3fd8d70f52ec2f92 data/adamsarsplus/recipes/adam_boots_a.json
 06e795ceeb7f3bd6a67171319be1cabf73502435 data/adamsarsplus/recipes/adam_hood.json
@@ -24,6 +24,8 @@ ca0819036ac7b90339802f2c74456b99c9a01d43 data/adamsarsplus/recipes/camr_leggings
 c6394c48b37a38447418b1b54747204965301d2d data/adamsarsplus/recipes/camr_robes.json
 326830e1dba134864dc7bfde3e48fe444e705d7a data/adamsarsplus/recipes/camr_robes_a.json
 609d29eb69ec865300b19193cd31b9a4b9ee1dce data/adamsarsplus/recipes/elemental_soul.json
+656a9d26c1f85277d23387ebae5bbaec992f1f76 data/adamsarsplus/recipes/enchanters_stopwatch.json
+ed09ca7da2eb3cb85182e6d037b09f6694775c93 data/adamsarsplus/recipes/generals_wheel.json
 e9d200b563bc4d94cf63b61ad14903bcb9740b98 data/adamsarsplus/recipes/mana_diamond.json
 a44d65b92d1ccb453d7313a890e18add62414107 data/adamsarsplus/recipes/matt_boots.json
 846076f83b2c421c14eb2aa5023a6d10d7a37820 data/adamsarsplus/recipes/matt_boots_a.json

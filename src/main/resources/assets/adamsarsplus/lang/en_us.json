@@ -114,8 +114,6 @@
 	"item.adamsarsplus.thread_draconic": 				"Thread of Draconic Hex",
 	"adamsarsplus.perk_desc.thread_draconic":			"Inflicts a draconic curse upon spell targets when using a damaging spell.",
 
-
-
 	"item.adamsarsplus.mana_diamond": 					"Mana Diamond",
 	"item.adamsarsplus.mage_cloth": 					"Mage Cloth",
 	"item.adamsarsplus.flame_soul": 					"Flame Soul",
@@ -128,11 +126,13 @@
 	"item.adamsarsplus.void_soul": 						"Void Soul",
 
 	"item.adamsarsplus.enchanters_stopwatch": 			"Enchanters Stopwatch",
+	"item.adamsarsplus.generals_wheel": 				"General's Wheel",
 
 	"item.adamsarsplus.ritual_mage_summon": 			"Summon Mage",
 	"item.adamsarsplus.ritual_ten_shadows": 			"Challenge Shikigami",
 
 	"block.adamsarsplus.domain_shell_block": 			"Domain Shell",
+	"block.adamsarsplus.auto_turret_block": 			"Auto Spell Turret",
 
 	"effect.adamsarsplus.limitless": 					"Limitless",
 	"effect.adamsarsplus.domain_burnout": 				"Domain Burnout",

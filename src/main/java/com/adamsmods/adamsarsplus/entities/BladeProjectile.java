@@ -5,6 +5,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -15,7 +17,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.common.util.FakePlayer;
 
 import static net.minecraft.world.item.Items.IRON_SWORD;
 
@@ -48,8 +52,14 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         super.tick();
 
         this.age++;
-        if(age > 100){
+        if(this.inGround){
+            this.age = this.age + 2;
+        }
+        if(age > 40){
             this.setNoGravity(false);
+        }
+        if(age > 80){
+            this.remove(RemovalReason.DISCARDED);
         }
     }
 
@@ -86,7 +96,14 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
             target.setSecondsOnFire(i * 4);
         }
 
-        boolean flag = target.hurt(attacker.damageSources().mobAttack(attacker), f);
+        boolean flag;
+        if(this.getOwner() == null){
+            flag = target.hurt(this.damageSources().arrow(this, this), f);
+        } else {
+            flag = target.hurt(attacker.damageSources().mobAttack(attacker), f);
+            attacker.setLastHurtMob(target);
+        }
+
         if (flag) {
             if (f1 > 0.0F && target instanceof LivingEntity) {
                 ((LivingEntity)target).knockback((double)(f1 * 0.5F), (double)Mth.sin(this.getYRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(this.getYRot() * ((float)Math.PI / 180F))));
@@ -99,7 +116,6 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
             }
 
             this.doEnchantDamageEffects(attacker, target);
-            attacker.setLastHurtMob(target);
         }
 
         return flag;

@@ -5,6 +5,7 @@ import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.effects.*;
 import com.adamsmods.adamsarsplus.item.EnchantersStopwatch;
+import com.adamsmods.adamsarsplus.item.GeneralsWheel;
 import com.adamsmods.adamsarsplus.item.MagicItems;
 import com.adamsmods.adamsarsplus.item.RegularItems;
 import com.adamsmods.adamsarsplus.block.ModBlocks.*;
@@ -102,6 +103,7 @@ public class ModRegistry {
     public static final RegistryObject<ModItem> TRUE_ELEMENTAL_SOUL;
 
     public static final RegistryObject<EnchantersStopwatch> ENCHANTERS_STOPWATCH;
+    public static final RegistryObject<GeneralsWheel> GENERALS_WHEEL;
 
     public static final RegistryObject<MageMagicArmor> CADE_BOOTS;
     public static final RegistryObject<MageMagicArmor> CADE_LEGGINGS;
@@ -207,6 +209,7 @@ public class ModRegistry {
 
         // Other Items
         ENCHANTERS_STOPWATCH = ITEMS.register("enchanters_stopwatch", () -> new EnchantersStopwatch(new Item.Properties().stacksTo(1)));
+        GENERALS_WHEEL       = ITEMS.register("generals_wheel", () -> new GeneralsWheel(new Item.Properties().stacksTo(1)));
 
         // Armor Sets
         CADE_BOOTS          = ITEMS.register("cade_boots",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS));

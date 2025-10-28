@@ -26,6 +26,7 @@ import com.hollingsworth.arsnouveau.common.datagen.ImbuementRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectExchange;
+import com.hollingsworth.arsnouveau.common.spell.method.MethodSelf;
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -39,6 +40,7 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
@@ -52,6 +54,7 @@ import java.util.function.Consumer;
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.prefix;
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.AIR_ESSENCE;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.SUMMONING_FOCUS;
 import static com.hollingsworth.arsnouveau.setup.registry.RegistryHelper.getRegistryName;
 import static net.minecraft.world.item.Items.*;
 
@@ -122,12 +125,10 @@ public class ArsProviders {
             recipes.add(get(AugmentDurationDownThree.INSTANCE).withItem(AugmentDurationDownTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(TRUE_ELEMENTAL_SOUL));
             recipes.add(get(AugmentDurationDownTwo.INSTANCE).withItem(AugmentDurationDown.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND, 4).withItem(ELEMENTAL_SOUL));
             recipes.add(get(AugmentOpenDomain.INSTANCE).withItem(VOID_SOUL, 8).withItem(NETHER_STAR));
-
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND, 8).withItem(NETHER_STAR));
             recipes.add(get(EffectDomain.INSTANCE).withItem(TRUE_ELEMENTAL_SOUL,4).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
-            recipes.add(get(EffectLimitless.INSTANCE).withItem(ItemsRegistry.ABJURATION_ESSENCE, 3).withItem(VOID_SOUL, 6));
             recipes.add(get(EffectSwapTarget.INSTANCE).withItem(EMERALD_BLOCK).withItem(EffectExchange.INSTANCE.getGlyph().asItem()).withItem(ENDER_EYE, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
-
+            recipes.add(get(FilterNotSelf.INSTANCE).withItem(MethodSelf.INSTANCE.getGlyph().asItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
             recipes.add(get(EffectSimpleDomain.INSTANCE).withItem(ELEMENTAL_SOUL,4).withItem(MANA_DIAMOND,4).withItem(ItemsRegistry.CONJURATION_ESSENCE));
 
             recipes.add(get(EffectEruption.INSTANCE).withItem(FLAME_SOUL,3).withItem(ItemsRegistry.FIRE_ESSENCE,2).withItem(FLINT_AND_STEEL));
@@ -135,10 +136,16 @@ public class ArsProviders {
             recipes.add(get(EffectRaiseEarth.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
             recipes.add(get(EffectDivineSmite.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(AIR_ESSENCE,2).withItem(LIGHTNING_ROD));
             recipes.add(get(EffectMeteorSwarm.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE,2).withItem(FIRE_CHARGE));
-            recipes.add(get(EffectSummonUndead_boss.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE).withItem(WITHER_SKELETON_SKULL).withItem(ItemsRegistry.ENCHANTERS_SWORD));
-            recipes.add(get(EffectFracture.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
 
-            recipes.add(get(EffectAnnihilate.INSTANCE).withItem(VOID_SOUL,3).withItem(ItemsRegistry.ABJURATION_ESSENCE,2).withItem(CHORUS_FRUIT));
+            recipes.add(get(EffectBlueFlame.INSTANCE).withItem(FLAME_SOUL,3).withItem(SOUL_CAMPFIRE).withItem(LAVA_BUCKET).withItem(SOUL_LANTERN));
+
+            recipes.add(get(EffectFracture.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
+            recipes.add(get(EffectDismantle.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(SHEARS).withItem(ItemsRegistry.SPLIT_ARROW).withItem(NETHERITE_SWORD));
+            recipes.add(get(EffectSummonUndead_boss.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE).withItem(WITHER_SKELETON_SKULL).withItem(ItemsRegistry.ENCHANTERS_SWORD));
+            recipes.add(get(EffectConjureBlade.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE).withItem(DIAMOND_SWORD).withItem(DIAMOND_AXE));
+
+            recipes.add(get(EffectLimitless.INSTANCE).withItem(ItemsRegistry.ABJURATION_ESSENCE, 2).withItem(CHORUS_FRUIT).withItem(VOID_SOUL, 3));
+            recipes.add(get(EffectAnnihilate.INSTANCE).withItem(VOID_SOUL,3).withItem(ItemsRegistry.ABJURATION_ESSENCE,1).withItem(END_CRYSTAL).withItem(DRAGON_HEAD));
 
             recipes.add(get(MethodDetonate.INSTANCE).withItem(FLAME_SOUL).withItem(GUNPOWDER,2).withItem(ARROW, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
             recipes.add(get(PropagateDetonate.INSTANCE).withItem(MethodDetonate.INSTANCE.getGlyph().asItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
@@ -174,6 +181,9 @@ public class ArsProviders {
             recipes.add(builder().withSourceCost(10000).withPedestalItem(8, ItemsRegistry.SOURCE_GEM).withReagent(DIAMOND).withResult(MANA_DIAMOND).build());
             recipes.add(builder().withSourceCost(10000).withPedestalItem(1, FLAME_SOUL).withPedestalItem(1, FROST_SOUL).withPedestalItem(1, EARTH_SOUL).withReagent(MANA_DIAMOND).withResult(ELEMENTAL_SOUL).build());
             recipes.add(builder().withSourceCost(10000).withPedestalItem(1, FLAME_SOUL).withPedestalItem(1, FROST_SOUL).withPedestalItem(1, EARTH_SOUL).withPedestalItem(1, HERO_SOUL).withPedestalItem(1, LIGHTNING_SOUL).withReagent(MANA_DIAMOND).withResult(TRUE_ELEMENTAL_SOUL).build());
+
+            recipes.add(builder().withSourceCost(7000).withPedestalItem(3, GOLD_INGOT).withPedestalItem(2, REPEATER).withPedestalItem(1, MANA_DIAMOND).withPedestalItem(2, LIGHTNING_SOUL).withReagent(CLOCK).withResult(ENCHANTERS_STOPWATCH).build());
+            recipes.add(builder().withSourceCost(2500).withPedestalItem(4, GOLD_INGOT).withPedestalItem(4, MANA_DIAMOND).withReagent(SUMMONING_FOCUS).withResult(GENERALS_WHEEL).build());
 
             // Perks
             recipes.add(builder().withResult(getPerkItem(SixeyesPerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, VOID_SOUL).withPedestalItem(2, END_CRYSTAL).withPedestalItem(2, NETHERITE_BLOCK).build());
