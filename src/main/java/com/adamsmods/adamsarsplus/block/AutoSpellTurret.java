@@ -2,18 +2,24 @@ package com.adamsmods.adamsarsplus.block;
 
 import com.adamsmods.adamsarsplus.block.tile.AutoTurretTile;
 import com.hollingsworth.arsnouveau.api.ANFakePlayer;
+import com.hollingsworth.arsnouveau.api.item.ICasterTool;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.TileCaster;
+import com.hollingsworth.arsnouveau.api.util.CasterUtil;
 import com.hollingsworth.arsnouveau.api.util.SourceUtil;
 import com.hollingsworth.arsnouveau.common.block.RotatingSpellTurret;
+import com.hollingsworth.arsnouveau.common.block.tile.BasicSpellTurretTile;
 import com.hollingsworth.arsnouveau.common.block.tile.RotatingTurretTile;
+import com.hollingsworth.arsnouveau.common.block.tile.TimerSpellTurretTile;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.items.WarpScroll;
 import com.hollingsworth.arsnouveau.common.network.Networking;
 import com.hollingsworth.arsnouveau.common.network.PacketOneShotAnimation;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodProjectile;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
+import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.core.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -35,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 
+import static net.minecraft.world.item.Items.COMMAND_BLOCK;
+
 public class AutoSpellTurret extends RotatingSpellTurret {
     public static HashMap<AbstractCastMethod, ITurretBehavior> ROT_TURRET_BEHAVIOR_MAP = new HashMap();
 
@@ -46,17 +54,91 @@ public class AutoSpellTurret extends RotatingSpellTurret {
     }
 
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-        /*
-        if (player.getItemInHand(handIn).getItem() instanceof WarpScroll) {
-            BlockPos aimPos = WarpScroll.WarpScrollData.get(player.getItemInHand(handIn)).getPos();
-            BlockEntity var9 = player.level().getBlockEntity(pos);
+
+        ItemStack stack = player.getItemInHand(handIn);
+        if (handIn == InteractionHand.MAIN_HAND) {
+            if (stack.getItem() instanceof ICasterTool || worldIn.isClientSide) {
+                if (handIn != InteractionHand.MAIN_HAND) {
+                    return InteractionResult.PASS;
+                } else if (worldIn.isClientSide) {
+                    return InteractionResult.SUCCESS;
+                } else {
+                    Spell spell = CasterUtil.getCaster(stack).getSpell();
+                    if (!spell.isEmpty()) {
+                        if (spell.getCastMethod() == null) {
+                            PortUtil.sendMessage(player, Component.translatable("ars_nouveau.alert.turret_needs_form"));
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        if (!TURRET_BEHAVIOR_MAP.containsKey(spell.getCastMethod())) {
+                            PortUtil.sendMessage(player, Component.translatable("ars_nouveau.alert.turret_type"));
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        BlockEntity var10 = worldIn.getBlockEntity(pos);
+                        if (var10 instanceof BasicSpellTurretTile) {
+                            BasicSpellTurretTile tile = (BasicSpellTurretTile)var10;
+                            tile.spellCaster.copyFromCaster(CasterUtil.getCaster(stack));
+                            tile.spellCaster.setSpell(spell.clone());
+                            tile.updateBlock();
+                            PortUtil.sendMessage(player, Component.translatable("ars_nouveau.alert.spell_set"));
+                            worldIn.sendBlockUpdated(pos, state, state, 2);
+                        }
+                    }
+
+                    return InteractionResult.PASS;
+                }
+            }
+
+            BlockEntity var9 = worldIn.getBlockEntity(pos);
             if (var9 instanceof AutoTurretTile) {
-                AutoTurretTile tile = (AutoTurretTile)var9;
-                tile.aim(aimPos, player);
+                AutoTurretTile autoSpellTurretTile = (AutoTurretTile) var9;
+
+                if(player.isShiftKeyDown() && !autoSpellTurretTile.creative){
+                    if(autoSpellTurretTile.owner == null){
+                        autoSpellTurretTile.owner = player;
+                        PortUtil.sendMessage(player, Component.literal("Set you as turret owner."));
+                        return InteractionResult.SUCCESS;
+                    } else {
+                        if(player == autoSpellTurretTile.owner){
+                            autoSpellTurretTile.owner = null;
+                            PortUtil.sendMessage(player, Component.literal("Turret owner removed."));
+                            return InteractionResult.SUCCESS;
+                        }
+                    }
+                } else if(stack == COMMAND_BLOCK.getDefaultInstance()){
+                    if(autoSpellTurretTile.creative){
+                        autoSpellTurretTile.creative = false;
+                        PortUtil.sendMessage(player, Component.literal("Turret set as Survival Mode."));
+                        return InteractionResult.SUCCESS;
+                    } else {
+                        autoSpellTurretTile.creative = true;
+                        PortUtil.sendMessage(player, Component.literal("Turret set as Creative Mode."));
+                        return InteractionResult.SUCCESS;
+                    }
+                } else if(!autoSpellTurretTile.creative && (autoSpellTurretTile.owner == null || autoSpellTurretTile.owner == player)){
+                    autoSpellTurretTile.mode++;
+                    if(autoSpellTurretTile.mode >= 4){
+                        autoSpellTurretTile.mode = 0;
+                    }
+                    autoSpellTurretTile.target = null;
+
+                    if(autoSpellTurretTile.mode == 0){
+                        PortUtil.sendMessage(player, Component.literal("Targeting: Players"));
+                    } else if(autoSpellTurretTile.mode == 1){
+                        PortUtil.sendMessage(player, Component.literal("Targeting: Non-owner"));
+                    } else if(autoSpellTurretTile.mode == 2){
+                        PortUtil.sendMessage(player, Component.literal("Targeting: Non-Players"));
+                    } else {
+                        PortUtil.sendMessage(player, Component.literal("Targeting: Monsters"));
+                    }
+
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
-        */
-        return super.use(state, worldIn, pos, player, handIn, hit);
+
+        return InteractionResult.SUCCESS;
     }
 
     public void shootSpell(ServerLevel world, BlockPos pos) {

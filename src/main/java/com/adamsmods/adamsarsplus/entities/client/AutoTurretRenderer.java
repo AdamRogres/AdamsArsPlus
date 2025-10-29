@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus.entities.client;
 
 import com.adamsmods.adamsarsplus.block.tile.AutoTurretTile;
+import com.hollingsworth.arsnouveau.client.renderer.item.GenericItemBlockRenderer;
 import com.hollingsworth.arsnouveau.client.renderer.tile.ArsGeoBlockRenderer;
 import com.hollingsworth.arsnouveau.client.renderer.tile.GenericModel;
 import com.hollingsworth.arsnouveau.common.block.tile.RotatingTurretTile;
@@ -61,5 +62,9 @@ public class AutoTurretRenderer extends ArsGeoBlockRenderer<AutoTurretTile> {
     }
 
     protected void rotateBlock(Direction facing, PoseStack poseStack) {
+    }
+
+    public static GenericItemBlockRenderer getISTER() {
+        return new GenericItemBlockRenderer(model);
     }
 }

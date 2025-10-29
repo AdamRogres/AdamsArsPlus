@@ -3,6 +3,7 @@ package com.adamsmods.adamsarsplus.block;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.block.tile.AutoTurretTile;
 import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
+import com.adamsmods.adamsarsplus.entities.client.AutoTurretRenderer;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.client.renderer.tile.BasicTurretRenderer;
 import com.hollingsworth.arsnouveau.common.block.tile.MageBlockTile;
@@ -47,7 +48,7 @@ public class ModBlocks {
     public static final RegistryWrapper<AutoSpellTurret> AUTO_TURRET_BLOCK = registerBlockAndItem("auto_turret_block", AutoSpellTurret::new, (reg) -> new RendererBlockItem(reg, defaultItemProperties()) {
         @Override
         public Supplier<BlockEntityWithoutLevelRenderer> getRenderer() {
-            return BasicTurretRenderer::getISTER;
+            return AutoTurretRenderer::getISTER;
         }
     }.withTooltip(Component.translatable("ars_nouveau.turret.tooltip")));
     public static RegistryWrapper<BlockEntityType<AutoTurretTile>> AUTO_TURRET_BLOCK_TILE = registerTile("auto_turret", AutoTurretTile::new, AUTO_TURRET_BLOCK);
