@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus.datagen;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import net.minecraft.core.HolderLookup;
@@ -9,6 +10,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -71,19 +73,6 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
     @Override
     public @NotNull String getName() {
         return "ArsPlus Item Tags";
-    }
-
-    public static class AdamBlockTagsProvider extends BlockTagsProvider {
-
-        public AdamBlockTagsProvider(DataGenerator gen, CompletableFuture<HolderLookup.Provider> provider, @javax.annotation.Nullable ExistingFileHelper existingFileHelper) {
-            super(gen.getPackOutput(), provider, MOD_ID, existingFileHelper);
-        }
-
-        @Override
-        protected void addTags(HolderLookup.@NotNull Provider provider) {
-
-
-        }
     }
 
 }

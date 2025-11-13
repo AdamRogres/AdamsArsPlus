@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "adamsarsplus:block/lightning_soul_brick_block",
+    "top": "adamsarsplus:block/lightning_soul_brick_block",
+    "side": "adamsarsplus:block/lightning_soul_brick_block"
+  }
+}

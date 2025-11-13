@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "adamsarsplus:block/earth_soul_brick_block_4",
+    "top": "adamsarsplus:block/earth_soul_brick_block_4",
+    "side": "adamsarsplus:block/earth_soul_brick_block_4"
+  }
+}

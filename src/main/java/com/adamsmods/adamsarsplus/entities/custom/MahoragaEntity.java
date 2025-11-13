@@ -40,6 +40,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -760,6 +761,18 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     }
 
     // Mahoraga Stuff
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.WARDEN_AMBIENT;
+    }
+
+    protected SoundEvent getHurtSound(DamageSource pDamageSource) {
+        return SoundEvents.WARDEN_HURT;
+    }
+
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.WARDEN_DEATH;
+    }
+
     public boolean canAdaptCheck(MahoragaEntity entity){
         boolean ret = false;
 
@@ -993,10 +1006,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
             this.entity.applyDisruption(this.entity, pEnemy);
 
-            this.entity.attackBCooldown = 80;
+            if(this.entity.level().random.nextInt(0,100) < 40){
+                this.entity.attackBCooldown = 40;
+            }
+
             this.entity.rangedAttackCooldown = 0;
 
-            if(!this.entity.canSlashAttack && this.entity.level().getRandom().nextInt(0,100) < 15){
+            if(!this.entity.canSlashAttack && this.entity.level().random.nextInt(0,100) < 15){
                 if(canAdaptCheck(this.entity)){
                     this.entity.canSlashAttack = true;
                 }
@@ -1092,7 +1108,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
                     if(pEnemy.isBlocking()){
                         if(pEnemy instanceof Player playerEnemy){
-                            this.entity.attackBCooldown += 80;
+                            this.entity.attackBCooldown += 40;
                         }
                     }
                 }
@@ -1138,8 +1154,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
             this.entity.applyDisruption(this.entity, pEnemy);
 
-            if(this.entity.level().getRandom().nextInt(0,100) < 25){
-                this.entity.attackBCooldown = 80;
+            if(this.entity.level().random.nextInt(0,100) < 25){
+                this.entity.attackBCooldown = 40;
             } else {
                 this.entity.attackB2Cooldown = 80;
             }

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "adamsarsplus:frozen_library",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1323465883,
+    "spacing": 36,
+    "separation": 18,
+    "type": "minecraft:random_spread"
+  }
+}

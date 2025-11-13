@@ -1,6 +1,5 @@
 package com.adamsmods.adamsarsplus.datagen;
 
-import com.adamsmods.adamsarsplus.ArsNouveauRegistry;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
@@ -12,18 +11,12 @@ import com.adamsmods.adamsarsplus.recipe.jei.AArmorRecipe;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
 import com.adamsmods.adamsarsplus.ritual.RitualTenShadows;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.EnchantingApparatusRecipe;
-import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.registry.RitualRegistry;
-import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
-import com.hollingsworth.arsnouveau.api.spell.AbstractCastMethod;
-import com.hollingsworth.arsnouveau.api.spell.AbstractEffect;
-import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.GlyphRecipe;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.ImbuementRecipe;
 import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.GlyphRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.ImbuementRecipeProvider;
-import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectExchange;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodSelf;
@@ -32,26 +25,23 @@ import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 
-import net.minecraft.world.level.block.SkullBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.prefix;
+import static com.adamsmods.adamsarsplus.block.ModBlocks.*;
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.AIR_ESSENCE;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.SUMMONING_FOCUS;
@@ -150,12 +140,10 @@ public class ArsProviders {
             recipes.add(get(MethodDetonate.INSTANCE).withItem(FLAME_SOUL).withItem(GUNPOWDER,2).withItem(ARROW, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
             recipes.add(get(PropagateDetonate.INSTANCE).withItem(MethodDetonate.INSTANCE.getGlyph().asItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
 
-
             for (GlyphRecipe recipe : recipes) {
                 Path path = getScribeGlyphPath(output, recipe.output.getItem());
                 saveStable(cache, recipe.asRecipe(), path);
             }
-
         }
 
 
@@ -178,11 +166,11 @@ public class ArsProviders {
         @Override
         public void collectJsons(CachedOutput cache) {
             // Basic
-            recipes.add(builder().withSourceCost(10000).withPedestalItem(8, ItemsRegistry.SOURCE_GEM).withReagent(DIAMOND).withResult(MANA_DIAMOND).build());
+            recipes.add(builder().withSourceCost(500).withPedestalItem(8, ItemsRegistry.SOURCE_GEM).withReagent(DIAMOND).withResult(MANA_DIAMOND).build());
             recipes.add(builder().withSourceCost(10000).withPedestalItem(1, FLAME_SOUL).withPedestalItem(1, FROST_SOUL).withPedestalItem(1, EARTH_SOUL).withReagent(MANA_DIAMOND).withResult(ELEMENTAL_SOUL).build());
             recipes.add(builder().withSourceCost(10000).withPedestalItem(1, FLAME_SOUL).withPedestalItem(1, FROST_SOUL).withPedestalItem(1, EARTH_SOUL).withPedestalItem(1, HERO_SOUL).withPedestalItem(1, LIGHTNING_SOUL).withReagent(MANA_DIAMOND).withResult(TRUE_ELEMENTAL_SOUL).build());
 
-            recipes.add(builder().withSourceCost(7000).withPedestalItem(3, GOLD_INGOT).withPedestalItem(2, REPEATER).withPedestalItem(1, MANA_DIAMOND).withPedestalItem(2, LIGHTNING_SOUL).withReagent(CLOCK).withResult(ENCHANTERS_STOPWATCH).build());
+            recipes.add(builder().withSourceCost(7000).withPedestalItem(3, GOLD_INGOT).withPedestalItem(2, REPEATER).withPedestalItem(1, MANA_DIAMOND).withPedestalItem(2, AUTO_TURRET_BLOCK.asItem()).withReagent(CLOCK).withResult(ENCHANTERS_STOPWATCH).build());
             recipes.add(builder().withSourceCost(2500).withPedestalItem(4, GOLD_INGOT).withPedestalItem(4, MANA_DIAMOND).withReagent(SUMMONING_FOCUS).withResult(GENERALS_WHEEL).build());
 
             // Perks
@@ -259,7 +247,6 @@ public class ArsProviders {
             recipes.add(new AArmorRecipe(5,6,builder().withResult(ADAM_LEGGINGS_A).withReagent(ADAM_LEGGINGS).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(10000).keepNbtOfReagent(true).build()));
             recipes.add(new AArmorRecipe(5,6,builder().withResult(ADAM_BOOTS_A).withReagent(ADAM_BOOTS).withPedestalItem(4,VOID_SOUL).withPedestalItem(4,NETHERITE_INGOT).withSourceCost(10000).keepNbtOfReagent(true).build()));
 
-
             Path output = this.generator.getPackOutput().getOutputFolder();
             for (EnchantingApparatusRecipe g : recipes) {
                 if (g != null) {
@@ -289,12 +276,35 @@ public class ArsProviders {
         public void collectJsons(CachedOutput cache) {
             System.out.println("started Imbument>collect jsons");
 
+            recipes.add(new ImbuementRecipe("fire_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(FIRE_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(FLAME_SOUL));
+            recipes.add(new ImbuementRecipe("fire_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(FIRE_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(FLAME_SOUL));
+            recipes.add(new ImbuementRecipe("fire_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(FIRE_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(FLAME_SOUL));
+
+            recipes.add(new ImbuementRecipe("frost_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(FROST_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(FROST_SOUL));
+            recipes.add(new ImbuementRecipe("frost_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(FROST_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(FROST_SOUL));
+            recipes.add(new ImbuementRecipe("frost_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(FROST_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(FROST_SOUL));
+
+            recipes.add(new ImbuementRecipe("earth_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(EARTH_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(EARTH_SOUL));
+            recipes.add(new ImbuementRecipe("earth_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(EARTH_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(EARTH_SOUL));
+            recipes.add(new ImbuementRecipe("earth_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(EARTH_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(EARTH_SOUL));
+
+            recipes.add(new ImbuementRecipe("lightning_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(LIGHTNING_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(LIGHTNING_SOUL));
+            recipes.add(new ImbuementRecipe("lightning_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(LIGHTNING_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(LIGHTNING_SOUL));
+            recipes.add(new ImbuementRecipe("lightning_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(LIGHTNING_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(LIGHTNING_SOUL));
+
+            recipes.add(new ImbuementRecipe("holy_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(HOLY_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(HERO_SOUL));
+            recipes.add(new ImbuementRecipe("holy_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(HOLY_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(HERO_SOUL));
+            recipes.add(new ImbuementRecipe("holy_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(HOLY_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(HERO_SOUL));
+
+            recipes.add(new ImbuementRecipe("void_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(VOID_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(VOID_SOUL));
+            recipes.add(new ImbuementRecipe("void_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(VOID_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(VOID_SOUL));
+            recipes.add(new ImbuementRecipe("void_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(VOID_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(VOID_SOUL));
+
             Path output = generator.getPackOutput().getOutputFolder();
             for (ImbuementRecipe g : recipes) {
                 Path path = getRecipePath(output, g.getId().getPath());
                 saveStable(cache, g.asRecipe(), path);
             }
-
         }
 
         protected Path getRecipePath(Path pathIn, String str) {

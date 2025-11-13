@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "adamsarsplus:block/void_soul_brick_slab"
+    },
+    "type=double": {
+      "model": "adamsarsplus:block/void_soul_brick_block"
+    },
+    "type=top": {
+      "model": "adamsarsplus:block/void_soul_brick_slab_top"
+    }
+  }
+}

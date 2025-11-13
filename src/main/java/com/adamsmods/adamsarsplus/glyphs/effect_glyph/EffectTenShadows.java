@@ -54,6 +54,9 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+
+                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), 1200));
+                    shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), 2400));
                 }
                 case 3 -> {
                     // Round Deer
@@ -62,6 +65,8 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+
+                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
                 }
                 case 2 -> {
                     // Rabbit Escape
@@ -70,6 +75,8 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+
+                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
                 }
                 case 1 -> {
                     // Nue
@@ -78,6 +85,8 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+
+                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
                 }
                 default -> {
                     // Divine Dogs
@@ -90,10 +99,9 @@ public class EffectTenShadows extends AbstractEffect{
                         tsentity.setOwner(shooter);
                         this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
                     }
+                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
                 }
             }
-
-            shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
         } else if(shooter.hasEffect(TENSHADOWS_EFFECT.get())){
             shooter.removeEffect(TENSHADOWS_EFFECT.get());
             shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), 200));

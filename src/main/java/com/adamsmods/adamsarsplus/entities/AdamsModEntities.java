@@ -123,7 +123,7 @@ public class AdamsModEntities {
             AdamsLibEntityNames.MAGE,
             EntityType.Builder.<MysteriousMageEntity>of(MysteriousMageEntity::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f)
-                    .clientTrackingRange(10));
+                    .setTrackingRange(10));
 
     // Ten Shadows
     public static final RegistryObject<EntityType<DivineDogEntity>> DIVINE_DOG = registerEntity(

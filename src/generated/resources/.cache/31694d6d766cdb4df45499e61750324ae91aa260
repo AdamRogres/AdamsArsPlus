@@ -1,0 +1,4 @@
+// 1.20.1	2025-11-08T14:17:14.7841486	ArsPlus Block Tags
+e207a27ddb515c3850f20c947a12beb36bd661dc data/ars_nouveau/tags/blocks/break_blacklist.json
+950f8927b15b73b04cd606d199e9b09a6e363342 data/minecraft/tags/blocks/mineable/pickaxe.json
+2e81ccf3e728d1f545b886bea7406c7162fe73ad data/minecraft/tags/blocks/needs_diamond_tool.json

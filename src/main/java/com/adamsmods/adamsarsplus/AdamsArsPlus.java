@@ -5,6 +5,7 @@ import com.adamsmods.adamsarsplus.datagen.CommunityMages;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.client.*;
 import com.adamsmods.adamsarsplus.events.AdamsEvents;
+import com.adamsmods.adamsarsplus.loot.ModLootModifiers;
 import com.adamsmods.adamsarsplus.network.AdamNetworking;
 import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.adamsmods.adamsarsplus.registry.AdamClientHandler;
@@ -51,6 +52,8 @@ public class AdamsArsPlus {
         modbus.addListener(this::doClientStuff);
         modbus.addListener(this::doTabThings);
 
+        ModLootModifiers.register(modbus);
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -66,6 +69,7 @@ public class AdamsArsPlus {
         ArsNouveauRegistry.registerPerks();
 
         AdamNetworking.registerMessages();
+
 
         event.enqueueWork(AdamsModEntities::registerPlacements);
 

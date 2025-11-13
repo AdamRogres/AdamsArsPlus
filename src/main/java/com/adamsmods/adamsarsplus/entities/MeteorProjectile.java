@@ -59,7 +59,7 @@ public class MeteorProjectile extends EntityProjectileSpell {
         super.tick();
 
         iTime++;
-        if(!level().isClientSide && iTime % (20 - 2 * accelerates) == 0){
+        if(!level().isClientSide && iTime % Math.max(20 - 2 * accelerates, 2) == 0){
             this.spellResolver.spell.add(AugmentAmplify.INSTANCE);
         }
     }

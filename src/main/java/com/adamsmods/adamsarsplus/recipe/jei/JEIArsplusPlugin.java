@@ -45,6 +45,7 @@ public class JEIArsplusPlugin  implements IModPlugin {
         registry.addRecipeCategories(new IRecipeCategory[]{ new AArmorRecipeCategory(registry.getJeiHelpers().getGuiHelper())});
     }
 
+    /*
     public void registerRecipes(IRecipeRegistration registry) {
         List<AArmorRecipe> aarmorUpgrades = new ArrayList();
 
@@ -59,7 +60,7 @@ public class JEIArsplusPlugin  implements IModPlugin {
 
 
         registry.addRecipes(A_ARMOR_RECIPE_TYPE, aarmorUpgrades);
-    }
+    }*/
 
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
         registry.addRecipeCatalyst(new ItemStack(BlockRegistry.ENCHANTING_APP_BLOCK), new RecipeType[]{A_ARMOR_RECIPE_TYPE});

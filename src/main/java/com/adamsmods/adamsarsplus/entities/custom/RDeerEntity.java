@@ -440,6 +440,18 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
     // Round Deer Stuff
 
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.HORSE_AMBIENT;
+    }
+
+    protected SoundEvent getHurtSound(DamageSource pDamageSource) {
+        return SoundEvents.HORSE_ANGRY;
+    }
+
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.HORSE_DEATH;
+    }
+
     public void spawnAuraParticles(LivingEntity living, ServerLevel level, double radius, int height) {
         Vec3 livingEyes = living.getEyePosition();
         double x = livingEyes.x;

@@ -6,6 +6,7 @@ import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
 import com.adamsmods.adamsarsplus.entities.client.AutoTurretRenderer;
 import com.adamsmods.adamsarsplus.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.client.renderer.tile.BasicTurretRenderer;
+import com.hollingsworth.arsnouveau.common.block.ModBlock;
 import com.hollingsworth.arsnouveau.common.block.tile.MageBlockTile;
 import com.hollingsworth.arsnouveau.common.items.RendererBlockItem;
 import com.hollingsworth.arsnouveau.common.util.RegistryWrapper;
@@ -14,12 +15,11 @@ import com.mojang.datafixers.types.Type;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -28,6 +28,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 import static com.hollingsworth.arsnouveau.setup.registry.BlockRegistry.getDefaultBlockItem;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.defaultItemProperties;
@@ -38,7 +39,44 @@ public class ModBlocks {
 
 
     // Blocks ---------------------------------------------------
+    public static final RegistryWrapper<ModBlock> FIRE_SOUL_BRICK_BLOCK = registerBlockAndItem("fire_soul_brick_block", () -> new ModBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F).lightLevel(new ToIntFunction<BlockState>() {
+        @Override
+        public int applyAsInt(BlockState value) {
+            return 3;
+        }
+    })));
+    public static final RegistryWrapper<SlabBlock> FIRE_SOUL_BRICK_SLAB = registerBlockAndItem("fire_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F).lightLevel(new ToIntFunction<BlockState>() {
+        @Override
+        public int applyAsInt(BlockState value) {
+            return 3;
+        }
+    })));
+    public static final RegistryWrapper<StairBlock> FIRE_SOUL_BRICK_STAIR = registerBlockAndItem("fire_soul_brick_stair", () -> new StairBlock(() -> FIRE_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F).lightLevel(new ToIntFunction<BlockState>() {
+        @Override
+        public int applyAsInt(BlockState value) {
+            return 3;
+        }
+    })));
 
+    public static final RegistryWrapper<ModBlock> FROST_SOUL_BRICK_BLOCK = registerBlockAndItem("frost_soul_brick_block", () -> new ModBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().friction(0.94F).strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<SlabBlock> FROST_SOUL_BRICK_SLAB = registerBlockAndItem("frost_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().friction(0.94F).strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<StairBlock> FROST_SOUL_BRICK_STAIR = registerBlockAndItem("frost_soul_brick_stair", () -> new StairBlock(() -> FROST_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().friction(0.94F).strength(50.0F, 1200.0F)));
+
+    public static final RegistryWrapper<ModBlock> EARTH_SOUL_BRICK_BLOCK = registerBlockAndItem("earth_soul_brick_block", () -> new ModBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<SlabBlock> EARTH_SOUL_BRICK_SLAB = registerBlockAndItem("earth_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<StairBlock> EARTH_SOUL_BRICK_STAIR = registerBlockAndItem("earth_soul_brick_stair", () -> new StairBlock(() -> EARTH_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+
+    public static final RegistryWrapper<ModBlock> LIGHTNING_SOUL_BRICK_BLOCK = registerBlockAndItem("lightning_soul_brick_block", () -> new ModBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<SlabBlock> LIGHTNING_SOUL_BRICK_SLAB = registerBlockAndItem("lightning_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<StairBlock> LIGHTNING_SOUL_BRICK_STAIR = registerBlockAndItem("lightning_soul_brick_stair", () -> new StairBlock(() -> LIGHTNING_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+
+    public static final RegistryWrapper<ModBlock> HOLY_SOUL_BRICK_BLOCK = registerBlockAndItem("holy_soul_brick_block", () -> new ModBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<SlabBlock> HOLY_SOUL_BRICK_SLAB = registerBlockAndItem("holy_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<StairBlock> HOLY_SOUL_BRICK_STAIR = registerBlockAndItem("holy_soul_brick_stair", () -> new StairBlock(() -> HOLY_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+
+    public static final RegistryWrapper<ModBlock> VOID_SOUL_BRICK_BLOCK = registerBlockAndItem("void_soul_brick_block", () -> new ModBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<SlabBlock> VOID_SOUL_BRICK_SLAB = registerBlockAndItem("void_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
+    public static final RegistryWrapper<StairBlock> VOID_SOUL_BRICK_STAIR = registerBlockAndItem("void_soul_brick_stair", () -> new StairBlock(() -> VOID_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
 
 
     // Other Blocks
@@ -50,13 +88,10 @@ public class ModBlocks {
         public Supplier<BlockEntityWithoutLevelRenderer> getRenderer() {
             return AutoTurretRenderer::getISTER;
         }
-    }.withTooltip(Component.translatable("ars_nouveau.turret.tooltip")));
+    }.withTooltip(Component.translatable("adamsarsplus.turret.tooltip")));
     public static RegistryWrapper<BlockEntityType<AutoTurretTile>> AUTO_TURRET_BLOCK_TILE = registerTile("auto_turret", AutoTurretTile::new, AUTO_TURRET_BLOCK);
 
-
-
     // ----------------------------------------------------------
-
 
     public static <T extends Block> RegistryWrapper<T> registerBlock(String name, Supplier<T> blockSupp) {
         return new RegistryWrapper(BLOCKS.register(name, blockSupp));
@@ -68,13 +103,13 @@ public class ModBlocks {
 
     public static <T extends Block> RegistryWrapper<T> registerBlockAndItem(String name, Supplier<T> blockSupp) {
         RegistryWrapper<T> blockReg = new RegistryWrapper(BLOCKS.register(name, blockSupp));
-        ItemsRegistry.ITEMS.register(name, () -> getDefaultBlockItem((Block)blockReg.get()));
+        ModRegistry.ITEMS.register(name, () -> getDefaultBlockItem((Block)blockReg.get()));
         return blockReg;
     }
 
     public static <T extends Block> RegistryWrapper<T> registerBlockAndItem(String name, Supplier<T> blockSupp, Function<RegistryWrapper<T>, Item> blockItemFunc) {
         RegistryWrapper<T> blockReg = new RegistryWrapper(BLOCKS.register(name, blockSupp));
-        ItemsRegistry.ITEMS.register(name, () -> (Item)blockItemFunc.apply(blockReg));
+        ModRegistry.ITEMS.register(name, () -> (Item)blockItemFunc.apply(blockReg));
         return blockReg;
     }
 

@@ -132,7 +132,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         int radius = 4 + flatAoe;
         Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
 
-        if (!level().isClientSide && age % (20 - 2 * getAccelerates()) == 0) {
+        if (!level().isClientSide && age % Math.max(20 - 2 * getAccelerates(), 2) == 0) {
             if (getOpen()) {
                 for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
                     if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {

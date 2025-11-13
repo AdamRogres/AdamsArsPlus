@@ -11,32 +11,38 @@ import com.hollingsworth.arsnouveau.common.spell.method.MethodProjectile;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.adamsmods.adamsarsplus.block.ModBlocks.AUTO_TURRET_BLOCK_TILE;
+import static com.hollingsworth.arsnouveau.common.block.tile.MobJarTile.loadEntityFromTag;
+import static net.minecraft.world.level.block.Blocks.AIR;
 
 public class AutoTurretTile extends RotatingTurretTile implements IWandable {
-    public LivingEntity owner;
-    public UUID ownerUUID;
     public LivingEntity target;
     public int mode;
     public boolean creative;
@@ -128,50 +134,47 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         if(!this.level.isClientSide){
             if(this.target == null){
                 for (Entity entity : level.getEntities(null, new AABB(this.worldPosition).inflate(30,30,30))) {
-                    if(this.mode == 1){
-                        // Target non-owner
-                        if(entity instanceof LivingEntity && entity != this.owner) {
-                            this.target = (LivingEntity) entity;
-                            ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
-                            break;
-                        }
-                    } else if(this.mode == 2) {
+                    if(this.mode == 1) {
                         // Target non-players
-                        if(entity instanceof LivingEntity && entity != this.owner && !(entity instanceof Player)) {
-                            this.target = (LivingEntity) entity;
-                            ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
-                            break;
+                        if(entity instanceof LivingEntity && !(entity instanceof Player)) {
+                            if(this.isValidTarget(entity)){
+                                this.target = (LivingEntity) entity;
+                                ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
+                                break;
+                            }
                         }
-                    } else if(this.mode == 3){
+                    } else if(this.mode == 2){
                         // Target Monsters
                         if(entity instanceof Monster) {
-                            this.target = (LivingEntity) entity;
-                            ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
-                            break;
+                            if(this.isValidTarget(entity)){
+                                this.target = (LivingEntity) entity;
+                                ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
+                                break;
+                            }
                         }
                     } else {
                         // Target Players
-                        if(entity instanceof Player) {
-                            this.target = (LivingEntity) entity;
-                            ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
-                            break;
+                        if(entity instanceof Player player) {
+                            if(this.isValidTarget(entity)){
+                                if(!player.isCreative() && !player.isSpectator()){
+                                    this.target = (LivingEntity) entity;
+                                    ParticleUtil.beam(this.target.blockPosition(), this.getBlockPos(), this.level);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
-            } else if(this.isTooFar(this.worldPosition, this.target.blockPosition(), 30)){
+            } else if(!this.isValidTarget(this.target)){
                 this.target = null;
                 this.ticksElapsed = 0;
             } else {
-                if(!this.target.isAlive()){
-                    this.target = null;
-                } else {
-                    this.aimAuto(target.blockPosition());
+                this.aimAuto(target.blockPosition());
 
-                    ++this.ticksElapsed;
-                    if (this.ticksPerSignal > 0 && !this.isOff && this.ticksElapsed >= this.ticksPerSignal) {
-                        this.getBlockState().tick((ServerLevel)this.level, this.getBlockPos(), this.getLevel().random);
-                        this.ticksElapsed = 0;
-                    }
+                ++this.ticksElapsed;
+                if (this.ticksPerSignal > 0 && !this.isOff && this.ticksElapsed >= this.ticksPerSignal) {
+                    this.getBlockState().tick((ServerLevel)this.level, this.getBlockPos(), this.getLevel().random);
+                    this.ticksElapsed = 0;
                 }
             }
         }
@@ -230,12 +233,32 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         }
     }
 
+    public boolean isValidTarget(Entity target){
+        return !isTooFar(this.worldPosition, target.blockPosition(), 30) && !checkLineOfSight(this.worldPosition, target.blockPosition(), this.level) && target.isAlive();
+    }
+
     public boolean isTooFar(BlockPos pos1, BlockPos pos2, float distance){
         int diffX = pos1.getX() - pos2.getX();
         int diffY = pos1.getY() - pos2.getY();
         int diffZ = pos1.getZ() - pos2.getZ();
 
         return (distance < (Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ)));
+    }
+
+    public boolean checkLineOfSight(BlockPos pos1, BlockPos pos2, Level world){
+        int diffX = pos1.getX() - pos2.getX();
+        int diffY = pos1.getY() - pos2.getY();
+        int diffZ = pos1.getZ() - pos2.getZ();
+
+        int distance = (int) Math.ceil(Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ));
+
+        for(int i = 0; i < distance; i++){
+            if(world.getBlockState(new BlockPos(pos2.getX() + (int)(i * diffX / distance), pos2.getY() + (int)(i * diffY / distance), pos2.getZ() + (int)(i * diffZ / distance))).getBlock() != AIR){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static double angleBetween(Vec3 a, Vec3 b) {
@@ -257,6 +280,7 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         return Math.max(0, cost);
     }
 
+    @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
 
@@ -264,9 +288,7 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         tag.putFloat("rotationXa", this.rotationX);
         tag.putFloat("neededRotationYa", this.neededRotationY);
         tag.putFloat("neededRotationXa", this.neededRotationX);
-        if(this.owner != null){
-            tag.putUUID("ownerUUID", this.owner.getUUID());
-        }
+
         tag.putInt("mode", this.mode);
         tag.putBoolean("creative", this.creative);
 
@@ -276,6 +298,7 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         tag.putInt("ticksElapsed", this.ticksElapsed);
     }
 
+    @Override
     public void load(CompoundTag tag) {
         super.load(tag);
 
@@ -283,10 +306,7 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         this.rotationY = tag.getFloat("rotationYa");
         this.neededRotationX = tag.getFloat("neededRotationXa");
         this.neededRotationY = tag.getFloat("neededRotationYa");
-        this.setOwnerUUID(tag.getUUID("ownerUUID"));
-        if(this.ownerUUID != null){
-            this.owner = this.getOwnerFromID();
-        }
+
         this.setMode(tag.getInt("mode"));
         this.setCreative(tag.getBoolean("creative"));
 
@@ -296,36 +316,23 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
         this.ticksElapsed = tag.getInt("ticksElapsed");
     }
 
-    public LivingEntity getOwnerFromID() {
-        try {
-            UUID uuid = this.getOwnerUUID();
-            return uuid == null ? null : this.level.getPlayerByUUID(uuid);
-        } catch (IllegalArgumentException var21) {
-            return null;
-        }
-    }
-    public UUID getOwnerUUID() {
-        return this.ownerUUID;
-    }
-
     public float getRotationX() {
         return this.rotationX;
     }
     public float getRotationY() {
         return this.rotationY;
     }
-    public LivingEntity getOwner(){ return this.owner; }
     public int getMode(){ return this.mode; }
     public boolean getCreative(){ return this.creative; }
 
-    public void setOwnerUUID(UUID ownerUUID){ this.ownerUUID = ownerUUID; }
+
     public void setRotationX(float rot) {
         this.rotationX = rot;
     }
     public void setRotationY(float rot) {
         this.rotationY = rot;
     }
-    public void setOwner(LivingEntity owner){ this.owner = owner; }
+
     public void setMode(int mode){ this.mode = mode; }
     public void setCreative(boolean creative){ this.creative = creative; }
 

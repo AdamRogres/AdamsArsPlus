@@ -8,11 +8,7 @@ import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.TileCaster;
 import com.hollingsworth.arsnouveau.api.util.CasterUtil;
 import com.hollingsworth.arsnouveau.api.util.SourceUtil;
 import com.hollingsworth.arsnouveau.common.block.RotatingSpellTurret;
-import com.hollingsworth.arsnouveau.common.block.tile.BasicSpellTurretTile;
-import com.hollingsworth.arsnouveau.common.block.tile.RotatingTurretTile;
-import com.hollingsworth.arsnouveau.common.block.tile.TimerSpellTurretTile;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
-import com.hollingsworth.arsnouveau.common.items.WarpScroll;
 import com.hollingsworth.arsnouveau.common.network.Networking;
 import com.hollingsworth.arsnouveau.common.network.PacketOneShotAnimation;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodProjectile;
@@ -76,13 +72,15 @@ public class AutoSpellTurret extends RotatingSpellTurret {
                         }
 
                         BlockEntity var10 = worldIn.getBlockEntity(pos);
-                        if (var10 instanceof BasicSpellTurretTile) {
-                            BasicSpellTurretTile tile = (BasicSpellTurretTile)var10;
-                            tile.spellCaster.copyFromCaster(CasterUtil.getCaster(stack));
-                            tile.spellCaster.setSpell(spell.clone());
-                            tile.updateBlock();
-                            PortUtil.sendMessage(player, Component.translatable("ars_nouveau.alert.spell_set"));
-                            worldIn.sendBlockUpdated(pos, state, state, 2);
+                        if (var10 instanceof AutoTurretTile) {
+                            AutoTurretTile tile = (AutoTurretTile)var10;
+                            if(!tile.creative){
+                                tile.spellCaster.copyFromCaster(CasterUtil.getCaster(stack));
+                                tile.spellCaster.setSpell(spell.clone());
+                                tile.updateBlock();
+                                PortUtil.sendMessage(player, Component.translatable("ars_nouveau.alert.spell_set"));
+                                worldIn.sendBlockUpdated(pos, state, state, 2);
+                            }
                         }
                     }
 
@@ -94,19 +92,7 @@ public class AutoSpellTurret extends RotatingSpellTurret {
             if (var9 instanceof AutoTurretTile) {
                 AutoTurretTile autoSpellTurretTile = (AutoTurretTile) var9;
 
-                if(player.isShiftKeyDown() && !autoSpellTurretTile.creative){
-                    if(autoSpellTurretTile.owner == null){
-                        autoSpellTurretTile.owner = player;
-                        PortUtil.sendMessage(player, Component.literal("Set you as turret owner."));
-                        return InteractionResult.SUCCESS;
-                    } else {
-                        if(player == autoSpellTurretTile.owner){
-                            autoSpellTurretTile.owner = null;
-                            PortUtil.sendMessage(player, Component.literal("Turret owner removed."));
-                            return InteractionResult.SUCCESS;
-                        }
-                    }
-                } else if(stack == COMMAND_BLOCK.getDefaultInstance()){
+                if(stack.getItem() == COMMAND_BLOCK.asItem()){
                     if(autoSpellTurretTile.creative){
                         autoSpellTurretTile.creative = false;
                         PortUtil.sendMessage(player, Component.literal("Turret set as Survival Mode."));
@@ -116,9 +102,9 @@ public class AutoSpellTurret extends RotatingSpellTurret {
                         PortUtil.sendMessage(player, Component.literal("Turret set as Creative Mode."));
                         return InteractionResult.SUCCESS;
                     }
-                } else if(!autoSpellTurretTile.creative && (autoSpellTurretTile.owner == null || autoSpellTurretTile.owner == player)){
+                } else if(!autoSpellTurretTile.creative){
                     autoSpellTurretTile.mode++;
-                    if(autoSpellTurretTile.mode >= 4){
+                    if(autoSpellTurretTile.mode >= 3){
                         autoSpellTurretTile.mode = 0;
                     }
                     autoSpellTurretTile.target = null;
@@ -126,10 +112,8 @@ public class AutoSpellTurret extends RotatingSpellTurret {
                     if(autoSpellTurretTile.mode == 0){
                         PortUtil.sendMessage(player, Component.literal("Targeting: Players"));
                     } else if(autoSpellTurretTile.mode == 1){
-                        PortUtil.sendMessage(player, Component.literal("Targeting: Non-owner"));
-                    } else if(autoSpellTurretTile.mode == 2){
                         PortUtil.sendMessage(player, Component.literal("Targeting: Non-Players"));
-                    } else {
+                    } else if(autoSpellTurretTile.mode == 2){
                         PortUtil.sendMessage(player, Component.literal("Targeting: Monsters"));
                     }
 
