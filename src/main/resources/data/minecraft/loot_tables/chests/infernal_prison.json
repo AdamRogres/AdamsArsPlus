@@ -59,7 +59,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "ars_nouveau:battlemage_robes",
+          "name": "adamsarsplus:ritual_mage_summon",
           "weight": 5
         },
         {
@@ -115,7 +115,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "adamsarsplus:ritual_mage_summon"
+          "name": "ars_nouveau:battlemage_robes"
         }
       ],
       "rolls": 1.0

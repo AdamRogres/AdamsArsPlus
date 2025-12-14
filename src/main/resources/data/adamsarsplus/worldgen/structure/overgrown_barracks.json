@@ -1,0 +1,27 @@
+
+{
+  "type": "minecraft:jigsaw",
+  "start_pool": "adamsarsplus:overgrown_barracks/start_pool",
+  "size": 5,
+  "max_distance_from_center": 120,
+  "biomes": "#adamsarsplus:has_structure/overgrown_barracks",
+  "step": "underground_structures",
+  "use_expansion_hack": false,
+  "liquid_settings": "ignore_waterlogging",
+  "start_height": {
+    "absolute": -27
+  },
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "piece",
+      "spawns": [
+        {
+          "type": "adamsarsplus:mage",
+          "weight": 5,
+          "minCount": 1,
+          "maxCount": 3
+        }
+      ]
+    }
+  }
+}

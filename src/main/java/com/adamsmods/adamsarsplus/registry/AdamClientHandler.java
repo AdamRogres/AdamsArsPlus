@@ -37,6 +37,7 @@ public class AdamClientHandler {
         event.registerEntityRenderer(AdamsModEntities.DIVINE_SMITE.get(), DivineSmiteRenderer::new);
         event.registerEntityRenderer(AdamsModEntities.METEOR_SPELL.get(), MeteorRenderer::new);
         event.registerEntityRenderer(AdamsModEntities.BLADE_PROJ.get(), BladeRenderer::new);
+        event.registerEntityRenderer(AdamsModEntities.EYE_OF_SOUL.get(), SoulEyeRenderer::new);
         //event.registerEntityRenderer(AdamsModEntities.BLADE_PROJ.get(), TempRenderer::new);
         event.registerBlockEntityRenderer(ModBlocks.AUTO_TURRET_BLOCK_TILE.get(), AutoTurretRenderer::new);
     }

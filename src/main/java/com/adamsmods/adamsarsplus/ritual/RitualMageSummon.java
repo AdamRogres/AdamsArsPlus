@@ -1,18 +1,28 @@
 package com.adamsmods.adamsarsplus.ritual;
 
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import com.adamsmods.adamsarsplus.datagen.AdamsStructureTagProvider;
 import com.adamsmods.adamsarsplus.entities.custom.*;
 import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
 import com.hollingsworth.arsnouveau.common.datagen.ItemTagProvider;
 import com.hollingsworth.arsnouveau.common.entity.WildenChimera;
+import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.ArrayList;
@@ -51,103 +61,249 @@ public class RitualMageSummon extends AbstractRitual {
 
             // Summon Ryan
             } else if (this.getProgress() >= 8 && isRyanSpawn()) {
-                RyanEntity boss = new RyanEntity(this.getWorld());
-                this.summon(boss, this.getPos().above());
 
-                for(BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                    if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
-                        BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                if (this.getWorld() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.getWorld();
+                    BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.IP_TAG, this.getPos(), 100, false);
+                    if (structurePos != null){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.IP_TAG)) {
+                            RyanEntity boss = new RyanEntity(this.getWorld());
+                            this.summon(boss, this.getPos().above());
+
+                            for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                    BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                                }
+                            }
+                        } else {
+                            for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                                if(entity instanceof Player player){
+                                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructure"));
+                                }
+                            }
+
+                        }
+                    } else {
+                        for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                            if(entity instanceof Player player){
+                                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructuredim"));
+                            }
+                        }
+
                     }
                 }
+
                 this.setFinished();
 
             // Summon Cade
             } else if (this.getProgress() >= 8 && isCadeSpawn()) {
-                CadeEntity boss = new CadeEntity(this.getWorld());
-                this.summon(boss, this.getPos().above());
 
-                for(BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                    if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
-                        BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                if (this.getWorld() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.getWorld();
+                    BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.FL_TAG, this.getPos(), 100, false);
+                    if (structurePos != null){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.FL_TAG)) {
+                            CadeEntity boss = new CadeEntity(this.getWorld());
+                            this.summon(boss, this.getPos().above());
+
+                            for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                    BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                                }
+                            }
+                        } else {
+                            for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                                if(entity instanceof Player player){
+                                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructure"));
+                                }
+                            }
+
+                        }
+                    } else {
+                        for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                            if(entity instanceof Player player){
+                                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructuredim"));
+                            }
+                        }
+
                     }
                 }
+
                 this.setFinished();
 
             // Summon Nick
             } else if (this.getProgress() >= 8 && isNickSpawn()) {
-                NickEntity boss = new NickEntity(this.getWorld());
-                this.summon(boss, this.getPos().above());
 
-                for(BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                    if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
-                        BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                if (this.getWorld() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.getWorld();
+                    BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.OB_TAG, this.getPos(), 100, false);
+                    if (structurePos != null){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.OB_TAG)) {
+                            NickEntity boss = new NickEntity(this.getWorld());
+                            this.summon(boss, this.getPos().above());
+
+                            for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                    BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                                }
+                            }
+                        } else {
+                            for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                                if(entity instanceof Player player){
+                                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructure"));
+                                }
+                            }
+
+                        }
+                    } else {
+                        for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                            if(entity instanceof Player player){
+                                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructuredim"));
+                            }
+                        }
+
                     }
                 }
+
                 this.setFinished();
 
             // Summon Cam
             } else if (this.getProgress() >= 8 && isCamrSpawn()) {
-                CamEntity boss = new CamEntity(this.getWorld());
-                this.summon(boss, this.getPos().above());
 
-                for(BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                    if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
-                        BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                if (this.getWorld() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.getWorld();
+                    BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.NR_TAG, this.getPos(), 100, false);
+                    if (structurePos != null){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.NR_TAG)) {
+                            CamEntity boss = new CamEntity(this.getWorld());
+                            this.summon(boss, this.getPos().above());
+
+                            for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                    BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                                }
+                            }
+                        } else {
+                            for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                                if(entity instanceof Player player){
+                                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructure"));
+                                }
+                            }
+
+                        }
+                    } else {
+                        for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                            if(entity instanceof Player player){
+                                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructuredim"));
+                            }
+                        }
+
                     }
                 }
+
                 this.setFinished();
 
             // Summon Matt
             } else if (this.getProgress() >= 8 && isMattSpawn()) {
-                MattEntity boss = new MattEntity(this.getWorld());
-                this.summon(boss, this.getPos().above());
 
-                for(BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                    if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
-                        BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                if (this.getWorld() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.getWorld();
+                    BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.HM_TAG, this.getPos(), 100, false);
+                    if (structurePos != null){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.HM_TAG)) {
+                            MattEntity boss = new MattEntity(this.getWorld());
+                            this.summon(boss, this.getPos().above());
+
+                            for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                    BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                                }
+                            }
+                        } else {
+                            for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                                if(entity instanceof Player player){
+                                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructure"));
+                                }
+                            }
+
+                        }
+                    } else {
+                        for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                            if(entity instanceof Player player){
+                                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructuredim"));
+                            }
+                        }
+
                     }
                 }
+
                 this.setFinished();
 
             // Summon Adam
             } else if (this.getProgress() >= 8 && isAdamSpawn()) {
-                AdamEntity boss = new AdamEntity(this.getWorld());
-                this.summon(boss, this.getPos().above());
 
-                for(BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                    if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
-                        BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                if (this.getWorld() instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel) this.getWorld();
+                    BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.VF_TAG, this.getPos(), 100, false);
+                    if (structurePos != null){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.VF_TAG)) {
+                            AdamEntity boss = new AdamEntity(this.getWorld());
+                            this.summon(boss, this.getPos().above());
+
+                            for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                    BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                                }
+                            }
+                        } else {
+                            for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                                if(entity instanceof Player player){
+                                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructure"));
+                                }
+                            }
+
+                        }
+                    } else {
+                        for (Entity entity : this.getWorld().getEntities(null, new AABB(new Vec3(this.getPos().getX() + 48, this.getPos().getY() + 48, this.getPos().getZ() + 48), new Vec3(this.getPos().getX() - 48, this.getPos().getY() - 48, this.getPos().getZ() - 48)))) {
+                            if(entity instanceof Player player){
+                                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.magesummon.nostructuredim"));
+                            }
+                        }
+
                     }
                 }
-                this.setFinished();
 
+                this.setFinished();
             }
         }
     }
 
+    public boolean checkDistance(BlockPos pos, ServerLevel world, TagKey<Structure> tagKey){
+        return world.structureManager().getStructureWithPieceAt(pos, tagKey).isValid();
+    }
 
     public boolean isRyanSpawn() {
-        return this.didConsumeItem(ItemsRegistry.FIRE_ESSENCE.asItem());
+        return this.didConsumeItem(EYE_OF_FLAME.get());
     }
 
     public boolean isCadeSpawn() {
-        return this.didConsumeItem(ItemsRegistry.WATER_ESSENCE.asItem());
+        return this.didConsumeItem(EYE_OF_FROST.get());
     }
 
     public boolean isNickSpawn() {
-        return this.didConsumeItem(ItemsRegistry.EARTH_ESSENCE.asItem());
+        return this.didConsumeItem(EYE_OF_EARTH.get());
     }
 
     public boolean isCamrSpawn() {
-        return this.didConsumeItem(ItemsRegistry.AIR_ESSENCE.asItem()) && this.didConsumeItem(ELEMENTAL_SOUL.get());
+        return this.didConsumeItem(EYE_OF_LIGHTNING.get());
     }
 
     public boolean isMattSpawn() {
-        return this.didConsumeItem(ItemsRegistry.CONJURATION_ESSENCE.asItem()) && this.didConsumeItem(ELEMENTAL_SOUL.get());
+        return this.didConsumeItem(EYE_OF_HOLY.get());
     }
 
     public boolean isAdamSpawn() {
-        return this.didConsumeItem(ItemsRegistry.ABJURATION_ESSENCE.asItem()) && this.didConsumeItem(TRUE_ELEMENTAL_SOUL.get());
+        return this.didConsumeItem(EYE_OF_VOID.get());
     }
 
     public void summon(Mob mob, BlockPos pos) {

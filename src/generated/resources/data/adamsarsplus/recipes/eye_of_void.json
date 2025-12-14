@@ -1,0 +1,21 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "output": {
+    "item": "adamsarsplus:eye_of_void"
+  },
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:abjuration_essence"
+    },
+    {
+      "item": "adamsarsplus:true_elemental_soul"
+    }
+  ],
+  "reagent": [
+    {
+      "item": "minecraft:ender_eye"
+    }
+  ],
+  "sourceCost": 500
+}

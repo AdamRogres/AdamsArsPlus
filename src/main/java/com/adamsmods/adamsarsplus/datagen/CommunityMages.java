@@ -47,25 +47,44 @@ public class CommunityMages {
     public static void initAlt(){
         mages.add(new ComMages("Flame Mage","red",
                 "ignite-aoe-delay-flare-explosion-burst-aoe-sensitive-ignite"
-                ,"medium", "projectile", "one"));
+                ,"medium", "projectile", "overworld-griefing"));
         mages.add(new ComMages("Water Mage","blue",
                 "freeze-cold_snap-burst-sensitive-conjure_water-freeze"
-                ,"medium", "projectile", "one"));
+                ,"medium", "projectile", "overworld"));
         mages.add(new ComMages("Earth Mage","green",
                 "burst-sensitive-raise_earth"
-                ,"medium", "projectile", "one"));
+                ,"medium", "projectile", "overworld-griefing"));
         mages.add(new ComMages("Air Mage","white",
                 "launch-slowfall-delay-duration_down-windshear"
-                ,"medium", "projectile", "one"));
+                ,"medium", "projectile", "overworld"));
         mages.add(new ComMages("Abjuration Mage","purple",
                 "harm-amp-extend-hex-swap_target-heal"
-                ,"short", "projectile", "one"));
+                ,"short", "projectile", "overworld"));
         mages.add(new ComMages("Conjuration Mage","gray",
                 "summon_undead"
-                ,"long", "projectile", "one"));
+                ,"long", "projectile", "overworld"));
         mages.add(new ComMages("Manipulation Mage","orange",
                 "harm-amp-swap_target-craft"
-                ,"short", "projectile", "one"));
+                ,"short", "projectile", "overworld"));
+
+        mages.add(new ComMages("Flame Soul Mage","red",
+                "eruption-ignite-blue_flame-aoe_three-extend_two-amp_two"
+                ,"short", "projectile", "flame"));
+        mages.add(new ComMages("Frost Soul Mage","light_blue",
+                "linger-sensitive-ice_burst-aoe-amp_two-conjure_water-freeze"
+                ,"short", "projectile", "frost"));
+        mages.add(new ComMages("Earth Soul Mage","gray",
+                "burst-sensitive-raise_earth-sensitive-amp_two"
+                ,"short", "projectile", "earth"));
+        mages.add(new ComMages("Lightning Soul Mage","white",
+                "duration_down_two-pierce-pierce-pierce-pierce-lightning-delay-divine_smite-amp_two"
+                ,"short", "detonate", "lightning"));
+        mages.add(new ComMages("Holy Soul Mage","yellow",
+                "dismantle-accelerate_three-amp_three-conjure_blade-aoe_three-aoe_three"
+                ,"short", "detonate", "holy"));
+        mages.add(new ComMages("Void Soul Mage","black",
+                "annihilate-limitless-pierce-extend_time-amp-aoe_three"
+                ,"short", "detonate", "void"));
     }
 
     public static String readUrl(URL url) throws IOException {

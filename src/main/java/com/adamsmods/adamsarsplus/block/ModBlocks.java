@@ -78,7 +78,6 @@ public class ModBlocks {
     public static final RegistryWrapper<SlabBlock> VOID_SOUL_BRICK_SLAB = registerBlockAndItem("void_soul_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
     public static final RegistryWrapper<StairBlock> VOID_SOUL_BRICK_STAIR = registerBlockAndItem("void_soul_brick_stair", () -> new StairBlock(() -> VOID_SOUL_BRICK_BLOCK.defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.STONE_BRICKS).requiresCorrectToolForDrops().strength(50.0F, 1200.0F)));
 
-
     // Other Blocks
     public static final RegistryWrapper<DomainShell> DOMAIN_SHELL_BLOCK = registerBlockAndItem("domain_shell_block", () -> new DomainShell(BlockBehaviour.Properties.copy(Blocks.GLASS).mapColor(MapColor.COLOR_BLACK).requiresCorrectToolForDrops().strength(50.0F, 1200.0F).sound(SoundType.GLASS)));
     public static RegistryWrapper<BlockEntityType<DomainShellTile>> DOMAIN_SHELL_BLOCK_TILE = registerTile("domain_shell", DomainShellTile::new, DOMAIN_SHELL_BLOCK);

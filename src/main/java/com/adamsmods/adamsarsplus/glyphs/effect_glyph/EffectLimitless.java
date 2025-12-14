@@ -11,11 +11,13 @@ import com.hollingsworth.arsnouveau.common.entity.EnchantedFallingBlock;
 import com.hollingsworth.arsnouveau.common.items.curios.ShapersFocus;
 import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
+import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -26,6 +28,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -202,17 +205,18 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
     }
 
     public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio, int radius) {
-
             strength *= 5.0;
 
-            entity.hasImpulse = true;
-            entity.setDeltaMovement(entity.getDeltaMovement().scale(0));
+            entity.setDeltaMovement(Vec3.ZERO);
             if(strength <=  0) {
                 entity.setDeltaMovement(strength * -0.5 * xRatio, strength * -0.5 * yRatio, strength * -0.5 * zRatio);
             }
             else{
                 entity.setDeltaMovement(strength * -0.5 * absDifference(radius, xRatio), strength * -0.5 * absDifference(radius, yRatio), strength * -0.5 * absDifference(radius, zRatio));
             }
+
+            entity.hasImpulse = true;
+            entity.hurtMarked = true;
     }
 
     public void makeLSphere(BlockPos center, Level world, @NotNull Entity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver){
@@ -235,6 +239,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
         for(LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, (new AABB(center)).inflate((double)radius, (double)radius, (double)radius))) {
             if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center)) && (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !spellContext.getUnwrappedCaster().equals(entity))) {
                 if (spellStats.hasBuff(AugmentPierce.INSTANCE)) {
+
                     this.knockback(entity, (double)center.getX(), (double)center.getY(), (double)center.getZ(), (float)amp, radius);
                     if (shooter instanceof LivingEntity) {
                         LivingEntity shooterL = (LivingEntity)shooter;
@@ -391,7 +396,8 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 AugmentDampen.INSTANCE,
                 AugmentSensitive.INSTANCE,
                 AugmentPierce.INSTANCE,
-                AugmentExtendTime.INSTANCE
+                AugmentExtendTime.INSTANCE,
+                AugmentExtract.INSTANCE
         );
     }
 

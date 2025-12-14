@@ -10,6 +10,7 @@ import com.adamsmods.adamsarsplus.item.MagicItems;
 import com.adamsmods.adamsarsplus.item.RegularItems;
 import com.adamsmods.adamsarsplus.block.ModBlocks.*;
 import com.adamsmods.adamsarsplus.item.armor.MageMagicArmor;
+import com.adamsmods.adamsarsplus.item.eyes.*;
 import com.adamsmods.adamsarsplus.recipe.jei.AArmorRecipe;
 import com.hollingsworth.arsnouveau.api.enchanting_apparatus.ArmorUpgradeRecipe;
 import com.hollingsworth.arsnouveau.api.perk.IPerk;
@@ -18,8 +19,13 @@ import com.hollingsworth.arsnouveau.api.registry.PerkRegistry;
 import com.hollingsworth.arsnouveau.api.sound.SpellSound;
 import com.hollingsworth.arsnouveau.common.items.ModItem;
 import com.hollingsworth.arsnouveau.common.potions.PublicEffect;
+import com.hollingsworth.arsnouveau.common.world.processors.WaterloggingFixProcessor;
+import com.hollingsworth.arsnouveau.common.world.structure.WildenDen;
+import com.hollingsworth.arsnouveau.common.world.structure.WildenGuardianDen;
 import com.hollingsworth.arsnouveau.setup.registry.RecipeRegistry;
+import com.hollingsworth.arsnouveau.setup.registry.StructureRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
@@ -36,6 +42,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -64,8 +72,9 @@ public class ModRegistry {
     public static final DeferredRegister<RecipeType<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, AdamsArsPlus.MOD_ID);
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, AdamsArsPlus.MOD_ID);
 
-    //public static final DeferredHolder<MobEffect, MobEffect> MANA_EXHAUST_EFFECT = EFFECTS.register(MANA_EXHAUST, () -> new PublicEffect(MobEffectCategory.HARMFUL, 2039587)
-    //        .addAttributeModifier(PerkAttributes.MANA_REGEN_BONUS, AdamsArsPlus.prefix("manaex_regen_penalty"), -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    public static final DeferredRegister<StructureType<?>> STRUCTURES;
+    public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSOR;
+
 
     public static void registerRegistries(IEventBus bus) {
       //  BLOCKS.register(bus);
@@ -73,6 +82,9 @@ public class ModRegistry {
         SOUNDS.register(bus);
         ENTITIES.register(bus);
         EFFECTS.register(bus);
+
+        STRUCTURES.register(bus);
+        STRUCTURE_PROCESSOR.register(bus);
 
         RECIPE_TYPES.register(bus);
         RECIPE_SERIALIZERS.register(bus);
@@ -104,6 +116,12 @@ public class ModRegistry {
 
     public static final RegistryObject<EnchantersStopwatch> ENCHANTERS_STOPWATCH;
     public static final RegistryObject<GeneralsWheel> GENERALS_WHEEL;
+    public static final RegistryObject<EyeOfFlame> EYE_OF_FLAME;
+    public static final RegistryObject<EyeOfFrost> EYE_OF_FROST;
+    public static final RegistryObject<EyeOfEarth> EYE_OF_EARTH;
+    public static final RegistryObject<EyeOfLightning> EYE_OF_LIGHTNING;
+    public static final RegistryObject<EyeOfHoly> EYE_OF_HOLY;
+    public static final RegistryObject<EyeOfVoid> EYE_OF_VOID;
 
     public static final RegistryObject<MageMagicArmor> CADE_BOOTS;
     public static final RegistryObject<MageMagicArmor> CADE_LEGGINGS;
@@ -211,6 +229,13 @@ public class ModRegistry {
         ENCHANTERS_STOPWATCH = ITEMS.register("enchanters_stopwatch", () -> new EnchantersStopwatch(new Item.Properties().stacksTo(1)));
         GENERALS_WHEEL       = ITEMS.register("generals_wheel", () -> new GeneralsWheel(new Item.Properties().stacksTo(1)));
 
+        EYE_OF_FLAME        = ITEMS.register("eye_of_flame", () -> new EyeOfFlame(new Item.Properties().stacksTo(64)));
+        EYE_OF_FROST        = ITEMS.register("eye_of_frost", () -> new EyeOfFrost(new Item.Properties().stacksTo(64)));
+        EYE_OF_EARTH        = ITEMS.register("eye_of_earth", () -> new EyeOfEarth(new Item.Properties().stacksTo(64)));
+        EYE_OF_LIGHTNING    = ITEMS.register("eye_of_lightning", () -> new EyeOfLightning(new Item.Properties().stacksTo(64)));
+        EYE_OF_HOLY         = ITEMS.register("eye_of_holy", () -> new EyeOfHoly(new Item.Properties().stacksTo(64)));
+        EYE_OF_VOID         = ITEMS.register("eye_of_void", () -> new EyeOfVoid(new Item.Properties().stacksTo(64)));
+
         // Armor Sets
         CADE_BOOTS          = ITEMS.register("cade_boots",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS));
         CADE_LEGGINGS       = ITEMS.register("cade_leggings",   () -> MageMagicArmor.cade(ArmorItem.Type.LEGGINGS));
@@ -275,6 +300,10 @@ public class ModRegistry {
 
         A_ARMOR_UP              = RECIPE_TYPES.register("a_armor_upgrade", () -> new ModRecipeType());
         A_ARMOR_UP_SERIALIZER   = RECIPE_SERIALIZERS.register("a_armor_upgrade", () -> new AArmorRecipe.Serializer());
+
+        STRUCTURES = DeferredRegister.create(Registries.STRUCTURE_TYPE, MOD_ID);
+        STRUCTURE_PROCESSOR = DeferredRegister.create(Registries.STRUCTURE_PROCESSOR, MOD_ID);
+
     }
 
     public static class ModRecipeType<T extends Recipe<?>> implements RecipeType<T> {

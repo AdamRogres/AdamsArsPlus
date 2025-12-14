@@ -83,7 +83,7 @@ public class EffectAnnihilate extends AbstractEffect implements IDamageEffect {
             level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, 0.5, 0.5, 0, 1);
             level.sendParticles(ParticleTypes.DRAGON_BREATH, x, y, z, 1, -0.5, 0.5, 0, 1);
 
-            float damage = (float) (10 + (2 * (spellStats.getAmpMultiplier())));
+            float damage = (float) (4 + (2 * (spellStats.getAmpMultiplier())));
 
             DamageSource dVoid = DamageUtil.source(level, DamageTypes.FELL_OUT_OF_WORLD, shooter);
 
@@ -279,8 +279,8 @@ public class EffectAnnihilate extends AbstractEffect implements IDamageEffect {
     @Override
     public void buildConfig(ForgeConfigSpec.Builder builder) {
         super.buildConfig(builder);
-        addDamageConfig(builder, 14);
-        addAmpConfig(builder, 8);
+        addDamageConfig(builder, 4);
+        addAmpConfig(builder, 2);
     }
 
     @Nonnull

@@ -66,7 +66,7 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
         tag(MAGE_BOOT_A).add(RYAN_BOOTS_A.get(),CADE_BOOTS_A.get(),NICK_BOOTS_A.get());
         tag(MAGE_BOOT_B).add(CAMR_BOOTS_A.get(),MATT_BOOTS_A.get());
 
-        tag(MAGE_RITUAL).add(ItemsRegistry.FIRE_ESSENCE.get(), ItemsRegistry.WATER_ESSENCE.get(), ItemsRegistry.EARTH_ESSENCE.get(), ItemsRegistry.AIR_ESSENCE.get(), ItemsRegistry.CONJURATION_ESSENCE.get(), ItemsRegistry.ABJURATION_ESSENCE.get(), ELEMENTAL_SOUL.get(), TRUE_ELEMENTAL_SOUL.get());
+        tag(MAGE_RITUAL).add(EYE_OF_FLAME.get(), EYE_OF_FROST.get(), EYE_OF_EARTH.get(), EYE_OF_LIGHTNING.get(), EYE_OF_HOLY.get(), EYE_OF_VOID.get());
         tag(TS_RITUAL).add(MANA_DIAMOND.get());
     }
 

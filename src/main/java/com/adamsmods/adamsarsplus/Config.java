@@ -16,6 +16,7 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue  DOMAIN_BURNOUT;
     public static ForgeConfigSpec.BooleanValue  DISCOUNT_BACKLASH;
     public static ForgeConfigSpec.BooleanValue  COM_MAGES;
+    public static ForgeConfigSpec.BooleanValue  MAGES_GRIEF;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> MAGE_DIMENSION_BLACKLIST;
 
     public static ForgeConfigSpec SERVER_CONFIG;
@@ -28,6 +29,7 @@ public class Config {
         MAX_DISCOUNTS       = SERVER_BUILDER.comment("maximum number of times spell efficiency can appear").defineInRange("maxDiscount",5,0,10);
         MAX_DOMAIN_ENTITIES = SERVER_BUILDER.comment("maximum number of entities a domain can target every spell cast").defineInRange("maxDomainEntities",10,1,100);
         COM_MAGES           = SERVER_BUILDER.comment("include community spells for the mysterious mage entity?").define("doComMages", true);
+        MAGES_GRIEF         = SERVER_BUILDER.comment("Allow overworld mages that can mobgrief?").define("doMageGrief", true);
         MAGE_DIMENSION_BLACKLIST = SERVER_BUILDER.comment("Dimensions where mages will not spawn. Ex: [\"minecraft:overworld\", \"undergarden:undergarden\"]. . Run /forge dimensions for a list.").defineList("dimensionBlacklist", new ArrayList(), (o) -> true);
 
         SERVER_CONFIG = SERVER_BUILDER.build();

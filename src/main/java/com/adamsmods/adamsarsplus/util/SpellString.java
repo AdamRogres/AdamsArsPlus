@@ -303,6 +303,15 @@ public class SpellString {
             case "detonate" -> {
                 retPart = PropagateDetonate.INSTANCE;
             }
+            case "blue_flame" -> {
+                retPart = EffectBlueFlame.INSTANCE;
+            }
+            case "conjure_blade" -> {
+                retPart = EffectConjureBlade.INSTANCE;
+            }
+            case "dismantle" -> {
+                retPart = EffectDismantle.INSTANCE;
+            }
         }
 
         return retPart;

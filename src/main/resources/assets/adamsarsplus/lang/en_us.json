@@ -127,6 +127,12 @@
 
 	"item.adamsarsplus.enchanters_stopwatch": 			"Enchanters Stopwatch",
 	"item.adamsarsplus.generals_wheel": 				"General's Wheel",
+	"item.adamsarsplus.eye_of_flame": 					"Eye Of Flame",
+	"item.adamsarsplus.eye_of_frost": 					"Eye Of Frost",
+	"item.adamsarsplus.eye_of_earth": 					"Eye Of Earth",
+	"item.adamsarsplus.eye_of_lightning": 				"Eye Of Lightning",
+	"item.adamsarsplus.eye_of_holy": 					"Eye Of Holy",
+	"item.adamsarsplus.eye_of_void": 					"Eye Of Void",
 
 	"item.adamsarsplus.ritual_mage_summon": 			"Summon Mage",
 	"item.adamsarsplus.ritual_ten_shadows": 			"Challenge Shikigami",
@@ -247,6 +253,8 @@
 	"adamsarsplus.tenshadows.maho_tamed": 				"You have now tamed: Mahoraga",
 	"adamsarsplus.tenshadows.tame_failed": 				"Failed to tame. You must first tame the proceeding shikigami",
 	"adamsarsplus.command.rankchange": 					"Ten Shadows rank changed to: ",
+	"adamsarsplus.magesummon.nostructure": 				"Archmagi can only be summoned at their place of final rest.",
+	"adamsarsplus.magesummon.nostructuredim": 			"Cannot find Archmagi structure in this dimension.",
 
 	"ars_nouveau.page.adamsarsplus_tweaks": 			"Ars Plus",
 	"adamsarsplus.page.adamsarsplus_tweaks": 			"To begin the content of Ars Plus you'll want to hunt the Mysterious Mages that have appeared across your world and obtain their Mage Cloth. Once you're ready, craft a ritual of Mage Summoning to challenge the strongest of mages and obtain their magecraft.",

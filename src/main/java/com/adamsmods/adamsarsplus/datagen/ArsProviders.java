@@ -43,8 +43,7 @@ import java.util.function.Consumer;
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.prefix;
 import static com.adamsmods.adamsarsplus.block.ModBlocks.*;
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
-import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.AIR_ESSENCE;
-import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.SUMMONING_FOCUS;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.*;
 import static com.hollingsworth.arsnouveau.setup.registry.RegistryHelper.getRegistryName;
 import static net.minecraft.world.item.Items.*;
 
@@ -172,6 +171,13 @@ public class ArsProviders {
 
             recipes.add(builder().withSourceCost(7000).withPedestalItem(3, GOLD_INGOT).withPedestalItem(2, REPEATER).withPedestalItem(1, MANA_DIAMOND).withPedestalItem(2, AUTO_TURRET_BLOCK.asItem()).withReagent(CLOCK).withResult(ENCHANTERS_STOPWATCH).build());
             recipes.add(builder().withSourceCost(2500).withPedestalItem(4, GOLD_INGOT).withPedestalItem(4, MANA_DIAMOND).withReagent(SUMMONING_FOCUS).withResult(GENERALS_WHEEL).build());
+
+            recipes.add(builder().withSourceCost(500).withPedestalItem(1, FIRE_ESSENCE).withReagent(ENDER_EYE).withResult(EYE_OF_FLAME).build());
+            recipes.add(builder().withSourceCost(500).withPedestalItem(1, WATER_ESSENCE).withReagent(ENDER_EYE).withResult(EYE_OF_FROST).build());
+            recipes.add(builder().withSourceCost(500).withPedestalItem(1, EARTH_ESSENCE).withReagent(ENDER_EYE).withResult(EYE_OF_EARTH).build());
+            recipes.add(builder().withSourceCost(500).withPedestalItem(1, AIR_ESSENCE).withPedestalItem(ELEMENTAL_SOUL).withReagent(ENDER_EYE).withResult(EYE_OF_LIGHTNING).build());
+            recipes.add(builder().withSourceCost(500).withPedestalItem(1, CONJURATION_ESSENCE).withPedestalItem(ELEMENTAL_SOUL).withReagent(ENDER_EYE).withResult(EYE_OF_HOLY).build());
+            recipes.add(builder().withSourceCost(500).withPedestalItem(1, ABJURATION_ESSENCE).withPedestalItem(TRUE_ELEMENTAL_SOUL).withReagent(ENDER_EYE).withResult(EYE_OF_VOID).build());
 
             // Perks
             recipes.add(builder().withResult(getPerkItem(SixeyesPerk.INSTANCE.getRegistryName())).withReagent(ItemsRegistry.BLANK_THREAD).withPedestalItem(2, VOID_SOUL).withPedestalItem(2, END_CRYSTAL).withPedestalItem(2, NETHERITE_BLOCK).build());

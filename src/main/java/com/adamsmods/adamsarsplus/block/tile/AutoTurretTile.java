@@ -28,6 +28,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -40,7 +43,7 @@ import java.util.UUID;
 
 import static com.adamsmods.adamsarsplus.block.ModBlocks.AUTO_TURRET_BLOCK_TILE;
 import static com.hollingsworth.arsnouveau.common.block.tile.MobJarTile.loadEntityFromTag;
-import static net.minecraft.world.level.block.Blocks.AIR;
+import static net.minecraft.world.level.block.Blocks.*;
 
 public class AutoTurretTile extends RotatingTurretTile implements IWandable {
     public LivingEntity target;
@@ -252,13 +255,27 @@ public class AutoTurretTile extends RotatingTurretTile implements IWandable {
 
         int distance = (int) Math.ceil(Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ));
 
+        int numObstacles = 0;
+
         for(int i = 0; i < distance; i++){
-            if(world.getBlockState(new BlockPos(pos2.getX() + (int)(i * diffX / distance), pos2.getY() + (int)(i * diffY / distance), pos2.getZ() + (int)(i * diffZ / distance))).getBlock() != AIR){
-                return true;
+            numObstacles = numObstacles + checkBlockList(world.getBlockState(new BlockPos(pos2.getX() + (int)(i * diffX / distance), pos2.getY() + (int)(i * diffY / distance), pos2.getZ() + (int)(i * diffZ / distance))).getBlock());
+
+            if(numObstacles > 1){
+                break;
             }
         }
 
-        return false;
+        return (numObstacles > 1);
+    }
+
+    public int checkBlockList(Block block){
+        if(block == AIR || block == WATER || block == LAVA){
+            return 0;
+        } else if(block instanceof StairBlock || block instanceof SlabBlock){
+            return 1;
+        }
+
+        return 2;
     }
 
     public static double angleBetween(Vec3 a, Vec3 b) {

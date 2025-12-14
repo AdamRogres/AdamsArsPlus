@@ -35,6 +35,7 @@ public class Setup {
         gen.addProvider(event.includeServer(), new AdamsEntityTagProvider(output, provider, fileHelper));
         gen.addProvider(event.includeServer(), new AdamsItemTagsProvider(output, provider, fileHelper));
         gen.addProvider(event.includeServer(), new AdamPatchouliProvider(gen));
+        gen.addProvider(event.includeServer(), new AdamsStructureTagProvider(output, provider, fileHelper));
     }
 
 

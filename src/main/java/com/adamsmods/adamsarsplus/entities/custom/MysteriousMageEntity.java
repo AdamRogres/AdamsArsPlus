@@ -10,6 +10,7 @@ import com.adamsmods.adamsarsplus.util.SpellString;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 
 import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
+import static com.adamsmods.adamsarsplus.Config.MAGES_GRIEF;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MAGE_ENTITY;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
 
@@ -323,13 +324,35 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
         if (!CommunityMages.mages.isEmpty()) {
             try {
+                int size = 7;
+                int Offset = 0;
+
                 if(COM_MAGES.get()){
                     this.setIndex(randomSource.nextInt(CommunityMages.mages.size()));
+                    size = CommunityMages.mages.size();
                 } else {
                     this.setIndex(randomSource.nextInt(7));
                 }
 
-                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(this.getIndex());
+                for(int i = 0; i < size; i++){
+                    if(i + this.getIndex() < size){
+                        if(CommunityMages.mages.get(i + this.getIndex()).tier.contains("overworld")){
+                            if(MAGES_GRIEF.get() || !CommunityMages.mages.get(i + this.getIndex()).tier.contains("griefing")){
+                                Offset = i;
+                                break;
+                            }
+                        }
+                    } else {
+                        if(CommunityMages.mages.get(i + this.getIndex() - size).tier.contains("overworld")){
+                            if(MAGES_GRIEF.get() || !CommunityMages.mages.get(i + this.getIndex()).tier.contains("griefing")){
+                                Offset = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(this.getIndex() + Offset);
 
                 this.setColor(communityMage.color);
                 this.setName(communityMage.name);

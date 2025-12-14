@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.projectile.EyeOfEnder;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -33,6 +34,14 @@ public class AdamsModEntities {
         static <T extends Entity> RegistryObject<EntityType<T>> registerEntity(String name, EntityType.Builder<T> builder) {
             return ENTITIES.register(name, () -> builder.build(MOD_ID + ":" + name));
         }
+
+        public static final RegistryObject<EntityType<EyeOfSoulSeeking>> EYE_OF_SOUL = registerEntity(
+                AdamsLibEntityNames.SOUL_EYE,
+                EntityType.Builder.<EyeOfSoulSeeking>of(EyeOfSoulSeeking::new, MobCategory.MISC)
+                        .sized(0.25f, 0.25f)
+                        .clientTrackingRange(4)
+                        .updateInterval(4)
+        );
 
         public static final RegistryObject<EntityType<EntityDomainSpell>> DOMAIN_SPELL = registerEntity(
                 AdamsLibEntityNames.DOMAIN,
