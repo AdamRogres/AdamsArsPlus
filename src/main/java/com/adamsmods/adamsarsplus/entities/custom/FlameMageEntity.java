@@ -1,18 +1,15 @@
 package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.datagen.CommunityMages;
+import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
+import static com.adamsmods.adamsarsplus.Config.MAGES_GRIEF;
+
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Det;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Melee;
 import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal_Self;
 import com.adamsmods.adamsarsplus.util.SpellString;
-
 import com.hollingsworth.arsnouveau.api.spell.Spell;
-
-import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
-import static com.adamsmods.adamsarsplus.Config.MAGES_GRIEF;
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MAGE_ENTITY;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -37,8 +34,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class MysteriousMageEntity extends Monster implements RangedAttackMob {
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.FLAME_MAGE_ENTITY;
 
+public class FlameMageEntity extends MysteriousMageEntity implements RangedAttackMob {
     public String color = "white";
     public String coold = "";
     public String spell = "";
@@ -51,23 +51,23 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
     public boolean init = true;
 
     public static final EntityDataAccessor<Boolean> CASTING =
-            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+            SynchedEntityData.defineId(FlameMageEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> SELF_CASTING =
-            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+            SynchedEntityData.defineId(FlameMageEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> ATTACKING =
-            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.BOOLEAN);
+            SynchedEntityData.defineId(FlameMageEntity.class, EntityDataSerializers.BOOLEAN);
 
     public static final EntityDataAccessor<Integer> INDEX =
-            SynchedEntityData.defineId(MysteriousMageEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(FlameMageEntity.class, EntityDataSerializers.INT);
 
     public int castCooldown = 0;
 
-    public MysteriousMageEntity(EntityType<? extends Monster> pEntityType, Level pLevel){
+    public FlameMageEntity(EntityType<? extends Monster> pEntityType, Level pLevel){
         super(pEntityType, pLevel);
     }
 
-    public MysteriousMageEntity(Level pLevel){
-        this(MAGE_ENTITY.get(), pLevel);
+    public FlameMageEntity(Level pLevel){
+        this(FLAME_MAGE_ENTITY.get(), pLevel);
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -180,7 +180,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
         String[] tokens = spellString.split("-");
 
         for(String t : tokens){
-           returnSpell.add(SpellString.stringSpellComponent(t));
+            returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
         returnSpell.color = SpellString.stringColor(color);
@@ -288,7 +288,8 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
+                .add(Attributes.MAX_HEALTH, 40D)
+                .add(Attributes.ARMOR, 4D)
                 .add(Attributes.MOVEMENT_SPEED, (double)0.2F)
                 .add(Attributes.FOLLOW_RANGE, (double)40.0F)
                 .add(Attributes.ATTACK_DAMAGE, 8D)
@@ -320,26 +321,26 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
         if (!CommunityMages.mages.isEmpty()) {
             try {
-                int size = 7;
+                int size = 1;
                 int Offset = 0;
 
                 if(COM_MAGES.get()){
                     this.setIndex(randomSource.nextInt(CommunityMages.mages.size()));
                     size = CommunityMages.mages.size();
                 } else {
-                    this.setIndex(randomSource.nextInt(7));
+                    this.setIndex(7);
                 }
 
                 for(int i = 0; i < size; i++){
                     if(i + this.getIndex() < size){
-                        if(CommunityMages.mages.get(i + this.getIndex()).tier.contains("overworld")){
+                        if(CommunityMages.mages.get(i + this.getIndex()).tier.contains("flame")){
                             if(MAGES_GRIEF.get() || !CommunityMages.mages.get(i + this.getIndex()).tier.contains("griefing")){
                                 Offset = i;
                                 break;
                             }
                         }
                     } else {
-                        if(CommunityMages.mages.get(i + this.getIndex() - size).tier.contains("overworld")){
+                        if(CommunityMages.mages.get(i + this.getIndex() - size).tier.contains("flame")){
                             if(MAGES_GRIEF.get() || !CommunityMages.mages.get(i + this.getIndex()).tier.contains("griefing")){
                                 Offset = i;
                                 break;

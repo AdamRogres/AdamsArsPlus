@@ -128,9 +128,40 @@ public class AdamsModEntities {
                 EntityType.Builder.<AdamEntity>of(AdamEntity::new, MobCategory.MONSTER)
                         .sized(0.6f, 1.8f));
 
+    // Mages
     public static final RegistryObject<EntityType<MysteriousMageEntity>> MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.MAGE,
             EntityType.Builder.<MysteriousMageEntity>of(MysteriousMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<FlameMageEntity>> FLAME_MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.FLAME_MAGE,
+            EntityType.Builder.<FlameMageEntity>of(FlameMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<FrostMageEntity>> FROST_MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.FROST_MAGE,
+            EntityType.Builder.<FrostMageEntity>of(FrostMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<EarthMageEntity>> EARTH_MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.EARTH_MAGE,
+            EntityType.Builder.<EarthMageEntity>of(EarthMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<LightningMageEntity>> LIGHTNING_MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.LIGHTNING_MAGE,
+            EntityType.Builder.<LightningMageEntity>of(LightningMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<HolyMageEntity>> HOLY_MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.HOLY_MAGE,
+            EntityType.Builder.<HolyMageEntity>of(HolyMageEntity::new, MobCategory.MONSTER)
+                    .sized(0.7f, 1.8f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<VoidMageEntity>> VOID_MAGE_ENTITY = registerEntity(
+            AdamsLibEntityNames.VOID_MAGE,
+            EntityType.Builder.<VoidMageEntity>of(VoidMageEntity::new, MobCategory.MONSTER)
                     .sized(0.7f, 1.8f)
                     .setTrackingRange(10));
 
@@ -173,6 +204,12 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.MATT_ENTITY.get(), MattEntity.createAttributes().build());
             event.put(AdamsModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().build());
             event.put(AdamsModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.FLAME_MAGE_ENTITY.get(), FlameMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.FROST_MAGE_ENTITY.get(), FrostMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.EARTH_MAGE_ENTITY.get(), EarthMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.LIGHTNING_MAGE_ENTITY.get(), LightningMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.HOLY_MAGE_ENTITY.get(), HolyMageEntity.createAttributes().build());
+            event.put(AdamsModEntities.VOID_MAGE_ENTITY.get(), VoidMageEntity.createAttributes().build());
             event.put(AdamsModEntities.SUMMON_SKELETON_M.get(), SummonSkeleton_m.createAttributes().build());
             event.put(AdamsModEntities.DIVINE_DOG.get(), DivineDogEntity.createAttributes().build());
             event.put(AdamsModEntities.NUE.get(), NueEntity.createAttributes().build());

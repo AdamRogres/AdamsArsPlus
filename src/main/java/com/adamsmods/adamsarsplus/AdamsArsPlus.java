@@ -89,6 +89,12 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.SUMMON_SKELETON_M.get(), RenderSummonedSkeletonM::new);
         EntityRenderers.register(AdamsModEntities.ADAM_ENTITY.get(), AdamRenderer::new);
         EntityRenderers.register(AdamsModEntities.MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.FLAME_MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.FROST_MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.EARTH_MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.LIGHTNING_MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.HOLY_MAGE_ENTITY.get(), MageRenderer::new);
+        EntityRenderers.register(AdamsModEntities.VOID_MAGE_ENTITY.get(), MageRenderer::new);
         EntityRenderers.register(AdamsModEntities.FIRE_ENTITY.get(), FireRenderer::new);
 
         // Ten Shadows

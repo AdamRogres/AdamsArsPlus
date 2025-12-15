@@ -179,6 +179,12 @@
 	"entity.adamsarsplus.matt": 						"Matthew: King of Heroes",
 	"entity.adamsarsplus.adam": 						"Adam: Emperor Archmage",
 	"entity.adamsarsplus.mage": 						"Mysterious Mage",
+	"entity.adamsarsplus.flame_mage": 					"Flame Soul Mage",
+	"entity.adamsarsplus.frost_mage": 					"Frost Soul Mage",
+	"entity.adamsarsplus.earth_mage": 					"Earth Soul Mage",
+	"entity.adamsarsplus.lightning_mage": 				"Lightning Soul Mage",
+	"entity.adamsarsplus.holy_mage": 					"Holy Soul Mage",
+	"entity.adamsarsplus.void_mage": 					"Void Soul Mage",
 
 	"entity.adamsarsplus.divine_dog": 					"Divine Dog",
 	"entity.adamsarsplus.nue": 							"Nue",

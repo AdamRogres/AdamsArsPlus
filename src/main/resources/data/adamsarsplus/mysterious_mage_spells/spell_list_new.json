@@ -14,7 +14,7 @@
       "spell":  "wither-amp-amp-amp-hex-amp-amp-amp-amp",
       "coold":  "medium",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-void"
     },
     {
        "name":  "Pointy",
@@ -22,7 +22,7 @@
       "spell":  "linger-accelerate_three-harm-swap_target-heal-amp-amp-amp-amp-dispel",
       "coold":  "medium",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-holy"
     },
     {
        "name":  "Gojo",
@@ -30,7 +30,7 @@
       "spell":  "limitless-aoe_three-amp-amp-pierce-dampen",
       "coold":  "medium",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-void"
     },
     {
       "name":  "Glow",
@@ -38,7 +38,7 @@
       "spell":  "rune-snare-extend-light",
       "coold":  "short",
       "type":   "melee",
-      "tier":   "overworld"
+      "tier":   "overworld-holy"
     },
     {
       "name":  "Bailey",
@@ -46,7 +46,7 @@
       "spell":  "launch-amp-amp-delay-explosion-amp",
       "coold":  "medium",
       "type":   "projectile",
-      "tier":   "overworld-griefing"
+      "tier":   "overworld-griefing-flame"
     },
     {
       "name":  "Arachne",
@@ -54,7 +54,7 @@
       "spell":  "split-split-snare-extend-extend-harm-extend",
       "coold":  "short",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-earth"
     },
     {
       "name":  "Warp",
@@ -70,7 +70,7 @@
       "spell":  "accelerate_three-ignite-delay-conjure_water-freeze",
       "coold":  "short",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-frost"
     },
     {
       "name":  "Gootastic",
@@ -78,7 +78,7 @@
       "spell":  "launch-amp-amp-delay-pull-amp-amp",
       "coold":  "short",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Toxin",
@@ -94,7 +94,7 @@
       "spell":  "intangible-aoe-aoe-pierce-pierce-pierce-pierce-pierce-extend",
       "coold":  "short",
       "type":   "melee",
-      "tier":   "overworld"
+      "tier":   "overworld-void"
     },
     {
       "name":  "Vault",
@@ -102,7 +102,7 @@
       "spell":  "launch-delay-leap-slowfall-burst-windshear",
       "coold":  "short",
       "type":   "melee",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Fireball!",
@@ -110,7 +110,7 @@
       "spell":  "ignite-explosion-amp-amp-aoe-aoe",
       "coold":  "long",
       "type":   "detonate",
-      "tier":   "overworld-griefing"
+      "tier":   "overworld-griefing-flame"
     },
     {
       "name":  "Renew",
@@ -118,7 +118,7 @@
       "spell":  "swap_target-rune-dispel-heal-amp",
       "coold":  "short",
       "type":   "melee",
-      "tier":   "overworld"
+      "tier":   "overworld-holy"
     },
     {
       "name":  "Yeet",
@@ -126,7 +126,7 @@
       "spell":  "orbit-launch-amp-amp-delay-knockback-amp-amp",
       "coold":  "medium",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Takeoff",
@@ -142,7 +142,7 @@
       "spell":  "orbit-blink-amp-summon_undead",
       "coold":  "long",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-holy"
     },
     {
       "name":  "Xacris",
@@ -150,7 +150,7 @@
       "spell":  "burst-aoe-sensitive-dampen-mageblock",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-earth"
     },
     {
       "name":  "Xacris",
@@ -158,7 +158,7 @@
       "spell":  "linger-sensitive-extend_three-aoe_three-firework-amp",
       "coold":  "medium",
       "type":   "detonate",
-      "tier":   "overworld"
+      "tier":   "overworld-flame"
     },
     {
       "name":  "Othy",
@@ -166,7 +166,7 @@
       "spell":  "burst-aoe_three-meteor_swarm-ignite-flare",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-flame"
     },
     {
       "name":  "Aurellia",
@@ -174,7 +174,7 @@
       "spell":  "linger-sensitive-fangs-lightning-amp-amp-extend_three",
       "coold":  "long",
       "type":   "detonate",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Alex",
@@ -182,7 +182,7 @@
       "spell":  "domain-extract-aoe_three-accelerate_two-snare-harm",
       "coold":  "long",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-earth"
     },
     {
       "name":  "Poseidon",
@@ -190,7 +190,7 @@
       "spell":  "light-burst-aoe_two-sensitive-conjure_water-freeze-ice_burst-conjure_water",
       "coold":  "medium",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-frost"
     },
     {
       "name":  "Chem",
@@ -198,7 +198,7 @@
       "spell":  "domain-extract-aoe_two-rune-launch-launch-launch-launch",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Ivy",
@@ -206,7 +206,7 @@
       "spell":  "burst-sensitive-animate-extend_three-extend_three",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld-griefing"
+      "tier":   "overworld-griefing-holy"
     },
     {
       "name":  "Darkfira",
@@ -214,7 +214,7 @@
       "spell":  "burst-sensitive-aoe_three-conjure_water-freeze-lightning-amp",
       "coold":  "long",
       "type":   "detonate",
-      "tier":   "overworld"
+      "tier":   "overworld-frost"
     },
     {
       "name":  "Spinoftw",
@@ -222,7 +222,7 @@
       "spell":  "conjure_water-heal-amp_two-mage_block-aoe_three",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-frost"
     },
     {
       "name":  "Lyrellion",
@@ -230,7 +230,7 @@
       "spell":  "wall-sensitive-mageblock-pierce-amp-limitless-pierce-amp",
       "coold":  "medium",
       "type":   "detonate",
-      "tier":   "overworld"
+      "tier":   "overworld-void"
     },
     {
       "name":  "Silvanus",
@@ -238,7 +238,7 @@
       "spell":  "glow-extend_three-ignite-extend_three",
       "coold":  "short",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-flame"
     },
     {
       "name":  "Uni",
@@ -246,7 +246,7 @@
       "spell":  "orbit-split-aoe_three-knockback-amp_three-harm-amp_three",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Crowdroverworld",
@@ -254,7 +254,7 @@
       "spell":  "domain-aoe_three-extract-snare-wither",
       "coold":  "long",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-void"
     },
     {
       "name":  "Chosen Architect",
@@ -262,7 +262,7 @@
       "spell":  "split-split-break-aoe-aoe-pierce-pierce",
       "coold":  "short",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-earth"
     },
     {
       "name":  "Lufia",
@@ -270,7 +270,7 @@
       "spell":  "accelerate_three-pierce-pierce-pierce-intangible-aoe_three",
       "coold":  "short",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-lightning"
     },
     {
       "name":  "Mystifi",
@@ -278,7 +278,7 @@
       "spell":  "linger-sensitive-extend_two-intangible-pierce-pierce-extend_two",
       "coold":  "medium",
       "type":   "projectile",
-      "tier":   "overworld"
+      "tier":   "overworld-earth"
     },
     {
       "name":  "Plauged",
@@ -286,7 +286,7 @@
       "spell":  "explosion-amp_two-aoe_three-aoe_three",
       "coold":  "medium",
       "type":   "self",
-      "tier":   "overworld-griefing"
+      "tier":   "overworld-griefing-flame"
     },
     {
       "name":  "Bugcolez",
@@ -294,7 +294,7 @@
       "spell":  "orbit-aoe_three-orbit-aoe_two-orbit-fangs",
       "coold":  "short",
       "type":   "self",
-      "tier":   "overworld"
+      "tier":   "overworld-earth"
     },
     {
       "name":  "Sloppybox",
@@ -302,7 +302,7 @@
       "spell":  "ignite-flare-rune-smelt-pierce-pierce-pierce-pierce-aoe_two",
       "coold":  "short",
       "type":   "melee",
-      "tier":   "overworld"
+      "tier":   "overworld-flame"
     }
 
   ]
