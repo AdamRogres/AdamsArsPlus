@@ -18,6 +18,8 @@ import java.util.Set;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 import static com.adamsmods.adamsarsplus.Config.*;
+import static com.adamsmods.adamsarsplus.Config.Common.DISCOUNT_BACKLASH;
+import static com.adamsmods.adamsarsplus.Config.Common.MAX_DISCOUNTS;
 
 
 public class SpellEfficiency extends AbstractEffect {

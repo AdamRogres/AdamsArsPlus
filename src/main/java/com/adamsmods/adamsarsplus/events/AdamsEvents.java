@@ -3,29 +3,14 @@ package com.adamsmods.adamsarsplus.events;
 import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.command.TSrankCommand;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.SpellEfficiency;
-import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.event.*;
-import com.hollingsworth.arsnouveau.api.perk.PerkAttributes;
-import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
-import com.hollingsworth.arsnouveau.api.util.ManaUtil;
-import com.hollingsworth.arsnouveau.common.block.tile.GhostWeaveTile;
-import com.hollingsworth.arsnouveau.common.block.tile.SpellSensorTile;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectInvisibility;
-import com.hollingsworth.arsnouveau.setup.config.ServerConfig;
-import com.hollingsworth.arsnouveau.setup.registry.EnchantmentRegistry;
-import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
-import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.UUID;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
 
@@ -58,6 +43,22 @@ public class AdamsEvents {
     @SubscribeEvent
     public static void commandRegister(RegisterCommandsEvent event) {
         TSrankCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void newMaxManaCalc(MaxManaCalcEvent event) {
+        if(!(event.getEntity().getEffect(EARTHEN_HEART_EFFECT.get()) == null)){
+            event.setMax(event.getMax() / 2);
+        }
+    }
+
+    @SubscribeEvent
+    public static void weaponAttackDisruption(AttackEntityEvent event){
+        if(event.getEntity().hasEffect(ABYSSAL_DOMINATION_EFFECT.get())){
+            if(event.getTarget() instanceof LivingEntity living){
+                living.addEffect(new MobEffectInstance(DISRUPTION_EFFECT.get(), 100, 0, true, true));
+            }
+        }
     }
 
 }

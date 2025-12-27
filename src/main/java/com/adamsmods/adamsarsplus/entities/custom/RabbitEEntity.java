@@ -260,6 +260,10 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
         return super.hurt(pSource, pAmount);
     }
 
+    public boolean canCollideWith(Entity pEntity) {
+        return pEntity.canBeCollidedWith() && !this.isPassengerOfSameVehicle(pEntity) && !(pEntity == this.getOwner());
+    }
+
     public void setOwner(LivingEntity owner) {
         this.owner = owner;
     }

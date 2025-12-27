@@ -74,6 +74,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
 
     public int ticksLeft;
     public boolean isSummon;
+    public int attackTimer = 0;
 
     Vec3 moveTargetPoint;
     BlockPos anchorPoint;
@@ -105,6 +106,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         this.attackPhase = NueEntity.AttackPhase.CIRCLE;
         this.moveControl = new NueMoveControl(this);
         this.lookControl = new NueLookControl(this);
+
     }
 
     public NueEntity(EntityType<? extends FlyingMob> type, Level worldIn) {
@@ -153,6 +155,21 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
 
         if(this.level().isClientSide()) {
             setupAnimationStates();
+        } else {
+            if(this.attackTimer <= 0 && this.isAttacking()){
+                this.setAttacking(false);
+            } else {
+                this.attackTimer--;
+            }
+            if(!this.isAttacking()){
+                this.attackTimer = 25;
+            }
+            /*
+            if(this.getOwner() instanceof Player player){
+                PortUtil.sendMessage(player, Component.literal(String.valueOf(attackTimer)));
+                PortUtil.sendMessage(player, Component.literal(String.valueOf(this.isAttacking())));
+            }
+             */
         }
 
     }
@@ -171,19 +188,15 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
             this.idleAnimationState.stop();
         }
         //Attack Animation control
-        if(this.isAttacking()){
-            if(this.attackAnimationTimeout <= 0){
-                attackAnimationState.start(this.tickCount);
-                this.attackAnimationTimeout = 25;
-            } else {
-                this.attackAnimationTimeout = Math.max(1, this.attackAnimationTimeout - 1);
+        if(this.isAttacking() && this.attackAnimationTimeout <= 0){
+           this.attackAnimationTimeout = 25;
+           this.attackAnimationState.start(this.tickCount);
 
-                if(this.attackAnimationTimeout == 1){
-                    this.setAttacking(false);
-                    this.attackAnimationTimeout = 0;
-                }
-            }
         } else {
+            this.attackAnimationTimeout--;
+        }
+        if(!this.isAttacking()){
+            this.attackAnimationTimeout = 0;
             attackAnimationState.stop();
         }
 

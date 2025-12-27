@@ -312,6 +312,12 @@ public class SpellString {
             case "dismantle" -> {
                 retPart = EffectDismantle.INSTANCE;
             }
+            case "not_self" -> {
+                retPart = FilterNotSelf.INSTANCE;
+            }
+            case "soul_rime" -> {
+                retPart = EffectSoulRime.INSTANCE;
+            }
         }
 
         return retPart;
@@ -321,6 +327,10 @@ public class SpellString {
         int r = 0;
         int g = 0;
         int b = 0;
+
+        if(color.contains("_sword")){
+            color = color.replace("_sword", "");
+        }
 
         switch(color){
             case "white"        -> r = 255;

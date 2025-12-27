@@ -1,4 +1,6 @@
-// 1.20.1	2025-11-08T14:17:14.7841486	ArsPlus Block Tags
-e207a27ddb515c3850f20c947a12beb36bd661dc data/ars_nouveau/tags/blocks/break_blacklist.json
+// 1.20.1	2025-12-18T15:39:07.6122438	ArsPlus Block Tags
+19696ef1a503e862e096e23af2acc41909ee98e9 data/adamsarsplus/tags/blocks/break_a.json
+a088366145f3f30f54c41121c64505f68c50fbcf data/adamsarsplus/tags/blocks/break_b.json
+971161c836ac8a6cf969f1f7fadc487dc5309b55 data/ars_nouveau/tags/blocks/break_blacklist.json
 950f8927b15b73b04cd606d199e9b09a6e363342 data/minecraft/tags/blocks/mineable/pickaxe.json
 2e81ccf3e728d1f545b886bea7406c7162fe73ad data/minecraft/tags/blocks/needs_diamond_tool.json

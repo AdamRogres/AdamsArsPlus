@@ -22,7 +22,8 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
     MysteriousMageEntity mageEntity;
 
     private int attackDelay = 15;
-    private int ticksUntilNextAttack = 5;
+    private int ticksUntilNextAttack = 15;
+    private int totalAnimation = 20;
     private boolean shouldCountTillNextAttack = false;
 
     Supplier<Integer> spellCooldown;
@@ -46,7 +47,7 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
     public void start() {
         super.start();
         attackDelay = 15;
-        ticksUntilNextAttack = 5;
+        ticksUntilNextAttack = 15;
     }
 
     public boolean canUse() {
@@ -94,7 +95,11 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
     }
 
     protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 8);
+        this.ticksUntilNextAttack = this.adjustedTickDelay(this.attackDelay);
+    }
+
+    protected void resetAttackLoopCooldown() {
+        this.ticksUntilNextAttack = this.adjustedTickDelay(this.totalAnimation);
     }
 
     protected boolean isTimeToAttack() {
@@ -114,11 +119,10 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
     }
 
     protected void performAttack(LivingEntity pEnemy) {
-        this.resetAttackCooldown();
+        this.resetAttackLoopCooldown();
         this.mob.swing(InteractionHand.MAIN_HAND);
         this.mob.doHurtTarget(pEnemy);
         this.done = true;
-
     }
 
     @Override

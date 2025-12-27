@@ -41,7 +41,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
-import static com.adamsmods.adamsarsplus.Config.DOMAIN_BURNOUT;
+import static com.adamsmods.adamsarsplus.Config.Common.DOMAIN_BURNOUT;
 
 public class EffectDomain extends AbstractEffect {
     public EffectDomain(ResourceLocation tag, String description) {

@@ -134,7 +134,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         }
         //Bite Animation control
         if(this.isBiting() && biteAnimationTimeout <= 0) {
-            biteAnimationTimeout = 20;
+            biteAnimationTimeout = 15;
             biteAnimationState.start(this.tickCount);
         } else {
             --this.biteAnimationTimeout;

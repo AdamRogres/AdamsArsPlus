@@ -2,15 +2,13 @@ package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.entities.ai.MageCastingGoal;
-import com.adamsmods.adamsarsplus.entities.client.MahoragaRenderer;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
+import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAmplifyThree;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentLesserAOE;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectAnnihilate;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectFracture;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectLimitless;
-import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
@@ -19,16 +17,11 @@ import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
-import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
-import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
-import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -52,7 +45,6 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -62,19 +54,15 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.RangedAttackMob;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,9 +70,6 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
-import static com.adamsmods.adamsarsplus.Config.MAX_DOMAIN_ENTITIES;
-import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
-import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
 import static java.lang.Math.*;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.item.Items.NETHERITE_SWORD;
@@ -241,10 +226,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         return this.entityData.get(ATTACKINGBBA);
     }
     public void setAttackingC(boolean attacking) {
-        this.entityData.set(ATTACKINGA, attacking);
+        this.entityData.set(ATTACKINGC, attacking);
     }
     public boolean isAttackingC() {
-        return this.entityData.get(ATTACKINGA);
+        return this.entityData.get(ATTACKINGC);
     }
     public void setRoar(boolean attacking) {
         this.entityData.set(ROAR, attacking);
@@ -350,8 +335,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 this.setWheel(true);
                 this.playSound(SoundEvents.IRON_DOOR_OPEN, 1.5F, 1F);
             }
-
-
         }
 
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
@@ -672,8 +655,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new MahoragaRitualGoal(this, () -> this.sealed));
 
+        this.goalSelector.addGoal(1, new MahoragaRitualGoal(this, () -> this.sealed));
         this.goalSelector.addGoal(2, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 30.0F, 3.0F));
         this.goalSelector.addGoal(3, new MahoragaAttackGoalC(this, 1.0D, true, () -> (this.attackCCooldown > 300 && this.canSlashAttack), 100));
         this.goalSelector.addGoal(4, new MahoragaRangeGoal<>(this, 1.0D, 40f, () -> this.rangedAttackCooldown > 100 && this.canRangedAttack));
@@ -913,7 +896,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         private final MahoragaEntity entity;
 
         private int attackDelay = 16;
-        private int ticksUntilNextAttack = 4;
+        private int ticksUntilNextAttack = 16;
+        private int totalAnimation = 20;
         private boolean shouldCountTillNextAttack = false;
 
         Supplier<Boolean> canUse;
@@ -929,7 +913,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         public void start() {
             super.start();
             attackDelay = 16;
-            ticksUntilNextAttack = 4;
+            ticksUntilNextAttack = 16;
 
             this.entity.rangedAttackCooldown = 0;
         }
@@ -953,7 +937,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-
 
                     performAttack(pEnemy);
                     if(pEnemy.isBlocking()){
@@ -979,7 +962,11 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 4);
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
         }
 
         protected boolean isTimeToAttack() {
@@ -999,7 +986,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackCooldown();
+            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
             this.done = true;
@@ -1052,7 +1039,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         private final MahoragaEntity entity;
 
         private int attackDelay = 7;
-        private int ticksUntilNextAttack = 3;
+        private int ticksUntilNextAttack = 7;
+        private int totalAnimation = 10;
         private boolean shouldCountTillNextAttack = false;
 
         Supplier<Boolean> canUse;
@@ -1070,7 +1058,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         public void start() {
             super.start();
             attackDelay = 7;
-            ticksUntilNextAttack = 3;
+            ticksUntilNextAttack = 7;
         }
 
         public boolean canUse() {
@@ -1127,7 +1115,11 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 3);
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
         }
 
         protected boolean isTimeToAttack() {
@@ -1147,14 +1139,14 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackCooldown();
+            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.doHurtTargetNW(pEnemy);
             this.done = true;
 
             this.entity.applyDisruption(this.entity, pEnemy);
 
-            if(this.entity.level().random.nextInt(0,100) < 25){
+            if(this.entity.level().getRandom().nextInt(0,100) < 85){
                 this.entity.attackBCooldown = 40;
             } else {
                 this.entity.attackB2Cooldown = 80;
@@ -1210,7 +1202,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         private final MahoragaEntity entity;
 
         private int attackDelay = 20;
-        private int ticksUntilNextAttack = 10;
+        private int ticksUntilNextAttack = 20;
+        private int totalAnimation = 30;
         private boolean shouldCountTillNextAttack = false;
 
         Supplier<Boolean> canUse;
@@ -1226,7 +1219,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         public void start() {
             super.start();
             attackDelay = 20;
-            ticksUntilNextAttack = 10;
+            ticksUntilNextAttack = 20;
         }
 
         public boolean canUse() {
@@ -1266,7 +1259,11 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 10);
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
         }
 
         protected boolean isTimeToAttack() {
@@ -1286,7 +1283,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackCooldown();
+            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.doHurtTargetNW(pEnemy);
             this.done = true;
@@ -1361,7 +1358,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         Supplier<Boolean> canUse;
 
         private int attackDelay = 15;
-        private int ticksUntilNextAttack = 5;
+        private int ticksUntilNextAttack = 15;
+        private int totalAnimation = 20;
         private boolean shouldCountTillNextAttack = false;
 
         public MahoragaRangeGoal(MahoragaEntity entity, double speed, float attackRange, Supplier<Boolean> canUse) {
@@ -1432,7 +1430,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             super.start();
             this.Entity.setAggressive(true);
             attackDelay = 15;
-            ticksUntilNextAttack = 5;
+            ticksUntilNextAttack = 15;
 
             if(!this.Entity.canSlashAttack){
                 this.Entity.attackCCooldown = 0;
@@ -1450,7 +1448,11 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 5);
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
         }
 
         protected boolean isTimeToAttack() {
@@ -1524,6 +1526,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
                     if(isTimeToAttack()) {
                         performCastAttack(this.Entity, this.Entity.getTarget());
+                        resetAttackLoopCooldown();
                         Entity.setRoar(false);
                         this.done = true;
                     }
@@ -1555,7 +1558,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         private final MahoragaEntity entity;
 
         private int attackDelay = 10;
-        private int ticksUntilNextAttack = 5;
+        private int ticksUntilNextAttack = 10;
+        private int totalAnimation = 15;
         private boolean shouldCountTillNextAttack = false;
 
         private int rangeAttackTime = 0;
@@ -1575,7 +1579,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         public void start() {
             super.start();
             attackDelay = 10;
-            ticksUntilNextAttack = 5;
+            ticksUntilNextAttack = 10;
             rangeAttackTime = 0;
         }
 
@@ -1611,6 +1615,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     performSpellAttack(this.entity, slashSpell, pEnemy);
+                    this.resetAttackLoopCooldown();
                 }
             } else {
                     resetAttackCooldown();
@@ -1630,7 +1635,11 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 5);
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
         }
 
         protected boolean isTimeToAttack() {
@@ -1654,7 +1663,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackCooldown();
+            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
 
             for (Entity entity : this.entity.level().getEntities(null, new AABB(this.entity.blockPosition()).inflate(this.getAttackReachSqr(this.entity),this.getAttackReachSqr(this.entity),this.getAttackReachSqr(this.entity)))) {
@@ -1714,12 +1723,17 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 .add(AugmentSplit.INSTANCE,6)
                 .add(AugmentPierce.INSTANCE, 3)
                 .add(AugmentAccelerate.INSTANCE, 2)
+                .add(AugmentDurationDown.INSTANCE, 1)
 
+                .add(EffectBurst.INSTANCE)
+                .add(AugmentAOE.INSTANCE, 2)
+                .add(AugmentSensitive.INSTANCE)
+                .add(EffectAnnihilate.INSTANCE)
+                .add(AugmentAmplifyThree.INSTANCE)
+                .add(EffectBurst.INSTANCE)
+                .add(AugmentLesserAOE.INSTANCE)
                 .add(EffectAnnihilate.INSTANCE)
                 .add(AugmentAmplify.INSTANCE, 2)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(EffectBurst.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
 
                 .withColor(slashSpellcolor);
 

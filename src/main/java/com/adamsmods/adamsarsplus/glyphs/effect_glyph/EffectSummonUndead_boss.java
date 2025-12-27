@@ -50,7 +50,6 @@ public class EffectSummonUndead_boss extends AbstractEffect {
         Spell newSpell = spellContext.getRemainingSpell();
         SpellContext newContext = spellContext.clone().withSpell(newSpell);
 
-
         if (canSummonM(shooter)) {
             Vec3 vector3d = this.safelyGetHitPos(rayTraceResult);
             int ticks = (int)((double)20.0F * ((double)(Integer)this.GENERIC_INT.get() + (double)(Integer)this.EXTEND_TIME.get() * spellStats.getDurationMultiplier()));

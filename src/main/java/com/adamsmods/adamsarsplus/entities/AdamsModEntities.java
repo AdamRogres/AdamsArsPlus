@@ -1,6 +1,7 @@
 package com.adamsmods.adamsarsplus.entities;
 
 import com.adamsmods.adamsarsplus.entities.custom.*;
+import com.adamsmods.adamsarsplus.entities.variants.*;
 import com.adamsmods.adamsarsplus.lib.AdamsLibEntityNames;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
@@ -10,10 +11,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.projectile.EyeOfEnder;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,7 +26,9 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.List;
 
 import static com.adamsmods.adamsarsplus.AdamsArsPlus.MOD_ID;
-import static com.adamsmods.adamsarsplus.Config.MAGE_DIMENSION_BLACKLIST;
+import static com.adamsmods.adamsarsplus.Config.Common.MAGE_DIMENSION_BLACKLIST;
+import static net.minecraft.world.entity.Mob.checkMobSpawnRules;
+import static net.minecraft.world.entity.monster.Monster.isDarkEnoughToSpawn;
 import static net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES;
 
 public class AdamsModEntities {
@@ -62,8 +66,8 @@ public class AdamsModEntities {
                         .noSave()
                         .setUpdateInterval(120).setCustomClientFactory(DetonateProjectile::new));
 
-    public static final RegistryObject<EntityType<MeteorProjectile>> METEOR_SPELL = registerEntity(
-            AdamsLibEntityNames.METEOR,
+        public static final RegistryObject<EntityType<MeteorProjectile>> METEOR_SPELL = registerEntity(
+                AdamsLibEntityNames.METEOR,
                 EntityType.Builder.<MeteorProjectile>of(MeteorProjectile::new, MobCategory.MISC)
                         .sized(0.5f, 0.5f)
                         .setTrackingRange(20)
@@ -72,14 +76,14 @@ public class AdamsModEntities {
                         .noSave()
                         .setUpdateInterval(120).setCustomClientFactory(MeteorProjectile::new));
 
-    public static final RegistryObject<EntityType<BladeProjectile>> BLADE_PROJ = registerEntity(
-            AdamsLibEntityNames.BLADE,
+        public static final RegistryObject<EntityType<BladeProjectile>> BLADE_PROJ = registerEntity(
+                AdamsLibEntityNames.BLADE,
                 EntityType.Builder.<BladeProjectile>of(BladeProjectile::new, MobCategory.MISC)
                         .sized(0.3f, 0.3f)
                         .clientTrackingRange(20));
 
-    public static final RegistryObject<EntityType<EntityDivineSmite>> DIVINE_SMITE = registerEntity(
-            AdamsLibEntityNames.DIVINESMITE,
+        public static final RegistryObject<EntityType<EntityDivineSmite>> DIVINE_SMITE = registerEntity(
+                AdamsLibEntityNames.DIVINESMITE,
                 EntityType.Builder.<EntityDivineSmite>of(EntityDivineSmite::new, MobCategory.MISC)
                         .noSave()
                         .sized(0.0F, 0.0F)
@@ -87,19 +91,25 @@ public class AdamsModEntities {
                         .updateInterval(Integer.MAX_VALUE)
                         .setShouldReceiveVelocityUpdates(true).setUpdateInterval(60));
 
-    public static final RegistryObject<EntityType<SummonSkeleton_m>> SUMMON_SKELETON_M = registerEntity(
-            AdamsLibEntityNames.SUMMONED_SKELETON_M,
+        public static final RegistryObject<EntityType<SummonSkeleton_m>> SUMMON_SKELETON_M = registerEntity(
+                AdamsLibEntityNames.SUMMONED_SKELETON_M,
                 EntityType.Builder.<SummonSkeleton_m>of(SummonSkeleton_m::new, MobCategory.CREATURE)
                         .sized(1.0F, 1.8F)
                         .clientTrackingRange(10));
 
-    public static final RegistryObject<EntityType<FireEntity>> FIRE_ENTITY = registerEntity(
-            AdamsLibEntityNames.FIRE,
+        public static final RegistryObject<EntityType<FireEntity>> FIRE_ENTITY = registerEntity(
+                AdamsLibEntityNames.FIRE,
                 EntityType.Builder.<FireEntity>of(FireEntity::new, MobCategory.CREATURE)
                     .sized(0.8f, 0.8f)
                     .setShouldReceiveVelocityUpdates(true));
 
-    public static final RegistryObject<EntityType<RyanEntity>> RYAN_ENTITY = registerEntity(
+    public static final RegistryObject<EntityType<TerraprismaEntity>> TERRA_ENTITY = registerEntity(
+            AdamsLibEntityNames.SWORD,
+            EntityType.Builder.<TerraprismaEntity>of(TerraprismaEntity::new, MobCategory.CREATURE)
+                    .sized(0.8f, 0.8f)
+                    .setShouldReceiveVelocityUpdates(true));
+
+        public static final RegistryObject<EntityType<RyanEntity>> RYAN_ENTITY = registerEntity(
                 AdamsLibEntityNames.RYAN,
                 EntityType.Builder.<RyanEntity>of(RyanEntity::new, MobCategory.MONSTER)
                         .sized(0.7f, 1.9f));
@@ -137,32 +147,62 @@ public class AdamsModEntities {
     public static final RegistryObject<EntityType<FlameMageEntity>> FLAME_MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.FLAME_MAGE,
             EntityType.Builder.<FlameMageEntity>of(FlameMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
-                    .setTrackingRange(10));
+                    .sized(0.7f, 1.8f));
     public static final RegistryObject<EntityType<FrostMageEntity>> FROST_MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.FROST_MAGE,
             EntityType.Builder.<FrostMageEntity>of(FrostMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
-                    .setTrackingRange(10));
+                    .sized(0.7f, 1.8f));
     public static final RegistryObject<EntityType<EarthMageEntity>> EARTH_MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.EARTH_MAGE,
             EntityType.Builder.<EarthMageEntity>of(EarthMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
-                    .setTrackingRange(10));
+                    .sized(0.7f, 1.8f));
     public static final RegistryObject<EntityType<LightningMageEntity>> LIGHTNING_MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.LIGHTNING_MAGE,
             EntityType.Builder.<LightningMageEntity>of(LightningMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
-                    .setTrackingRange(10));
+                    .sized(0.7f, 1.8f));
     public static final RegistryObject<EntityType<HolyMageEntity>> HOLY_MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.HOLY_MAGE,
             EntityType.Builder.<HolyMageEntity>of(HolyMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
-                    .setTrackingRange(10));
+                    .sized(0.7f, 1.8f));
     public static final RegistryObject<EntityType<VoidMageEntity>> VOID_MAGE_ENTITY = registerEntity(
             AdamsLibEntityNames.VOID_MAGE,
             EntityType.Builder.<VoidMageEntity>of(VoidMageEntity::new, MobCategory.MONSTER)
-                    .sized(0.7f, 1.8f)
+                    .sized(0.7f, 1.8f));
+
+    public static final RegistryObject<EntityType<MageKnightEntity>> MAGE_KNIGHT = registerEntity(
+            AdamsLibEntityNames.MAGE_KNIGHT,
+            EntityType.Builder.<MageKnightEntity>of(MageKnightEntity::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<FlameMageKnight>> FLAME_KNIGHT = registerEntity(
+            AdamsLibEntityNames.FLAME_KNIGHT,
+            EntityType.Builder.<FlameMageKnight>of(FlameMageKnight::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<FrostMageKnight>> FROST_KNIGHT = registerEntity(
+            AdamsLibEntityNames.FROST_KNIGHT,
+            EntityType.Builder.<FrostMageKnight>of(FrostMageKnight::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<EarthMageKnight>> EARTH_KNIGHT = registerEntity(
+            AdamsLibEntityNames.EARTH_KNIGHT,
+            EntityType.Builder.<EarthMageKnight>of(EarthMageKnight::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<LightningMageKnight>> LIGHTNING_KNIGHT = registerEntity(
+            AdamsLibEntityNames.LIGHTNING_KNIGHT,
+            EntityType.Builder.<LightningMageKnight>of(LightningMageKnight::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<HolyMageKnight>> HOLY_KNIGHT = registerEntity(
+            AdamsLibEntityNames.HOLY_KNIGHT,
+            EntityType.Builder.<HolyMageKnight>of(HolyMageKnight::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
+                    .setTrackingRange(10));
+    public static final RegistryObject<EntityType<VoidMageKnight>> VOID_KNIGHT = registerEntity(
+            AdamsLibEntityNames.VOID_KNIGHT,
+            EntityType.Builder.<VoidMageKnight>of(VoidMageKnight::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.9f)
                     .setTrackingRange(10));
 
     // Ten Shadows
@@ -203,6 +243,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.CAM_ENTITY.get(), CamEntity.createAttributes().build());
             event.put(AdamsModEntities.MATT_ENTITY.get(), MattEntity.createAttributes().build());
             event.put(AdamsModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().build());
+
             event.put(AdamsModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());
             event.put(AdamsModEntities.FLAME_MAGE_ENTITY.get(), FlameMageEntity.createAttributes().build());
             event.put(AdamsModEntities.FROST_MAGE_ENTITY.get(), FrostMageEntity.createAttributes().build());
@@ -210,6 +251,15 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.LIGHTNING_MAGE_ENTITY.get(), LightningMageEntity.createAttributes().build());
             event.put(AdamsModEntities.HOLY_MAGE_ENTITY.get(), HolyMageEntity.createAttributes().build());
             event.put(AdamsModEntities.VOID_MAGE_ENTITY.get(), VoidMageEntity.createAttributes().build());
+
+            event.put(AdamsModEntities.MAGE_KNIGHT.get(), MageKnightEntity.createAttributes().build());
+            event.put(AdamsModEntities.FLAME_KNIGHT.get(), FlameMageKnight.createAttributes().build());
+            event.put(AdamsModEntities.FROST_KNIGHT.get(), FrostMageKnight.createAttributes().build());
+            event.put(AdamsModEntities.EARTH_KNIGHT.get(), EarthMageKnight.createAttributes().build());
+            event.put(AdamsModEntities.LIGHTNING_KNIGHT.get(), LightningMageKnight.createAttributes().build());
+            event.put(AdamsModEntities.HOLY_KNIGHT.get(), HolyMageKnight.createAttributes().build());
+            event.put(AdamsModEntities.VOID_KNIGHT.get(), VoidMageKnight.createAttributes().build());
+
             event.put(AdamsModEntities.SUMMON_SKELETON_M.get(), SummonSkeleton_m.createAttributes().build());
             event.put(AdamsModEntities.DIVINE_DOG.get(), DivineDogEntity.createAttributes().build());
             event.put(AdamsModEntities.NUE.get(), NueEntity.createAttributes().build());
@@ -217,6 +267,7 @@ public class AdamsModEntities {
             event.put(AdamsModEntities.ROUND_DEER.get(), RDeerEntity.createAttributes().build());
             event.put(AdamsModEntities.MAHORAGA.get(), MahoragaEntity.createAttributes().build());
             event.put(AdamsModEntities.FIRE_ENTITY.get(), FireEntity.createAttributes().build());
+            event.put(AdamsModEntities.TERRA_ENTITY.get(), TerraprismaEntity.createAttributes().build());
         }
     }
 
@@ -226,10 +277,43 @@ public class AdamsModEntities {
 
     public static void registerPlacements() {
         SpawnPlacements.register((EntityType) MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageSpawnRules);
+        SpawnPlacements.register((EntityType) MAGE_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) FLAME_MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) FLAME_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) FROST_MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) FROST_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) EARTH_MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) EARTH_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) LIGHTNING_MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) LIGHTNING_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) HOLY_MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) HOLY_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) VOID_MAGE_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
+        SpawnPlacements.register((EntityType) VOID_KNIGHT.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AdamsModEntities::mageVariantSpawnRules);
     }
 
     public static boolean mageSpawnRules(EntityType<? extends Monster> type, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
         return worldIn.getDifficulty() != Difficulty.PEACEFUL && Monster.checkMonsterSpawnRules(type, worldIn, reason, pos, randomIn) && !((List) MAGE_DIMENSION_BLACKLIST.get()).contains(worldIn.getLevel().dimension().location().toString());
+    }
+
+    public static boolean mageVariantSpawnRules(EntityType<? extends Monster> type, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
+        return worldIn.getDifficulty() != Difficulty.PEACEFUL && checkMonsterSpawnRules(type, worldIn, reason, pos, randomIn);
+    }
+
+    public static boolean checkMonsterSpawnRules(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
+        return pLevel.getDifficulty() != Difficulty.PEACEFUL && isNaturalDarkEnoughToSpawn(pLevel, pPos, pRandom) && checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+    }
+
+    public static boolean isNaturalDarkEnoughToSpawn(ServerLevelAccessor pLevel, BlockPos pPos, RandomSource pRandom) {
+        DimensionType dimensiontype = pLevel.dimensionType();
+        int i = dimensiontype.monsterSpawnBlockLightLimit();
+        if (i < 15 && pLevel.getBrightness(LightLayer.BLOCK, pPos) > i) {
+            return false;
+        } else {
+            int j = pLevel.getLevel().isThundering() ? pLevel.getMaxLocalRawBrightness(pPos, 10) : pLevel.getMaxLocalRawBrightness(pPos);
+            return j <= dimensiontype.monsterSpawnLightTest().sample(pRandom);
+        }
+
     }
 
 }

@@ -1,4 +1,4 @@
-// 1.20.1	2025-10-27T20:33:14.0290503	Example Glyph Recipes
+// 1.20.1	2025-12-18T13:41:34.4521108	Example Glyph Recipes
 45a6547297d4ee52a7712a8f25901d6c7be18311 data/adamsarsplus/recipes/glyph_accelerate_three.json
 b9a3c9ba0fc6c9621702c298bd35a6e3b0a7ef8d data/adamsarsplus/recipes/glyph_accelerate_two.json
 7618289e4537f021750ad6f107642bbc615c69f2 data/adamsarsplus/recipes/glyph_amplify_three.json
@@ -22,6 +22,7 @@ ca4611729ebe86c45135aa81cd0248a16e84e798 data/adamsarsplus/recipes/glyph_effectf
 4799d56d4593d6d0ae15eb2a851faccb7fd6af91 data/adamsarsplus/recipes/glyph_effectmeteorswarm.json
 6cf0b602d0d2fe8bb16aeab31d3f1e8c170c4ddb data/adamsarsplus/recipes/glyph_effectraiseearth.json
 d87cd75565d8a275822ed990f0e80378fce91808 data/adamsarsplus/recipes/glyph_effectsimpledomain.json
+aded92b2b152e9880d4a908b6af15839cd0aeed4 data/adamsarsplus/recipes/glyph_effectsoulrime.json
 50e889df4596abb07a67eb30b27820b574620904 data/adamsarsplus/recipes/glyph_effectsummonundead_m.json
 cd643691b1d17becef6137e10d1c4b2be1e026a4 data/adamsarsplus/recipes/glyph_effectswaptarget.json
 6cdd3df74e81c71f0144e6e2cf8d74d7822fe9ab data/adamsarsplus/recipes/glyph_extendtime_three.json

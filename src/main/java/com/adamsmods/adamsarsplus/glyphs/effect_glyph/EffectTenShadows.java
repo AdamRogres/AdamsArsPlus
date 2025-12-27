@@ -55,8 +55,10 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
 
-                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), 1200));
-                    shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), 2400));
+                    int duration = 1200 + (int)(spellStats.getDurationMultiplier() * 300);
+
+                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), duration));
+                    shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), duration * 2));
                 }
                 case 3 -> {
                     // Round Deer
@@ -94,7 +96,7 @@ public class EffectTenShadows extends AbstractEffect{
 
                     for(int i = 0; i < 2; ++i) {
                         DivineDogEntity tsentity = new DivineDogEntity(world, shooter, ddColor[i], true);
-                        tsentity.moveTo(blockpos, 0.0F, 0.0F);
+                        tsentity.moveTo(blockpos.offset(i, 0, 0), 0.0F, 0.0F);
                         tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                         tsentity.setOwner(shooter);
                         this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
@@ -167,7 +169,9 @@ public class EffectTenShadows extends AbstractEffect{
 
     public @NotNull Set<AbstractAugment> getCompatibleAugments() {
         return this.setOf(new AbstractAugment[]{
-                AugmentAmplify.INSTANCE
+                AugmentAmplify.INSTANCE,
+                AugmentExtendTime.INSTANCE,
+                AugmentDurationDown.INSTANCE
         });
     }
 

@@ -16,10 +16,16 @@
       "bounding_box": "piece",
       "spawns": [
         {
-          "type": "adamsarsplus:mage",
+          "type": "adamsarsplus:lightning_mage",
           "weight": 5,
           "minCount": 1,
           "maxCount": 3
+        },
+        {
+          "type": "adamsarsplus:lightning_mage_knight",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 1
         }
       ]
     }

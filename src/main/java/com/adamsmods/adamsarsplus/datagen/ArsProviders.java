@@ -127,7 +127,7 @@ public class ArsProviders {
             recipes.add(get(EffectMeteorSwarm.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE,2).withItem(FIRE_CHARGE));
 
             recipes.add(get(EffectBlueFlame.INSTANCE).withItem(FLAME_SOUL,3).withItem(SOUL_CAMPFIRE).withItem(LAVA_BUCKET).withItem(SOUL_LANTERN));
-
+            recipes.add(get(EffectSoulRime.INSTANCE).withItem(FROST_SOUL,3).withItem(BLUE_ICE).withItem(DRIPSTONE_BLOCK).withItem(CHAIN, 2));
             recipes.add(get(EffectFracture.INSTANCE).withItem(EARTH_SOUL,3).withItem(ItemsRegistry.EARTH_ESSENCE,2).withItem(ANVIL));
             recipes.add(get(EffectDismantle.INSTANCE).withItem(LIGHTNING_SOUL,3).withItem(SHEARS).withItem(ItemsRegistry.SPLIT_ARROW).withItem(NETHERITE_SWORD));
             recipes.add(get(EffectSummonUndead_boss.INSTANCE).withItem(HERO_SOUL,3).withItem(ItemsRegistry.CONJURATION_ESSENCE).withItem(WITHER_SKELETON_SKULL).withItem(ItemsRegistry.ENCHANTERS_SWORD));

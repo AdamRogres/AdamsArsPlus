@@ -133,13 +133,13 @@
       "color":  "light_blue_sword",
       "spell":  "launch-launch-glide",
       "coold":  "short",
-      "type":   "self",
+      "type":   "melee",
       "tier":   "overworld"
     },
     {
       "name":  "Kirin",
       "color":  "yellow",
-      "spell":  "orbit-blink-amp-summon_undead",
+      "spell":  "orbit-blink-amp-summon_undead-harm",
       "coold":  "long",
       "type":   "self",
       "tier":   "overworld-holy"

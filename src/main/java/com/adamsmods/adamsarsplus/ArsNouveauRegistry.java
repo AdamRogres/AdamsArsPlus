@@ -7,6 +7,7 @@ import com.adamsmods.adamsarsplus.entities.effects.*;
 
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.MethodDetonate;
 import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
+import com.adamsmods.adamsarsplus.item.armor.MageArmorPerkHolder;
 import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
 import com.adamsmods.adamsarsplus.ritual.RitualTenShadows;
@@ -47,6 +48,16 @@ public class ArsNouveauRegistry {
     public static final RegistryObject<MobEffect> ICEBURST_EFFECT = EFFECTS.register(ICEBURST, IceBurstEffect::new);
     public static final RegistryObject<MobEffect> TENSHADOWS_EFFECT = EFFECTS.register(TENSHADOWS, TenShadowsEffect::new);
     public static final RegistryObject<MobEffect> DISRUPTION_EFFECT = EFFECTS.register(DISRUPTION, DisruptionEffect::new);
+    public static final RegistryObject<MobEffect> SOUL_RIME_EFFECT = EFFECTS.register(SOUL_RIME, SoulRimeEffect::new);
+    public static final RegistryObject<MobEffect> CLOUD_STEPS_EFFECT = EFFECTS.register(CLOUD_STEPS, CloudStepsEffect::new);
+    public static final RegistryObject<MobEffect> LEAP_FATIGUE_EFFECT = EFFECTS.register(LEAP_FATIGUE, LeapFatigueEffect::new);
+    public static final RegistryObject<MobEffect> FLAME_DEITY_EFFECT = EFFECTS.register(FLAME_DEITY, FlameDeityAuraEffect::new);
+    public static final RegistryObject<MobEffect> MARKED_CREMATION_EFFECT = EFFECTS.register(MARKED_CREMATION, MarkedForCremationEffect::new);
+    public static final RegistryObject<MobEffect> WALKING_BLIZZARD_EFFECT = EFFECTS.register(WALKING_BLIZZARD, WalkingBlizzardEffect::new);
+    public static final RegistryObject<MobEffect> EARTHEN_HEART_EFFECT = EFFECTS.register(EARTHEN_HEART, EarthSetbonusEffect::new);
+    public static final RegistryObject<MobEffect> LIGHTNING_STEPS_EFFECT = EFFECTS.register(LIGHTNING_STEPS, LightningStepsEffect::new);
+    public static final RegistryObject<MobEffect> HOLY_LEGION_EFFECT = EFFECTS.register(HOLY_LEGION, HolyLegionEffect::new);
+    public static final RegistryObject<MobEffect> ABYSSAL_DOMINATION_EFFECT = EFFECTS.register(ABYSSAL_DOMINATION, AbyssalDominationEffect::new);
 
     public static List<AbstractSpellPart> registeredSpells = new ArrayList<>(); //this will come handy for datagen
 
@@ -82,6 +93,7 @@ public class ArsNouveauRegistry {
         register(EffectAnnihilate.INSTANCE);
         register(EffectTenShadows.INSTANCE);
         register(EffectFracture.INSTANCE);
+        register(EffectSoulRime.INSTANCE);
         register(EffectDismantle.INSTANCE);
         register(EffectBlueFlame.INSTANCE);
         register(EffectConjureBlade.INSTANCE);
@@ -116,52 +128,50 @@ public class ArsNouveauRegistry {
     public static void registerPerks(){
         ArsNouveauAPI api = ArsNouveauAPI.getInstance();
 
-        api.getEnchantingRecipeTypes().add((RecipeType) A_ARMOR_UP.get());
-
         // Cade Armor
-        PerkRegistry.registerPerkProvider(CADE_BOOTS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(CADE_LEGGINGS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_LEGGINGS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CADE_ROBES.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_ROBES.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CADE_HOOD.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_HOOD.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(CADE_BOOTS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_BOOTS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CADE_LEGGINGS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_LEGGINGS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CADE_ROBES_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_ROBES_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CADE_HOOD_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CADE_HOOD_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.ONE),
@@ -169,49 +179,49 @@ public class ArsNouveauRegistry {
         )));
 
         // Ryan Armor
-        PerkRegistry.registerPerkProvider(RYAN_BOOTS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_LEGGINGS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_LEGGINGS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_ROBES.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_ROBES.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.TWO, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_HOOD.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_HOOD.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.ONE, PerkSlot.ONE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.ONE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE, PerkSlot.ONE, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_BOOTS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_BOOTS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_LEGGINGS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_LEGGINGS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_ROBES_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_ROBES_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(RYAN_HOOD_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(RYAN_HOOD_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.ONE),
@@ -219,49 +229,49 @@ public class ArsNouveauRegistry {
         )));
 
         // Nick Armor
-        PerkRegistry.registerPerkProvider(NICK_BOOTS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_LEGGINGS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_LEGGINGS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_ROBES.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_ROBES.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_HOOD.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_HOOD.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_BOOTS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_BOOTS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_LEGGINGS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_LEGGINGS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_ROBES_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_ROBES_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(NICK_HOOD_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(NICK_HOOD_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -269,56 +279,56 @@ public class ArsNouveauRegistry {
         )));
 
         // Cam Armor
-        PerkRegistry.registerPerkProvider(CAMR_BOOTS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_LEGGINGS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_LEGGINGS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_ROBES.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_ROBES.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_HOOD.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_HOOD.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_BOOTS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_BOOTS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.THREE, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_LEGGINGS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_LEGGINGS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_ROBES_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_ROBES_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(CAMR_HOOD_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(CAMR_HOOD_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.THREE, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -327,56 +337,56 @@ public class ArsNouveauRegistry {
         )));
 
         // Matt Armor
-        PerkRegistry.registerPerkProvider(MATT_BOOTS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(MATT_LEGGINGS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_LEGGINGS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(MATT_ROBES.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_ROBES.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(MATT_HOOD.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_HOOD.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(MATT_BOOTS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_BOOTS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(MATT_LEGGINGS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_LEGGINGS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE),
                 Arrays.asList(PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(MATT_ROBES_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_ROBES_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(MATT_HOOD_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(MATT_HOOD_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -385,7 +395,7 @@ public class ArsNouveauRegistry {
         )));
 
         // Adam Armor
-        PerkRegistry.registerPerkProvider(ADAM_BOOTS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -393,7 +403,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_LEGGINGS.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_LEGGINGS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -401,7 +411,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_ROBES.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_ROBES.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -409,7 +419,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.TWO, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_HOOD.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_HOOD.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -417,7 +427,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.THREE, PerkSlot.TWO),
                 Arrays.asList(APerkSlot.FIVE, PerkSlot.THREE, PerkSlot.TWO)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_BOOTS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_BOOTS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -425,7 +435,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_LEGGINGS_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_LEGGINGS_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -433,7 +443,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_ROBES_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_ROBES_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.SIX, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),
@@ -441,7 +451,7 @@ public class ArsNouveauRegistry {
                 Arrays.asList(APerkSlot.SIX, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(APerkSlot.SIX, PerkSlot.THREE, PerkSlot.THREE)
         )));
-        PerkRegistry.registerPerkProvider(ADAM_HOOD_A.get(), (stack) -> new ArmorPerkHolder(stack, Arrays.asList(
+        PerkRegistry.registerPerkProvider(ADAM_HOOD_A.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(APerkSlot.SIX, PerkSlot.THREE, PerkSlot.THREE),
                 Arrays.asList(PerkSlot.ONE),
                 Arrays.asList(PerkSlot.ONE),

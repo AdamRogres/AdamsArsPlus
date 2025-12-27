@@ -3,9 +3,14 @@
   "package": "com.adamsmods.adamsarsplus.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "adamsarsplus.mixin-refmap.json",
-
   "mixins": [
-    "MixinLivingEntity"
+    "MixinBlockUtil",
+    "MixinEffectBlink",
+    "MixinEffectLeap",
+    "MixinEnderpearlItem",
+    "MixinEntity",
+    "MixinLivingEntity",
+    "MixinWarpScroll"
   ],
   "minVersion": "0.8"
 }

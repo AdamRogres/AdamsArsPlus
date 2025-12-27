@@ -1,66 +1,32 @@
 package com.adamsmods.adamsarsplus.entities;
 
-import com.adamsmods.adamsarsplus.block.DomainShell;
-import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 
 import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
-import com.hollingsworth.arsnouveau.ArsNouveau;
-import com.hollingsworth.arsnouveau.api.ANFakePlayer;
-import com.hollingsworth.arsnouveau.api.item.IWandable;
-import com.hollingsworth.arsnouveau.api.spell.SpellContext;
-import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
-import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
-import com.hollingsworth.arsnouveau.api.util.SpellUtil;
-import com.hollingsworth.arsnouveau.common.block.MageBlock;
-import com.hollingsworth.arsnouveau.common.block.tile.MageBlockTile;
 import com.hollingsworth.arsnouveau.common.entity.*;
-import com.hollingsworth.arsnouveau.client.particle.ParticleUtil;
-import com.hollingsworth.arsnouveau.common.items.curios.ShapersFocus;
-import com.hollingsworth.arsnouveau.common.lib.EntityTags;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDampen;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
-import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
-import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
-import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import com.hollingsworth.arsnouveau.api.entity.ChangeableBehavior;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.*;
 import net.minecraft.world.phys.*;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.network.PlayMessages;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
-
-import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.SIMPLE_DOMAIN_EFFECT;
-import static com.adamsmods.adamsarsplus.Config.MAX_DOMAIN_ENTITIES;
-import static com.adamsmods.adamsarsplus.block.ModBlocks.DOMAIN_SHELL_BLOCK;
-import static com.hollingsworth.arsnouveau.setup.registry.BlockRegistry.MAGE_BLOCK;
+import static com.adamsmods.adamsarsplus.Config.Common.MAX_DOMAIN_ENTITIES;
 
 
 public class EntityDomainSpell extends EntityProjectileSpell {
@@ -153,7 +119,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
             }
 
             int i = 0;
-            for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(getAoe(),getAoe(),getAoe()))) {
+            for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(radius,radius,radius))) {
                 if (entity.equals(this) || entity.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST))
                     continue;
                 if (entity instanceof LivingEntity){

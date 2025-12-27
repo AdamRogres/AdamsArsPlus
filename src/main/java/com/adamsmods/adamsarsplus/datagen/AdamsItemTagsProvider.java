@@ -25,7 +25,6 @@ import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
 
 public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
 
-
     public static final TagKey<Item> MAGIC_HOOD = ItemTags.create(new ResourceLocation(ArsNouveau.MODID, "hood"));
     public static final TagKey<Item> MAGIC_ROBE = ItemTags.create(new ResourceLocation(ArsNouveau.MODID, "robe"));
     public static final TagKey<Item> MAGIC_LEG  = ItemTags.create(new ResourceLocation(ArsNouveau.MODID, "legs"));

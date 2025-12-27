@@ -23,6 +23,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.MATT_LAYER, MattModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.ADAM_LAYER, AdamModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.MAGE_LAYER, MageModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.MAGEK_LAYER, MageKnightModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.DDOG_LAYER, DDogModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.NUE_LAYER, NueModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.RABE_LAYER, RabbitEModel::createBodyLayer);
@@ -30,6 +31,7 @@ public class ModEventBusClientEvents {
         event.registerLayerDefinition(ModModelLayers.MAHO_LAYER, MahoragaModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.FIRE_LAYER, FireModel::createBodyLayer);
         event.registerLayerDefinition(ModModelLayers.BLADE_LAYER, BladeModel::createBodyLayer);
+        event.registerLayerDefinition(ModModelLayers.SWORD_LAYER, TerraprismaModel::createBodyLayer);
     }
 
 }

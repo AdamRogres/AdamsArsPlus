@@ -66,7 +66,7 @@ public class RyanCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
             .add(AugmentAmplify.INSTANCE)
 
             .add(EffectExplosion.INSTANCE)
-            .add(AugmentAmplify.INSTANCE,4)
+            .add(AugmentAmplify.INSTANCE,8)
 
             .add(EffectBurst.INSTANCE)
             .add(AugmentAOEThree.INSTANCE)

@@ -290,9 +290,9 @@ public class RyanEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new RyanDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 15));
-        this.goalSelector.addGoal(1, new RyanCastingGoal(this, 1.0D, 20f, () -> castCooldown <= 0, 0, 15));
-        this.goalSelector.addGoal(2, new RyanAttackGoal(this, 1.0D, true, () -> true));
+        this.goalSelector.addGoal(1, new RyanDomainGoal(this, 1.0D, 10f, () -> domainCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new RyanCastingGoal(this, 1.0D, 20f, () -> castCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(3, new RyanAttackGoal(this, 1.0D, true, () -> true));
 
         this.goalSelector.addGoal(5, new MoveTowardsRestrictionGoal(this, (double)1.0F));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, (double)1.0F, 0.0F));
@@ -315,7 +315,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                 .add(Attributes.FLYING_SPEED, (double)0.5F)
                 .add(Attributes.FOLLOW_RANGE, (double)70.0F)
                 .add(Attributes.ATTACK_KNOCKBACK, (double)1.0F)
-                .add(Attributes.KNOCKBACK_RESISTANCE, (double)0.7F)
+                .add(Attributes.KNOCKBACK_RESISTANCE, (double)1.0F)
                 .add(Attributes.ARMOR_TOUGHNESS, (double) 10D);
     }
 

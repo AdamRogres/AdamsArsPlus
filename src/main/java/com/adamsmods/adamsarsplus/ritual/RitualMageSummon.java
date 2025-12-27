@@ -51,11 +51,16 @@ public class RitualMageSummon extends AbstractRitual {
                 BlockPos summonPos = this.getPos().above().east(this.rand.nextInt(3) - this.rand.nextInt(6)).north(this.rand.nextInt(3) - this.rand.nextInt(6));
                 Object var10000;
 
-                var10000 = new MysteriousMageEntity(this.getWorld());
+                if(this.getProgress() <= 15){
+                    var10000 = new MysteriousMageEntity(this.getWorld());
+                } else {
+                    var10000 = new MageKnightEntity(this.getWorld());
+                }
 
                 Mob mobEntity = (Mob)var10000;
                 this.summon(mobEntity, summonPos);
-                if (this.getProgress() >= 15) {
+
+                if (this.getProgress() >= 19) {
                     this.setFinished();
                 }
 
@@ -316,7 +321,7 @@ public class RitualMageSummon extends AbstractRitual {
     }
 
     public String getLangDescription() {
-        return "Without augments, this ritual will summon a random variety of Mysterious Mages. When augmented with a fire/water/earth essence a powerful mage will be summoned. Using an air or conjuration essence requires an elemental soul and abjuration essence requires a true elemental soul. Note: Mages can be highly destructive.";
+        return "Without augments, this ritual will summon a random variety of Mysterious Mages. When augmented with an Eye of Flame/Frost/Earth/Lightning/Holy/Void you may summon an Archmage of the associated element as long as the ritual is performed within the final resting place of that archmage. Note: Mages can be highly destructive.";
     }
 
     public boolean canConsumeItem(ItemStack stack) {

@@ -33,8 +33,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
-
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AdamsArsPlus.MOD_ID)
 public class AdamsArsPlus {
@@ -44,8 +42,10 @@ public class AdamsArsPlus {
 
     public AdamsArsPlus() {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModRegistry.registerRegistries(modbus);
 
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC, "adamsarsplus-common.toml");
+
+        ModRegistry.registerRegistries(modbus);
         ArsNouveauRegistry.registerGlyphs();
 
         modbus.addListener(this::setup);
@@ -53,9 +53,6 @@ public class AdamsArsPlus {
         modbus.addListener(this::doTabThings);
 
         ModLootModifiers.register(modbus);
-
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
-
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -86,8 +83,8 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.NICK_ENTITY.get(), NickRenderer::new);
         EntityRenderers.register(AdamsModEntities.CAM_ENTITY.get(), CamRenderer::new);
         EntityRenderers.register(AdamsModEntities.MATT_ENTITY.get(), MattRenderer::new);
-        EntityRenderers.register(AdamsModEntities.SUMMON_SKELETON_M.get(), RenderSummonedSkeletonM::new);
         EntityRenderers.register(AdamsModEntities.ADAM_ENTITY.get(), AdamRenderer::new);
+
         EntityRenderers.register(AdamsModEntities.MAGE_ENTITY.get(), MageRenderer::new);
         EntityRenderers.register(AdamsModEntities.FLAME_MAGE_ENTITY.get(), MageRenderer::new);
         EntityRenderers.register(AdamsModEntities.FROST_MAGE_ENTITY.get(), MageRenderer::new);
@@ -95,7 +92,19 @@ public class AdamsArsPlus {
         EntityRenderers.register(AdamsModEntities.LIGHTNING_MAGE_ENTITY.get(), MageRenderer::new);
         EntityRenderers.register(AdamsModEntities.HOLY_MAGE_ENTITY.get(), MageRenderer::new);
         EntityRenderers.register(AdamsModEntities.VOID_MAGE_ENTITY.get(), MageRenderer::new);
+
+        EntityRenderers.register(AdamsModEntities.MAGE_KNIGHT.get(), MageKnightRenderer::new);
+        EntityRenderers.register(AdamsModEntities.FLAME_KNIGHT.get(), MageKnightRenderer::new);
+        EntityRenderers.register(AdamsModEntities.FROST_KNIGHT.get(), MageKnightRenderer::new);
+        EntityRenderers.register(AdamsModEntities.EARTH_KNIGHT.get(), MageKnightRenderer::new);
+        EntityRenderers.register(AdamsModEntities.LIGHTNING_KNIGHT.get(), MageKnightRenderer::new);
+        EntityRenderers.register(AdamsModEntities.HOLY_KNIGHT.get(), MageKnightRenderer::new);
+        EntityRenderers.register(AdamsModEntities.VOID_KNIGHT.get(), MageKnightRenderer::new);
+
+        // Misc
         EntityRenderers.register(AdamsModEntities.FIRE_ENTITY.get(), FireRenderer::new);
+        EntityRenderers.register(AdamsModEntities.SUMMON_SKELETON_M.get(), RenderSummonedSkeletonM::new);
+        EntityRenderers.register(AdamsModEntities.TERRA_ENTITY.get(), TerraprismaRenderer::new);
 
         // Ten Shadows
         EntityRenderers.register(AdamsModEntities.DIVINE_DOG.get(), DDogRenderer::new);

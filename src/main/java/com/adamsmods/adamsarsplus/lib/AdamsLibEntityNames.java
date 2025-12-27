@@ -10,6 +10,7 @@ public class AdamsLibEntityNames {
     public static final String SUMMONED_SKELETON_M = "summoned_skeleton_m";
     public static final String BLADE = "blade";
     public static final String SOUL_EYE = "soul_eye";
+    public static final String SWORD = "sword";
 
     // Bosses
     public static final String RYAN = "ryan";
@@ -27,6 +28,14 @@ public class AdamsLibEntityNames {
     public static final String LIGHTNING_MAGE = "lightning_mage";
     public static final String HOLY_MAGE = "holy_mage";
     public static final String VOID_MAGE = "void_mage";
+
+    public static final String MAGE_KNIGHT = "mage_knight";
+    public static final String FLAME_KNIGHT = "flame_mage_knight";
+    public static final String FROST_KNIGHT = "frost_mage_knight";
+    public static final String EARTH_KNIGHT = "earth_mage_knight";
+    public static final String LIGHTNING_KNIGHT = "lightning_mage_knight";
+    public static final String HOLY_KNIGHT = "holy_mage_knight";
+    public static final String VOID_KNIGHT = "void_mage_knight";
 
     // Ten Shadows
     public static final String DIVINEDOG = "divine_dog";

@@ -4,10 +4,7 @@ import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.block.ModBlocks;
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
 import com.adamsmods.adamsarsplus.entities.effects.*;
-import com.adamsmods.adamsarsplus.item.EnchantersStopwatch;
-import com.adamsmods.adamsarsplus.item.GeneralsWheel;
-import com.adamsmods.adamsarsplus.item.MagicItems;
-import com.adamsmods.adamsarsplus.item.RegularItems;
+import com.adamsmods.adamsarsplus.item.*;
 import com.adamsmods.adamsarsplus.block.ModBlocks.*;
 import com.adamsmods.adamsarsplus.item.armor.MageMagicArmor;
 import com.adamsmods.adamsarsplus.item.eyes.*;
@@ -116,6 +113,7 @@ public class ModRegistry {
 
     public static final RegistryObject<EnchantersStopwatch> ENCHANTERS_STOPWATCH;
     public static final RegistryObject<GeneralsWheel> GENERALS_WHEEL;
+    public static final RegistryObject<MageTome> MAGE_TOME;
     public static final RegistryObject<EyeOfFlame> EYE_OF_FLAME;
     public static final RegistryObject<EyeOfFrost> EYE_OF_FROST;
     public static final RegistryObject<EyeOfEarth> EYE_OF_EARTH;
@@ -200,6 +198,16 @@ public class ModRegistry {
     public static final RegistryObject<MobEffect> ICEBURST_EFFECT = EFFECTS.register(ICEBURST, IceBurstEffect::new);
     public static final RegistryObject<MobEffect> DISRUPTION_EFFECT = EFFECTS.register(DISRUPTION, DisruptionEffect::new);
     public static final RegistryObject<MobEffect> TENSHADOWS_EFFECT = EFFECTS.register(TENSHADOWS, TenShadowsEffect::new);
+    public static final RegistryObject<MobEffect> SOUL_RIME_EFFECT = EFFECTS.register(SOUL_RIME, SoulRimeEffect::new);
+    public static final RegistryObject<MobEffect> CLOUD_STEPS_EFFECT = EFFECTS.register(CLOUD_STEPS, CloudStepsEffect::new);
+    public static final RegistryObject<MobEffect> LEAP_FATIGUE_EFFECT = EFFECTS.register(LEAP_FATIGUE, LeapFatigueEffect::new);
+    public static final RegistryObject<MobEffect> FLAME_DEITY_EFFECT = EFFECTS.register(FLAME_DEITY, FlameDeityAuraEffect::new);
+    public static final RegistryObject<MobEffect> MARKED_CREMATION_EFFECT = EFFECTS.register(MARKED_CREMATION, MarkedForCremationEffect::new);
+    public static final RegistryObject<MobEffect> WALKING_BLIZZARD_EFFECT = EFFECTS.register(WALKING_BLIZZARD, WalkingBlizzardEffect::new);
+    public static final RegistryObject<MobEffect> EARTHEN_HEART_EFFECT = EFFECTS.register(EARTHEN_HEART, EarthSetbonusEffect::new);
+    public static final RegistryObject<MobEffect> LIGHTNING_STEPS_EFFECT = EFFECTS.register(LIGHTNING_STEPS, LightningStepsEffect::new);
+    public static final RegistryObject<MobEffect> HOLY_LEGION_EFFECT = EFFECTS.register(HOLY_LEGION, HolyLegionEffect::new);
+    public static final RegistryObject<MobEffect> ABYSSAL_DOMINATION_EFFECT = EFFECTS.register(ABYSSAL_DOMINATION, AbyssalDominationEffect::new);
 
     public static void registerPerk(IPerk perk) {
         PerkRegistry.registerPerk(perk);
@@ -228,6 +236,7 @@ public class ModRegistry {
         // Other Items
         ENCHANTERS_STOPWATCH = ITEMS.register("enchanters_stopwatch", () -> new EnchantersStopwatch(new Item.Properties().stacksTo(1)));
         GENERALS_WHEEL       = ITEMS.register("generals_wheel", () -> new GeneralsWheel(new Item.Properties().stacksTo(1)));
+        MAGE_TOME            = ITEMS.register("mage_tome", () -> new MageTome(MageTome.tomeTier, new Item.Properties().stacksTo(1).defaultDurability(10)));
 
         EYE_OF_FLAME        = ITEMS.register("eye_of_flame", () -> new EyeOfFlame(new Item.Properties().stacksTo(64)));
         EYE_OF_FROST        = ITEMS.register("eye_of_frost", () -> new EyeOfFrost(new Item.Properties().stacksTo(64)));

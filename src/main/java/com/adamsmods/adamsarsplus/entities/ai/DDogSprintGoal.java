@@ -65,6 +65,7 @@ public class DDogSprintGoal extends MeleeAttackGoal {
         }
 
         this.mob.setDeltaMovement($$1.x, 0.4, $$1.z);
+        entity.lungeAnimationTimeout = 0;
         entity.setLunging(true);
 
         this.entity.sprintCooldown = 0;

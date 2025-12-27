@@ -1,9 +1,11 @@
 package com.adamsmods.adamsarsplus.datagen;
 
+import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
 import com.adamsmods.adamsarsplus.perk.*;
 import com.adamsmods.adamsarsplus.ritual.RitualMageSummon;
 import com.adamsmods.adamsarsplus.ritual.RitualTenShadows;
+import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.familiar.AbstractFamiliarHolder;
 import com.hollingsworth.arsnouveau.api.perk.IPerk;
 import com.hollingsworth.arsnouveau.api.registry.PerkRegistry;
@@ -14,7 +16,6 @@ import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.common.datagen.PatchouliProvider;
 import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
 import com.hollingsworth.arsnouveau.common.items.PerkItem;
-import com.hollingsworth.arsnouveau.common.items.RitualTablet;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +25,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.registeredSpells;
+import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.*;
+import static com.adamsmods.adamsarsplus.block.ModBlocks.*;
 import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
 import static net.minecraft.world.item.Items.ENCHANTED_BOOK;
 
@@ -50,6 +53,20 @@ public class AdamPatchouliProvider extends PatchouliProvider {
 
         addBasicItem(ELEMENTAL_SOUL, RESOURCES, new ApparatusPage(ELEMENTAL_SOUL.get()));
         addBasicItem(TRUE_ELEMENTAL_SOUL, RESOURCES, new ApparatusPage(TRUE_ELEMENTAL_SOUL.get()));
+        addBasicItem(FLAME_SOUL, RESOURCES, new EntityPage(RYAN_ENTITY.get()));
+        addBasicItem(FROST_SOUL, RESOURCES, new EntityPage(CADE_ENTITY.get()));
+        addBasicItem(EARTH_SOUL, RESOURCES, new EntityPage(NICK_ENTITY.get()));
+        addBasicItem(LIGHTNING_SOUL, RESOURCES, new EntityPage(CAM_ENTITY.get()));
+        addBasicItem(HERO_SOUL, RESOURCES, new EntityPage(MATT_ENTITY.get()));
+        addBasicItem(VOID_SOUL, RESOURCES, new EntityPage(ADAM_ENTITY.get()));
+        addBasicItem(MAGE_CLOTH, RESOURCES, new EntityPage(MAGE_ENTITY.get()));
+
+        addBasicItem(EYE_OF_FLAME, RITUALS, new ApparatusPage(EYE_OF_FLAME));
+        addBasicItem(EYE_OF_FROST, RITUALS, new ApparatusPage(EYE_OF_FROST));
+        addBasicItem(EYE_OF_EARTH, RITUALS, new ApparatusPage(EYE_OF_EARTH));
+        addBasicItem(EYE_OF_LIGHTNING, RITUALS, new ApparatusPage(EYE_OF_LIGHTNING));
+        addBasicItem(EYE_OF_HOLY, RITUALS, new ApparatusPage(EYE_OF_HOLY));
+        addBasicItem(EYE_OF_VOID, RITUALS, new ApparatusPage(EYE_OF_VOID));
 
         addPerkPage(SixeyesPerk.INSTANCE);
         addPerkPage(ImmortalPerk.INSTANCE);
@@ -58,20 +75,24 @@ public class AdamPatchouliProvider extends PatchouliProvider {
         addPerkPage(AdrenalinePerk.INSTANCE);
         addPerkPage(InvinciblePerk.INSTANCE);
 
-        addBasicItem(RYAN_HOOD, EQUIPMENT, new ApparatusPage(RYAN_HOOD.get()));
-        addBasicItem(CADE_HOOD, EQUIPMENT, new ApparatusPage(CADE_HOOD.get()));
-        addBasicItem(NICK_HOOD, EQUIPMENT, new ApparatusPage(NICK_HOOD.get()));
-        addBasicItem(RYAN_HOOD_A, EQUIPMENT, new ApparatusPage(RYAN_HOOD_A.get()));
-        addBasicItem(CADE_HOOD_A, EQUIPMENT, new ApparatusPage(CADE_HOOD_A.get()));
-        addBasicItem(NICK_HOOD_A, EQUIPMENT, new ApparatusPage(NICK_HOOD_A.get()));
+        addBasicItem(ENCHANTERS_STOPWATCH, EQUIPMENT, new ApparatusPage(ENCHANTERS_STOPWATCH.get()));
+        addBasicItem(GENERALS_WHEEL, EQUIPMENT, new ApparatusPage(GENERALS_WHEEL.get()));
+        addBasicItem(MAGE_TOME, EQUIPMENT, new EntityPage(MAGE_KNIGHT.get()));
 
-        addBasicItem(CAMR_HOOD, EQUIPMENT, new ApparatusPage(CAMR_HOOD.get()));
-        addBasicItem(MATT_HOOD, EQUIPMENT, new ApparatusPage(MATT_HOOD.get()));
-        addBasicItem(CAMR_HOOD_A, EQUIPMENT, new ApparatusPage(CAMR_HOOD_A.get()));
-        addBasicItem(MATT_HOOD_A, EQUIPMENT, new ApparatusPage(MATT_HOOD_A.get()));
+        addBasicItem(RYAN_HOOD, EQUIPMENT, new MageArmorPage(RYAN_HOOD.get()));
+        addBasicItem(CADE_HOOD, EQUIPMENT, new MageArmorPage(CADE_HOOD.get()));
+        addBasicItem(NICK_HOOD, EQUIPMENT, new MageArmorPage(NICK_HOOD.get()));
+        addBasicItem(RYAN_HOOD_A, EQUIPMENT, new MageArmorPage(RYAN_HOOD_A.get()));
+        addBasicItem(CADE_HOOD_A, EQUIPMENT, new MageArmorPage(CADE_HOOD_A.get()));
+        addBasicItem(NICK_HOOD_A, EQUIPMENT, new MageArmorPage(NICK_HOOD_A.get()));
+        addBasicItem(CAMR_HOOD, EQUIPMENT, new MageArmorPage(CAMR_HOOD.get()));
+        addBasicItem(MATT_HOOD, EQUIPMENT, new MageArmorPage(MATT_HOOD.get()));
+        addBasicItem(CAMR_HOOD_A, EQUIPMENT, new MageArmorPage(CAMR_HOOD_A.get()));
+        addBasicItem(MATT_HOOD_A, EQUIPMENT, new MageArmorPage(MATT_HOOD_A.get()));
+        addBasicItem(ADAM_HOOD, EQUIPMENT, new MageArmorPage(ADAM_HOOD.get()));
+        addBasicItem(ADAM_HOOD_A, EQUIPMENT, new MageArmorPage(ADAM_HOOD_A.get()));
 
-        addBasicItem(ADAM_HOOD, EQUIPMENT, new ApparatusPage(ADAM_HOOD.get()));
-        addBasicItem(ADAM_HOOD_A, EQUIPMENT, new ApparatusPage(ADAM_HOOD_A.get()));
+        addBasicItem(AUTO_TURRET_BLOCK, AUTOMATION, new ApparatusPage(AUTO_TURRET_BLOCK.get()));
 
         for (PatchouliPage patchouliPage : pages) {
             saveStable(cache, patchouliPage.build(), patchouliPage.path());
@@ -162,6 +183,17 @@ public class AdamPatchouliProvider extends PatchouliProvider {
 
     private ResourceLocation getRegistryName(Enchantment enchantment) {
         return ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
+    }
+
+    static class MageArmorPage extends ApparatusPage {
+        public MageArmorPage(ItemLike itemLike) {
+            super(itemLike);
+        }
+
+        @Override
+        public ResourceLocation getType() {
+            return new ResourceLocation(ArsNouveau.MODID, "a_armor_upgrade_recipe");
+        }
     }
 
 }

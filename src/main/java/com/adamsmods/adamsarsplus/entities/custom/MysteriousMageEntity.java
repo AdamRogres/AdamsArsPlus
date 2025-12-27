@@ -9,8 +9,8 @@ import com.adamsmods.adamsarsplus.util.SpellString;
 
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 
-import static com.adamsmods.adamsarsplus.Config.COM_MAGES;
-import static com.adamsmods.adamsarsplus.Config.MAGES_GRIEF;
+import static com.adamsmods.adamsarsplus.Config.Common.COM_MAGES;
+import static com.adamsmods.adamsarsplus.Config.Common.MAGES_GRIEF;
 import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.MAGE_ENTITY;
 
 import net.minecraft.nbt.CompoundTag;
@@ -327,7 +327,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                     this.setIndex(randomSource.nextInt(CommunityMages.mages.size()));
                     size = CommunityMages.mages.size();
                 } else {
-                    this.setIndex(randomSource.nextInt(7));
+                    this.setIndex(randomSource.nextInt(0, 6));
                 }
 
                 for(int i = 0; i < size; i++){
@@ -335,6 +335,7 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                         if(CommunityMages.mages.get(i + this.getIndex()).tier.contains("overworld")){
                             if(MAGES_GRIEF.get() || !CommunityMages.mages.get(i + this.getIndex()).tier.contains("griefing")){
                                 Offset = i;
+                                this.setIndex(this.getIndex() + Offset);
                                 break;
                             }
                         }
@@ -342,13 +343,14 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                         if(CommunityMages.mages.get(i + this.getIndex() - size).tier.contains("overworld")){
                             if(MAGES_GRIEF.get() || !CommunityMages.mages.get(i + this.getIndex()).tier.contains("griefing")){
                                 Offset = i;
+                                this.setIndex(this.getIndex() + Offset - size);
                                 break;
                             }
                         }
                     }
                 }
 
-                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(this.getIndex() + Offset);
+                CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(this.getIndex());
 
                 this.setColor(communityMage.color);
                 this.setName(communityMage.name);

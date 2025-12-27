@@ -33,7 +33,12 @@ public class ModModelLayers {
             new ResourceLocation(AdamsArsPlus.MOD_ID, "blade_layer"), "main");
     public static final ModelLayerLocation MAGE_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "mage_layer"), "main");
+    public static final ModelLayerLocation MAGEK_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "magek_layer"), "main");
     public static final ModelLayerLocation FIRE_LAYER = new ModelLayerLocation(
             new ResourceLocation(AdamsArsPlus.MOD_ID, "fire_layer"), "main");
+    public static final ModelLayerLocation SWORD_LAYER = new ModelLayerLocation(
+            new ResourceLocation(AdamsArsPlus.MOD_ID, "sword_layer"), "main");
+
 
 }

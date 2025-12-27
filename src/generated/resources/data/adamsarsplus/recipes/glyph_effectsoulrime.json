@@ -1,0 +1,43 @@
+{
+  "type": "ars_nouveau:glyph",
+  "count": 1,
+  "exp": 55,
+  "inputItems": [
+    {
+      "item": {
+        "item": "adamsarsplus:frost_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:frost_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "adamsarsplus:frost_soul"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:blue_ice"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:dripstone_block"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:chain"
+      }
+    },
+    {
+      "item": {
+        "item": "minecraft:chain"
+      }
+    }
+  ],
+  "output": "adamsarsplus:glyph_effectsoulrime"
+}

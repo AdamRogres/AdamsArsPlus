@@ -1,9 +1,6 @@
 package com.adamsmods.adamsarsplus.entities.custom;
 
 import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
-import com.adamsmods.adamsarsplus.entities.ai.DDogAttackGoal;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectAnnihilate;
-import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
 import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
@@ -15,7 +12,6 @@ import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.Util;
@@ -29,7 +25,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -39,13 +34,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.control.JumpControl;
-import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
@@ -53,24 +44,17 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
-import static com.adamsmods.adamsarsplus.Config.MAX_DOMAIN_ENTITIES;
 import static java.lang.Math.*;
 import static java.lang.Math.toRadians;
 
@@ -483,7 +467,8 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         private final RDeerEntity entity;
 
         private int attackDelay = 15;
-        private int ticksUntilNextAttack = 10;
+        private int ticksUntilNextAttack = 15;
+        private int totalAnimation = 25;
         private boolean shouldCountTillNextAttack = false;
 
         Supplier<Boolean> canUse;
@@ -499,7 +484,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         public void start() {
             super.start();
             attackDelay = 15;
-            ticksUntilNextAttack = 10;
+            ticksUntilNextAttack = 15;
         }
 
         public boolean canUse() {
@@ -546,7 +531,11 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
 
         protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 10);
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(this.totalAnimation);
         }
 
         protected boolean isTimeToAttack() {
@@ -566,7 +555,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackCooldown();
+            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
             this.done = true;

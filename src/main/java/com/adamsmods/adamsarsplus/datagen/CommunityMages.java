@@ -61,7 +61,7 @@ public class CommunityMages {
                 "harm-amp-extend-hex-swap_target-heal"
                 ,"short", "projectile", "overworld"));
         mages.add(new ComMages("Conjuration Mage","gray",
-                "summon_undead"
+                "summon_undead-harm"
                 ,"long", "projectile", "overworld"));
         mages.add(new ComMages("Manipulation Mage","orange",
                 "harm-amp-swap_target-craft"
@@ -83,7 +83,7 @@ public class CommunityMages {
                 "dismantle-accelerate_three-amp_three-conjure_blade-aoe_three-aoe_three"
                 ,"short", "detonate", "holy"));
         mages.add(new ComMages("Void Soul Mage","black",
-                "annihilate-limitless-pierce-extend_time-amp-aoe_three"
+                "burst-not_self-annihilate-limitless-pierce-extend-amp-aoe_three"
                 ,"short", "detonate", "void"));
     }
 

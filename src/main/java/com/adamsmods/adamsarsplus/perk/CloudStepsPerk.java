@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.CLOUD_STEPS_EFFECT;
 import static com.hollingsworth.arsnouveau.setup.registry.ModPotions.FLIGHT_EFFECT;
 
 public class CloudStepsPerk extends Perk implements ITickablePerk {
@@ -41,7 +42,8 @@ public class CloudStepsPerk extends Perk implements ITickablePerk {
     @Override
     public void tick(ItemStack itemStack, Level level, Player player, PerkInstance perkInstance) {
         if (!player.hasEffect(FLIGHT_EFFECT.get())) {
-            player.addEffect(new MobEffectInstance(FLIGHT_EFFECT.get(), 1200, 0, false, false));
+            player.addEffect(new MobEffectInstance(FLIGHT_EFFECT.get(), 9999999, 0, false, false));
         }
+        player.addEffect(new MobEffectInstance(CLOUD_STEPS_EFFECT.get(), 40, 0, false, false, false));
     }
 }

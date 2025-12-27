@@ -6,7 +6,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +21,10 @@ public class AdamsBlockTagsProvider extends IntrinsicHolderTagsProvider<Block> {
     public AdamsBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
         super(output, Registries.BLOCK, future, block -> block.builtInRegistryHolder().key(), AdamsArsPlus.MOD_ID, helper);
     }
+
+    public static TagKey<Block> BREAK_A = BlockTags.create(new ResourceLocation(AdamsArsPlus.MOD_ID, "break_a"));
+    public static TagKey<Block> BREAK_B = BlockTags.create(new ResourceLocation(AdamsArsPlus.MOD_ID, "break_b"));
+    public static TagKey<Block> BREAK_C = BlockTags.create(new ResourceLocation(AdamsArsPlus.MOD_ID, "break_c"));
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
@@ -77,6 +83,11 @@ public class AdamsBlockTagsProvider extends IntrinsicHolderTagsProvider<Block> {
         this.tag(BREAK_BLACKLIST).add(
                 ModBlocks.DOMAIN_SHELL_BLOCK.get(),
 
+                ModBlocks.VOID_SOUL_BRICK_BLOCK.get(),
+                ModBlocks.VOID_SOUL_BRICK_SLAB.get(),
+                ModBlocks.VOID_SOUL_BRICK_STAIR.get()
+        );
+        this.tag(BREAK_A).add(
                 ModBlocks.FIRE_SOUL_BRICK_BLOCK.get(),
                 ModBlocks.FIRE_SOUL_BRICK_SLAB.get(),
                 ModBlocks.FIRE_SOUL_BRICK_STAIR.get(),
@@ -87,8 +98,9 @@ public class AdamsBlockTagsProvider extends IntrinsicHolderTagsProvider<Block> {
 
                 ModBlocks.EARTH_SOUL_BRICK_BLOCK.get(),
                 ModBlocks.EARTH_SOUL_BRICK_SLAB.get(),
-                ModBlocks.EARTH_SOUL_BRICK_STAIR.get(),
-
+                ModBlocks.EARTH_SOUL_BRICK_STAIR.get()
+        );
+        this.tag(BREAK_B).add(
                 ModBlocks.LIGHTNING_SOUL_BRICK_BLOCK.get(),
                 ModBlocks.LIGHTNING_SOUL_BRICK_SLAB.get(),
                 ModBlocks.LIGHTNING_SOUL_BRICK_STAIR.get(),

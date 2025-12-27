@@ -12,7 +12,8 @@ public class DDogAttackGoal extends MeleeAttackGoal {
     private final DivineDogEntity entity;
 
     private int attackDelay = 10;
-    private int ticksUntilNextAttack = 5;
+    private int ticksUntilNextAttack = 10;
+    private int totalAnimation = 15;
     private boolean shouldCountTillNextAttack = false;
 
     Supplier<Boolean> canUse;
@@ -28,7 +29,7 @@ public class DDogAttackGoal extends MeleeAttackGoal {
     public void start() {
         super.start();
         attackDelay = 10;
-        ticksUntilNextAttack = 5;
+        ticksUntilNextAttack = 10;
     }
 
     public boolean canUse() {
@@ -66,7 +67,11 @@ public class DDogAttackGoal extends MeleeAttackGoal {
     }
 
     protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 10);
+        this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+    }
+
+    protected void resetAttackLoopCooldown() {
+        this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
     }
 
     protected boolean isTimeToAttack() {
@@ -86,7 +91,7 @@ public class DDogAttackGoal extends MeleeAttackGoal {
     }
 
     protected void performAttack(LivingEntity pEnemy) {
-        this.resetAttackCooldown();
+        this.resetAttackLoopCooldown();
         this.mob.swing(InteractionHand.MAIN_HAND);
         this.mob.doHurtTarget(pEnemy);
         this.done = true;
