@@ -25,8 +25,9 @@ import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 public class RyanAttackGoal extends MeleeAttackGoal {
     private final RyanEntity entity;
 
+    private int totalAnimation = 20;
     private int attackDelay = 12;
-    private int ticksUntilNextAttack = 8;
+    private int ticksUntilNextAttack = 12;
     private boolean shouldCountTillNextAttack = false;
 
     Supplier<Boolean> canUse;
@@ -42,7 +43,7 @@ public class RyanAttackGoal extends MeleeAttackGoal {
     public void start() {
         super.start();
         attackDelay = 12;
-        ticksUntilNextAttack = 8;
+        ticksUntilNextAttack = 12;
     }
 
     private ParticleColor ryanColor = new ParticleColor(255, 0, 0);
@@ -91,7 +92,11 @@ public class RyanAttackGoal extends MeleeAttackGoal {
     }
 
     protected void resetAttackCooldown() {
-        this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay + 8);
+        this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+    }
+
+    protected void resetAttackLoopCooldown() {
+        this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
     }
 
     protected boolean isTimeToAttack() {
@@ -107,11 +112,11 @@ public class RyanAttackGoal extends MeleeAttackGoal {
     }
 
     protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-        return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 2.0F);
+        return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 4.0F);
     }
 
     protected void performAttack(LivingEntity pEnemy) {
-        this.resetAttackCooldown();
+        this.resetAttackLoopCooldown();
         this.mob.swing(InteractionHand.MAIN_HAND);
         this.mob.doHurtTarget(pEnemy);
         this.done = true;

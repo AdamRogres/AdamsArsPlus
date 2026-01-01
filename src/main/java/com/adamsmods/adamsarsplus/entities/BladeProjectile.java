@@ -27,8 +27,9 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK;
     public int age;
+    public double amp;
 
-    public BladeProjectile(Level world, ItemStack item, Entity shooter){
+    public BladeProjectile(Level world, ItemStack item, Entity shooter, double Amp){
         super(AdamsModEntities.BLADE_PROJ.get(), world);
 
         this.setOwner(shooter);
@@ -36,6 +37,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         this.setNoGravity(true);
 
         this.age = 0;
+        this.amp = Amp;
     }
 
     public BladeProjectile(EntityType<? extends AbstractArrow> type, Level worldIn) {
@@ -76,6 +78,9 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     public boolean doHurtTarget(Entity target, LivingEntity attacker) {
         float f = 2;
+
+        f += (float) this.amp;
+
         for (AttributeModifier modifier : this.getItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE))
         {
             f += (float) modifier.getAmount();

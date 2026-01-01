@@ -806,9 +806,9 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 if(canAdaptCheck(entity)){
                     entity.adaptedDamageStage[i]++;
                 }
-                return false;
+                return true;
             } else if(entity.adaptedDamageTypes[i] == damageSource.type() && entity.adaptedDamageStage[i] == 3){
-                return false;
+                return true;
             }
         }
         for(int i = 0; i < 8; i++){
@@ -817,7 +817,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                     entity.adaptedDamageTypes[i] = damageSource.type();
                     entity.adaptedDamageStage[i] = 1;
                 }
-                return false;
+                return true;
             }
         }
         return true;
@@ -888,6 +888,19 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         public boolean canUse() {
             return (Boolean)this.canUse.get();
+        }
+
+        public boolean canContinueToUse() {
+            return (Boolean)this.canUse.get();
+        }
+
+        public void tick() {
+            BlockPos $$0 = this.entity.blockPosition();
+
+            this.entity.setTarget(null);
+
+            this.entity.moveControl.setWantedPosition((double)$$0.getX(), (double)$$0.getY(), (double)$$0.getZ(), (double)0F);
+            this.entity.getLookControl().setLookAt((double)$$0.getX(), (double)$$0.getY() + (double)5F, (double)$$0.getZ(), 180.0F, 20.0F);
         }
 
     }

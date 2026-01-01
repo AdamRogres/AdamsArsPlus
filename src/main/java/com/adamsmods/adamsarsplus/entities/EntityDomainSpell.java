@@ -126,7 +126,10 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                     if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
                         continue;
                     }
+                } else {
+                    continue;
                 }
+
                 if(!getDome() || (blockPosition().getY() - 2 < entity.getBlockY())) {
                     if (!getFilter() || !(spellResolver.spellContext.getUnwrappedCaster().equals(entity))) {
                         spellResolver.onResolveEffect(level(), new EntityHitResult(entity));

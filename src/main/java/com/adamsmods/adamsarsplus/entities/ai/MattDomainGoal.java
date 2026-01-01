@@ -2,10 +2,8 @@ package com.adamsmods.adamsarsplus.entities.ai;
 
 import com.adamsmods.adamsarsplus.entities.custom.CamEntity;
 import com.adamsmods.adamsarsplus.entities.custom.MattEntity;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAOEThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeTwo;
+import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectConjureBlade;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectMeteorSwarm;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
@@ -69,10 +67,9 @@ public class MattDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
             .add(AugmentExtract.INSTANCE)
             .add(AugmentAccelerateThree.INSTANCE)
 
-            .add(EffectMeteorSwarm.INSTANCE)
-            .add(EffectExplosion.INSTANCE)
-            .add(AugmentAmplify.INSTANCE, 16)
-            .add(AugmentDampen.INSTANCE)
+            .add(EffectConjureBlade.INSTANCE)
+            .add(AugmentAOEThree.INSTANCE, 2)
+            .add(AugmentAmplifyThree.INSTANCE, 16)
 
             .add(EffectHex.INSTANCE)
             .add(AugmentExtendTimeTwo.INSTANCE)

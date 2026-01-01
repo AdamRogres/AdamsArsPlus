@@ -49,7 +49,7 @@ public class EffectConjureBlade extends AbstractEffect {
         ItemStack weapon = shooter.getOffhandItem();
 
         for (int i = 0; i < numSplits + aoe * 2; i++) {
-            projectiles.add(new BladeProjectile(world, weapon, shooter));
+            projectiles.add(new BladeProjectile(world, weapon, shooter, stats.getAmpMultiplier()));
         }
         float velocity = Math.max(0.1f, 0.75f + stats.getAccMultiplier() / 2);
         int opposite = -1;
@@ -150,7 +150,8 @@ public class EffectConjureBlade extends AbstractEffect {
             AugmentSplit.INSTANCE,
             AugmentSensitive.INSTANCE,
             AugmentRandomize.INSTANCE,
-            AugmentDecelerate.INSTANCE
+            AugmentDecelerate.INSTANCE,
+            AugmentAmplify.INSTANCE
         );
     }
 

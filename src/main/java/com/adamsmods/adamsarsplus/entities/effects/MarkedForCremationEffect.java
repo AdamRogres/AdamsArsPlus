@@ -43,12 +43,12 @@ public class MarkedForCremationEffect extends MobEffect {
 
         double offset = living.getBbWidth() / 2;
 
-        level.sendParticles(ParticleTypes.FLAME,x + offset, y, z, 1,  0, 0, 0, 0);
-        level.sendParticles(ParticleTypes.FLAME,x - offset, y, z, 1, 0, 0, 0, 0);
-        level.sendParticles(ParticleTypes.FLAME, x, y + offset, z, 1, 0,  0, 0, 0);
-        level.sendParticles(ParticleTypes.FLAME, x, y - offset, z, 1, 0, 0, 0, 0);
-        level.sendParticles(ParticleTypes.FLAME, x, y, z + offset, 1, 0, 0,  0, 0);
-        level.sendParticles(ParticleTypes.FLAME, x, y, z - offset, 1, 0, 0, 0, 0);
+        level.sendParticles(ParticleTypes.FLAME,x + offset, y + 1.5, z, 1,  0, 0, 0, 0);
+        level.sendParticles(ParticleTypes.FLAME,x - offset, y + 1.5, z, 1, 0, 0, 0, 0);
+        level.sendParticles(ParticleTypes.FLAME, x, y + offset + 1.5, z, 1, 0,  0, 0, 0);
+        level.sendParticles(ParticleTypes.FLAME, x, y - offset + 1.5, z, 1, 0, 0, 0, 0);
+        level.sendParticles(ParticleTypes.FLAME, x, y, z + offset + 1.5, 1, 0, 0,  0, 0);
+        level.sendParticles(ParticleTypes.FLAME, x, y, z - offset + 1.5, 1, 0, 0, 0, 0);
     }
 
     @Override

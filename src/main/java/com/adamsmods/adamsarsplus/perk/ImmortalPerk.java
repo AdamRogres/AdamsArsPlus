@@ -52,9 +52,6 @@ public class ImmortalPerk extends Perk implements ITickablePerk {
                 if (mana.getCurrentMana() > (double)250.0F) {
                     if(amp != 10) {
                         mana.removeMana((double) 250.0F);
-                        if(DISCOUNT_BACKLASH.get()){
-                            player.addEffect(new MobEffectInstance(MANA_EXHAUST_EFFECT.get(), 40));
-                        }
                     }
                     ((LivingEntity) player).removeEffect((MobEffect) MANA_HEALTH_EFFECT.get());
                     ((LivingEntity) player).addEffect(new MobEffectInstance((MobEffect) MANA_HEALTH_EFFECT.get(), 300, Math.min(10, amp + 1), false, false));

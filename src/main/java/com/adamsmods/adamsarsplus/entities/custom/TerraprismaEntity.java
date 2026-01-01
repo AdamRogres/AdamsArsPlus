@@ -166,6 +166,12 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
             }
+        } else {
+            if (!this.level().isClientSide) {
+                spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
+                this.remove(RemovalReason.DISCARDED);
+                this.onSummonDeath(this.level(), (DamageSource) null, true);
+            }
         }
 
         if(this.level().isClientSide()) {

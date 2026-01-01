@@ -8,6 +8,7 @@ import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeThree;
 import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentOpenDomain;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectAnnihilate;
 import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDomain;
+import com.adamsmods.adamsarsplus.glyphs.effect_glyph.FilterNotSelf;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -68,10 +69,13 @@ public class AdamDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
             .add(AugmentExtract.INSTANCE)
             .add(AugmentOpenDomain.INSTANCE)
 
+            .add(FilterNotSelf.INSTANCE)
             .add(EffectAnnihilate.INSTANCE)
             .add(AugmentAmplify.INSTANCE,2)
             .add(EffectBurst.INSTANCE)
+            .add(FilterNotSelf.INSTANCE)
             .add(EffectAnnihilate.INSTANCE)
+            .add(AugmentAmplify.INSTANCE, 3)
 
             .withColor(adamColor);
 

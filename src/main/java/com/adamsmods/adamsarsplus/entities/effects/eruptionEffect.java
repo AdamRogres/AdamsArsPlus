@@ -61,7 +61,7 @@ public class eruptionEffect extends MobEffect {
     @SubscribeEvent
     public static void entityHurt(LivingHurtEvent e) {
         if (e.getSource().is(DamageTypes.ON_FIRE) && e.getEntity().hasEffect((MobEffect)ERUPTION_EFFECT.get())) {
-            e.setAmount(e.getAmount() * 8.0F);
+            e.setAmount(e.getAmount() * 3.0F);
         }
     }
 

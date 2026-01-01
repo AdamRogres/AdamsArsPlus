@@ -17,10 +17,7 @@ import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.entity.SummonSkeleton;
 import com.hollingsworth.arsnouveau.common.network.Networking;
 import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDurationDown;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentPierce;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSplit;
+import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -78,17 +75,14 @@ public class MattCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
     private ParticleColor mattColor = new ParticleColor(255, 255, 0);
 
     public Spell mattCastSpell = new Spell()
-            .add(AugmentAccelerateTwo.INSTANCE)
-            .add(AugmentDurationDown.INSTANCE,3)
-
             .add(EffectSummonUndead_boss.INSTANCE)
             .add(AugmentSplit.INSTANCE, 2)
             .add(AugmentAmplify.INSTANCE,4)
-            .add(AugmentPierce.INSTANCE)
 
-            .add(EffectSummonUndead_boss.INSTANCE)
-            .add(AugmentSplit.INSTANCE, 2)
-            .add(AugmentAmplify.INSTANCE,4)
+            .add(EffectWither.INSTANCE)
+            .add(AugmentExtendTime.INSTANCE, 2)
+            .add(EffectHex.INSTANCE)
+            .add(AugmentExtendTime.INSTANCE, 2)
 
             .withColor(mattColor);
 

@@ -130,7 +130,7 @@ public class EffectRaiseEarth extends AbstractEffect implements IDamageEffect {
         for(Entity entity : list){
             entity.setPos(entity.position().x,pos1.getY() + highestReached + 2, entity.position().z);
             if(shooter!=null) {
-                double speed = 2 + (0.3f * spellStats.getAmpMultiplier()) + (0.5f * spellStats.getBuffCount(AugmentPierce.INSTANCE) + spellStats.getBuffCount(AugmentAccelerate.INSTANCE));
+                double speed = 0.3 * ((0.3f * spellStats.getAmpMultiplier()) + (0.5f * spellStats.getBuffCount(AugmentPierce.INSTANCE) + spellStats.getBuffCount(AugmentAccelerate.INSTANCE)));
                 entity.hurtMarked = true;
                 entity.hasImpulse = true;
 
@@ -220,7 +220,7 @@ public class EffectRaiseEarth extends AbstractEffect implements IDamageEffect {
         for(Entity entity : list){
             entity.setPos(entity.position().x,pos1.getY() + highestReached + 2, entity.position().z);
             if(shooter!=null) {
-                double speed = 2 + (0.3f * spellStats.getAmpMultiplier()) + (0.5f * spellStats.getBuffCount(AugmentPierce.INSTANCE) + spellStats.getBuffCount(AugmentAccelerate.INSTANCE));
+                double speed = 0.3 * ((0.3f * spellStats.getAmpMultiplier()) + (0.5f * spellStats.getBuffCount(AugmentPierce.INSTANCE) + spellStats.getBuffCount(AugmentAccelerate.INSTANCE)));
                 entity.hurtMarked = true;
                 entity.hasImpulse = true;
 
