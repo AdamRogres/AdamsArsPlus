@@ -216,6 +216,14 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
                 });
             }
         }
+        // Ritual Failed
+        if(this.ritualStatus && !this.isSummon){
+            for(LivingEntity living : this.attackersList){
+                if(living instanceof Player player){
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_interfere"));
+                }
+            }
+        }
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {

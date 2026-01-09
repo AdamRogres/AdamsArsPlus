@@ -231,6 +231,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         super.die(cause);
         onSummonDeath(level(), cause, false);
 
+        // Ritual Success
         if(!this.ritualStatus && !this.isSummon){
             if(this.attackersList[0] instanceof Player player){
                 AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
@@ -240,6 +241,15 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
                 PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.nue_tamed"));
             }
         }
+        // Ritual Failed
+        if(this.ritualStatus && !this.isSummon){
+            for(LivingEntity living : this.attackersList){
+                if(living instanceof Player player){
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_interfere"));
+                }
+            }
+        }
+
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {

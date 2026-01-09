@@ -346,7 +346,7 @@ public class MageMagicArmor extends ArmorItem implements IManaEquipment, IDyeabl
     }
 
     public int getMinTier() {
-        return 2;
+        return 1;
     }
 
     private boolean hasFullSuitOfArmorOn(Player player){

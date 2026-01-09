@@ -69,9 +69,11 @@ public class AArmorRecipe extends EnchantingApparatusRecipe implements ITextOutp
     @Override
     public boolean isMatch(List<ItemStack> pedestalItems, ItemStack reagent, EnchantingApparatusTile enchantingApparatusTile, @Nullable Player player) {
         IPerkHolder<ItemStack> perkHolder = PerkUtil.getPerkHolder(reagent);
+
         if (!(perkHolder instanceof ArmorPerkHolder armorPerkHolder)) {
             return false;
         }
+
         return armorPerkHolder.getTier() == (tier - 1) && super.isMatch(pedestalItems, reagent, enchantingApparatusTile, player);
     }
 

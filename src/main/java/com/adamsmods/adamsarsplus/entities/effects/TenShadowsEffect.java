@@ -19,14 +19,17 @@ import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
 public class TenShadowsEffect extends MobEffect {
 
     public TenShadowsEffect() {
-        super(MobEffectCategory.HARMFUL, 16122102);
+        super(MobEffectCategory.BENEFICIAL, 16122102);
     }
 
+    /*
     public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
         if(pLivingEntity.hasEffect(ModPotions.SUMMONING_SICKNESS_EFFECT.get())){
             pLivingEntity.removeEffect(TENSHADOWS_EFFECT.get());
         }
     }
+    */
+
 
     @Override
     public List<ItemStack> getCurativeItems() {

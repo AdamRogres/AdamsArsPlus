@@ -71,10 +71,10 @@ public class EffectDismantle extends AbstractEffect implements IDamageEffect {
 
             float damage = (float) (4 + (2 * (spellStats.getAmpMultiplier())));
 
-            DamageSource dShred = DamageUtil.source(level, DamageTypesRegistry.WINDSHEAR, shooter);
+            DamageSource dShred = DamageUtil.source(level, DamageTypes.MOB_ATTACK, shooter);
             attemptDamage(world, shooter, spellStats, spellContext, resolver, entity, dShred, damage);
 
-            entity.invulnerableTime = Math.max(0,(int)((4 - spellStats.getAccMultiplier())/4) * entity.invulnerableTime);
+            entity.invulnerableTime = Math.max(0,(int)((8 - spellStats.getAccMultiplier())/8) * entity.invulnerableTime);
         }
     }
 

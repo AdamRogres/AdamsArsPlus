@@ -19,9 +19,10 @@ import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.SOUL_RIME_EFFECT;
 public class MixinEffectBlink {
     @Inject(at = @At(value = "HEAD"), cancellable = true, method = "onResolveEntity", remap = false)
     private void onResolveEntity0(EntityHitResult rayTraceResult, Level world, LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver, CallbackInfo ci){
-        LivingEntity living = (LivingEntity) rayTraceResult.getEntity();
-        if(living.hasEffect(SOUL_RIME_EFFECT.get())){
-            ci.cancel();
+        if(rayTraceResult.getEntity() instanceof  LivingEntity living){
+            if(living.hasEffect(SOUL_RIME_EFFECT.get())){
+                ci.cancel();
+            }
         }
     }
 

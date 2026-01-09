@@ -18,6 +18,7 @@ public class Config {
         public static ForgeConfigSpec.BooleanValue  DOMAIN_BURNOUT;
         public static ForgeConfigSpec.BooleanValue  DISCOUNT_BACKLASH;
         public static ForgeConfigSpec.BooleanValue  COM_MAGES;
+        public static ForgeConfigSpec.BooleanValue  LOCAL_MAGE_POOL;
         public static ForgeConfigSpec.BooleanValue  MAGES_GRIEF;
         public static ForgeConfigSpec.BooleanValue  DO_LEAP_FATIGUE;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> MAGE_DIMENSION_BLACKLIST;
@@ -61,6 +62,7 @@ public class Config {
             MAX_DISCOUNTS       = builder.comment("maximum number of times spell efficiency can appear").defineInRange("maxDiscount",5,0,10);
             MAX_DOMAIN_ENTITIES = builder.comment("maximum number of entities a domain can target every spell cast").defineInRange("maxDomainEntities",10,1,100);
             COM_MAGES           = builder.comment("include community spells for the mysterious mage entity?").define("doComMages", true);
+            LOCAL_MAGE_POOL     = builder.comment("access pool of possible mage spells from local device (true) or online file (false)?").define("doLocalMagePool", true);
             MAGES_GRIEF         = builder.comment("Allow overworld mages that can mobgrief?").define("doMageGrief", true);
             DO_LEAP_FATIGUE     = builder.comment("Have a cooldown on the leap glyph?").define("doLeapFatigue", true);
             MAGE_DIMENSION_BLACKLIST = builder.comment("Dimensions where mages will not spawn. Ex: [\"minecraft:overworld\", \"undergarden:undergarden\"]. . Run /forge dimensions for a list.").defineList("dimensionBlacklist", new ArrayList<>(), (o) -> true);

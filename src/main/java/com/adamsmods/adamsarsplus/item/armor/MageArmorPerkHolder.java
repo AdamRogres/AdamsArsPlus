@@ -49,5 +49,6 @@ public class MageArmorPerkHolder extends ArmorPerkHolder {
         if(stack.getItem() == ADAM_BOOTS_A.get() || stack.getItem() == ADAM_LEGGINGS_A.get() || stack.getItem() == ADAM_ROBES_A.get() || stack.getItem() == ADAM_HOOD_A.get()){
             this.setTier(5);
         }
+
     }
 }

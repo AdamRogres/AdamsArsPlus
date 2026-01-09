@@ -33,6 +33,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
 
+import static com.adamsmods.adamsarsplus.Config.Common.LOCAL_MAGE_POOL;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AdamsArsPlus.MOD_ID)
 public class AdamsArsPlus {
@@ -71,7 +73,12 @@ public class AdamsArsPlus {
         event.enqueueWork(AdamsModEntities::registerPlacements);
 
         CommunityMages.initAlt();
-        CommunityMages.init();
+        if(LOCAL_MAGE_POOL.get()){
+            CommunityMages.initLocal();
+        } else {
+            CommunityMages.init();
+        }
+
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -137,4 +144,3 @@ public class AdamsArsPlus {
         MinecraftForge.EVENT_BUS.register(new SetInterval(method, tickInterval, timeToLive, end));
     }
 }
-

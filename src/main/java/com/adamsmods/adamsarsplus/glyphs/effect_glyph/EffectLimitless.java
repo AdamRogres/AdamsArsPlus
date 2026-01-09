@@ -69,6 +69,8 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
                 int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
 
+                boolean push = amp < 0;
+
                 BlockPos blockPos = rayTraceResult.getEntity().blockPosition();
 
                 AtomicInteger ticks = new AtomicInteger(0);
@@ -78,8 +80,8 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                     if (t >= time) {
                         this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                     }
-                    if(t % 5 == 0){
-                        this.spawnParticles((ServerLevel) world, blockPos, radius, amp < 0);
+                    if(t % 5 == 0 && !world.isClientSide){
+                        this.spawnParticles((ServerLevel) world, blockPos, radius, push);
                     }
                 }, 1, time, () -> false);
 
@@ -94,6 +96,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 AdamsArsPlus.setInterval(() -> {
                     int t = ticks.incrementAndGet();
                     this.makeLSphere(shooter.blockPosition(), world, shooter, spellStats, spellContext, resolver);
+                    this.restoreOutOfSphere(shooter.blockPosition(), world, shooter, radius);
                     if (t >= time) {
                         this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                     }
@@ -103,7 +106,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
                 int radius = (int) (1 + spellStats.getAoeMultiplier());
 
-                this.knockback(living, shooter, (float) amp * radius);
+                this.knockback(living, shooter, (float) amp, radius);
 
                 float damage = (float) (4 + (3 * (spellStats.getAmpMultiplier())));
                 DamageSource damageS = DamageUtil.source(world, DamageTypes.FLY_INTO_WALL, shooter);
@@ -126,6 +129,8 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
             int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
             int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
 
+            boolean push = amp < 0;
+
             BlockPos blockPos = rayTraceResult.getBlockPos();
 
             AtomicInteger ticks = new AtomicInteger(0);
@@ -136,7 +141,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                     this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                 }
                 if(t % 5 == 0 && !world.isClientSide){
-                    this.spawnParticles((ServerLevel) world, blockPos, radius, amp < 0);
+                    this.spawnParticles((ServerLevel) world, blockPos, radius, push);
                 }
             }, 1, time, () -> false);
 
@@ -151,6 +156,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
             AdamsArsPlus.setInterval(() -> {
                 int t = ticks.incrementAndGet();
                 this.makeLSphere(shooter.blockPosition(), world, shooter, spellStats, spellContext, resolver);
+                this.restoreOutOfSphere(shooter.blockPosition(), world, shooter, radius);
                 if (t >= time) {
                     this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                 }
@@ -173,8 +179,8 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
         return value;
     }
 
-    public void knockback(Entity target, LivingEntity shooter, float strength) {
-        this.knockback(target, (double)strength, (double)Mth.sin(shooter.getYHeadRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(shooter.getYHeadRot() * ((float)Math.PI / 180F))));
+    public void knockback(Entity target, LivingEntity shooter, float amp, float radius) {
+        this.knockback(target, (double)amp * radius, (double)Mth.sin(shooter.getYHeadRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(shooter.getYHeadRot() * ((float)Math.PI / 180F))));
     }
 
     public void knockback(Entity entity, double strength, double xRatio, double zRatio) {
@@ -205,7 +211,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
     }
 
     public void knockback(Entity entity, double strength, double xRatio, double yRatio, double zRatio, int radius) {
-            strength *= 5.0;
+            strength = Math.max(Math.min(strength, 1), -1);
 
             entity.setDeltaMovement(Vec3.ZERO);
             if(strength <=  0) {
@@ -285,6 +291,38 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
         }
 
         entity.hurtMarked = true;
+    }
+
+    private void restoreOutOfSphere(BlockPos center, Level world, Entity shooter, int radius){
+        AABB box = (new AABB(center)).inflate((double)radius + 0.5, (double)radius + 0.5, (double)radius + 0.5);
+
+        if (!savedVelocities.isEmpty()) {
+            for(Entity e : world.getEntities((Entity)null, (new AABB(center)).inflate((double)Math.max(32, radius * 8), (double)Math.max(32, radius * 8), (double)Math.max(32, radius * 8)))) {
+                if(world.getEntities((Entity)null, box).contains(e)){
+                    continue;
+                }
+
+                UUID id = e.getUUID();
+                if (savedVelocities.containsKey(id)) {
+                    Vec3 prev = (Vec3)savedVelocities.remove(id);
+                    if (prev != null) {
+                        e.setDeltaMovement(prev);
+                        e.hurtMarked = true;
+                        e.getPersistentData().remove("adams_limitless_prev_vx");
+                        e.getPersistentData().remove("adams_limitless_prev_vy");
+                        e.getPersistentData().remove("adams_limitless_prev_vz");
+                        e.getPersistentData().remove("adams_limitless_frozen");
+                        if (e instanceof Projectile) {
+                            try {
+                                e.setNoGravity(false);
+                            } catch (Throwable var18) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public void restoreLSphere(BlockPos center, Level world, Entity shooter, int radius) {

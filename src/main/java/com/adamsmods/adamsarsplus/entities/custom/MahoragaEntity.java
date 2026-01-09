@@ -63,6 +63,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
@@ -498,6 +499,14 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 });
             }
         }
+        // Ritual Failed
+        if(this.ritualStatus && !this.isSummon){
+            for(LivingEntity living : this.attackersList){
+                if(living instanceof Player player){
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_interfere"));
+                }
+            }
+        }
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {
@@ -912,6 +921,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         private int ticksUntilNextAttack = 16;
         private int totalAnimation = 20;
         private boolean shouldCountTillNextAttack = false;
+        private boolean leap = false;
 
         Supplier<Boolean> canUse;
         boolean done;
@@ -929,6 +939,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             ticksUntilNextAttack = 16;
 
             this.entity.rangedAttackCooldown = 0;
+            this.leap = false;
         }
 
         public boolean canUse() {
@@ -1033,6 +1044,18 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             }
 
             this.entity.rangedAttackCooldown++;
+
+            if(this.entity.rangedAttackCooldown > 50 && this.entity.getTarget() != null && !this.leap){
+                Vec3 $$0 = this.entity.getDeltaMovement();
+                Vec3 $$1 = new Vec3(this.entity.getTarget().getX() - this.entity.getX(), this.entity.getTarget().getY() - this.entity.getY(), this.entity.getTarget().getZ() - this.entity.getZ());
+                if ($$1.lengthSqr() > 1.0E-7) {
+                    $$1 = $$1.normalize().scale(1).add($$0.scale(0.2));
+                }
+
+                this.entity.setDeltaMovement($$1.x,  $$1.y + 0.4, $$1.z);
+                this.leap = true;
+            }
+
             if(this.entity.rangedAttackCooldown > 200 && !this.entity.canRangedAttack){
                 if(this.entity.canAdaptCheck(this.entity)){
                     this.entity.canRangedAttack = true;

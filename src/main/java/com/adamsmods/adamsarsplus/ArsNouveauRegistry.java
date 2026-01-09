@@ -128,6 +128,8 @@ public class ArsNouveauRegistry {
     public static void registerPerks(){
         ArsNouveauAPI api = ArsNouveauAPI.getInstance();
 
+        api.getEnchantingRecipeTypes().add((RecipeType) A_ARMOR_UP.get());
+
         // Cade Armor
         PerkRegistry.registerPerkProvider(CADE_BOOTS.get(), (stack) -> new MageArmorPerkHolder(stack, Arrays.asList(
                 Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE),

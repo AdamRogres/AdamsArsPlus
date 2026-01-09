@@ -770,7 +770,9 @@ public class MageKnightEntity extends Monster {
 
                     if(!pEnemy.isBlocking() && this.mageEntity.castCooldown <= 0){
                         pEnemy.invulnerableTime = 0;
-                        performSpellAttack(this.mageEntity, mageSpell.get(), mageSpell.get().color, pEnemy);
+                        if(mageSpell.get() != null && mageSpell.get().color != null){
+                            performSpellAttack(this.mageEntity, mageSpell.get(), mageSpell.get().color, pEnemy);
+                        }
                     }
                 }
             } else {

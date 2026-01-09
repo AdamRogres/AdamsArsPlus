@@ -5,11 +5,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.gson.stream.JsonReader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
@@ -24,6 +29,31 @@ public class CommunityMages {
 
             JsonObject object = JsonParser.parseString(readUrl(new URL("https://raw.githubusercontent.com/AdamRogres/AdamsArsPlus/refs/heads/master/src/main/resources/data/adamsarsplus/mysterious_mage_spells/spell_list_new.json"))).getAsJsonObject();
 
+
+            for(JsonElement element : object.getAsJsonArray("mageOwner")) {
+                JsonObject jsonObject = element.getAsJsonObject();
+                String name  = jsonObject.get("name").getAsString();
+                String color = jsonObject.get("color").getAsString();
+                String spell = jsonObject.get("spell").getAsString();
+                String coold = jsonObject.get("coold").getAsString();
+                String type  = jsonObject.get("type").getAsString();
+                String tier  = jsonObject.get("tier").getAsString();
+                mages.add(new ComMages(name, color, spell, coold, type, tier));
+            }
+        } catch (IOException var2) {
+            var2.printStackTrace();
+            if (!FMLEnvironment.production) {
+                throw new RuntimeException("Failed to load supporters.json");
+            }
+        }
+
+    }
+
+    public static void initLocal() {
+        try {
+
+            BufferedReader readIn = new BufferedReader(new InputStreamReader(CommunityMages.class.getClassLoader().getResourceAsStream("data/adamsarsplus/mysterious_mage_spells/spell_list_new.json"), "UTF-8"));
+            JsonObject object = JsonParser.parseReader(readIn).getAsJsonObject();
 
             for(JsonElement element : object.getAsJsonArray("mageOwner")) {
                 JsonObject jsonObject = element.getAsJsonObject();
