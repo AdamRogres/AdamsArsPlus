@@ -9,8 +9,8 @@
     "salt": 1323465885,
     "type": "minecraft:concentric_rings",
     "preferred_biomes": "#adamsarsplus:has_structure/nimbostratic_ruins",
-    "spread": 3,
+    "spread": 6,
     "count": 128,
-    "distance": 32
+    "distance": 16
   }
 }

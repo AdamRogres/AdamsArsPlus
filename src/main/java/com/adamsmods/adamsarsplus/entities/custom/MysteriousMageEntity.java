@@ -359,8 +359,20 @@ public class MysteriousMageEntity extends Monster implements RangedAttackMob {
                 this.type = communityMage.type;
                 this.tier = communityMage.tier;
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception e1) {
+                try {
+                    this.setIndex(0);
+                    CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(0);
+
+                    this.setColor(communityMage.color);
+                    this.setName(communityMage.name);
+                    this.setCooldown(communityMage.coold);
+                    this.setSpellData(communityMage.spell, communityMage.color);
+                    this.type = communityMage.type;
+                    this.tier = communityMage.tier;
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
             }
         } else {
             this.setColor("white");

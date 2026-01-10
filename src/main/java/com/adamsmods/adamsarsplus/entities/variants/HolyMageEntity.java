@@ -350,7 +350,19 @@ public class HolyMageEntity extends MysteriousMageEntity implements RangedAttack
                 this.tier = communityMage.tier;
 
             } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    this.setIndex(11);
+                    CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(11);
+
+                    this.setColor(communityMage.color);
+                    this.setName(communityMage.name);
+                    this.setCooldown(communityMage.coold);
+                    this.setSpellData(communityMage.spell, communityMage.color);
+                    this.type = communityMage.type;
+                    this.tier = communityMage.tier;
+                } catch(Exception e1){
+                    e1.printStackTrace();
+                }
             }
         } else {
             this.setColor("white");

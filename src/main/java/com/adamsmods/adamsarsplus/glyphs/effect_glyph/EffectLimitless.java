@@ -81,7 +81,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                         this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                     }
                     if(t % 5 == 0 && !world.isClientSide){
-                        this.spawnParticles((ServerLevel) world, blockPos, radius, push);
+                        this.spawnParticles(world, blockPos, radius, push);
                     }
                 }, 1, time, () -> false);
 
@@ -115,7 +115,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 } else {
                     attemptDamage(world, shooter, spellStats, spellContext, resolver, living, damageS, damage);
                 }
-                this.spawnParticles((ServerLevel) world, living.blockPosition(), radius, amp < 0);
+                this.spawnParticles(world, living.blockPosition(), radius, amp < 0);
             } else {
                 this.makeLSphere(rayTraceResult.getEntity().blockPosition(), world, shooter, spellStats, spellContext, resolver);
             }
@@ -141,7 +141,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                     this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                 }
                 if(t % 5 == 0 && !world.isClientSide){
-                    this.spawnParticles((ServerLevel) world, blockPos, radius, push);
+                    this.spawnParticles(world, blockPos, radius, push);
                 }
             }, 1, time, () -> false);
 
@@ -390,20 +390,24 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
 
     }
 
-    public void spawnParticles(ServerLevel world, BlockPos pos, float aoe, boolean push) {
-        if(!push){
-            for(int i = 0; i < 1 + Math.min(1, aoe); ++i) {
-                double d0 = (double)pos.getX();
-                double d1 = (double)pos.getY();
-                double d2 = (double)pos.getZ();
-                world.sendParticles(GlowParticleData.createData(new ParticleColor(255, 0 , 0)), d0, d1, d2, 3, 0, 0, 0, aoe / 10);
-            }
-        } else {
-            for(int i = 0; i < 1 + Math.min(1, aoe); ++i) {
-                double d0 = (double)pos.getX();
-                double d1 = (double)pos.getY();
-                double d2 = (double)pos.getZ();
-                world.sendParticles(GlowParticleData.createData(new ParticleColor(0, 0, 255)), d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+    public void spawnParticles(Level world, BlockPos pos, float aoe, boolean push) {
+        if(world instanceof ServerLevel serverLevel && !world.isClientSide){
+            if(!push){
+                for(int i = 0; i < 1 + Math.min(1, aoe); ++i) {
+                    double d0 = (double)pos.getX();
+                    double d1 = (double)pos.getY();
+                    double d2 = (double)pos.getZ();
+                    //serverLevel.sendParticles(ParticleTypes.DRIPPING_WATER GlowParticleData.createData(new ParticleColor(255, 0 , 0)), d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+                    serverLevel.sendParticles(ParticleTypes.DRIPPING_LAVA, d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+                }
+            } else {
+                for(int i = 0; i < 1 + Math.min(1, aoe); ++i) {
+                    double d0 = (double)pos.getX();
+                    double d1 = (double)pos.getY();
+                    double d2 = (double)pos.getZ();
+                    //serverLevel.sendParticles(GlowParticleData.createData(new ParticleColor(0, 0, 255)), d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+                    serverLevel.sendParticles(ParticleTypes.DRIPPING_WATER, d0, d1, d2, 3, 0, 0, 0, aoe / 10);
+                }
             }
         }
     }

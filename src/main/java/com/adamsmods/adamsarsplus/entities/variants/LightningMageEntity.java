@@ -350,7 +350,19 @@ public class LightningMageEntity extends MysteriousMageEntity implements RangedA
                 this.tier = communityMage.tier;
 
             } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    this.setIndex(10);
+                    CommunityMages.ComMages communityMage = (CommunityMages.ComMages)CommunityMages.mages.get(10);
+
+                    this.setColor(communityMage.color);
+                    this.setName(communityMage.name);
+                    this.setCooldown(communityMage.coold);
+                    this.setSpellData(communityMage.spell, communityMage.color);
+                    this.type = communityMage.type;
+                    this.tier = communityMage.tier;
+                } catch(Exception e1){
+                    e1.printStackTrace();
+                }
             }
         } else {
             this.setColor("white");
