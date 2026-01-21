@@ -1,0 +1,135 @@
+package adamsmods.adamsarsplus.world.example;
+
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.ConfigHandler;
+import com.hollingsworth.arsnouveau.common.world.biome.ArchwoodRegion;
+import com.hollingsworth.arsnouveau.setup.registry.BiomeRegistry;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.SurfaceRules;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import terrablender.api.ParameterUtils;
+import terrablender.api.Regions;
+import terrablender.api.SurfaceRuleManager;
+import terrablender.api.VanillaParameterOverlayBuilder;
+
+import java.util.function.Consumer;
+
+public class TerrablenderAE {
+    public static void registerBiomes() {
+        Regions.register(new ArchwoodRegion(ResourceLocation.fromNamespaceAndPath(AdamsArsPlus.MODID, "overworld"), ConfigHandler.Common.EXTRA_BIOMES.get()) {
+            @Override
+            public void addBiomes(Registry<Biome> registry, Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper) {
+                VanillaParameterOverlayBuilder builder = new VanillaParameterOverlayBuilder();
+
+                // Classic Archwood Forest is a biome where the elements are balanced, it's the most common biome in the region
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.COOL, ParameterUtils.Temperature.NEUTRAL, ParameterUtils.Temperature.WARM)
+                        .humidity(ParameterUtils.Humidity.DRY, ParameterUtils.Humidity.NEUTRAL, ParameterUtils.Humidity.WET)
+                        .continentalness(ParameterUtils.Continentalness.INLAND, ParameterUtils.Continentalness.FAR_INLAND)
+                        .erosion(ParameterUtils.Erosion.FULL_RANGE)
+                        .depth(ParameterUtils.Depth.FULL_RANGE)
+                        .weirdness(Climate.Parameter.span(-0.4F, 0.4F))
+                        .build().forEach(point -> builder.add(point, BiomeRegistry.ARCHWOOD_FOREST));
+
+
+                // Cascading Forest is a biome where water and cold elements are dominant, higher weirdness causes waterfalls to spawn more frequently
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.ICY, ParameterUtils.Temperature.COOL, ParameterUtils.Temperature.NEUTRAL, ParameterUtils.Temperature.WARM)
+                        .humidity(ParameterUtils.Humidity.HUMID, ParameterUtils.Humidity.WET, ParameterUtils.Humidity.NEUTRAL)
+                        .continentalness(ParameterUtils.Continentalness.span(ParameterUtils.Continentalness.COAST, ParameterUtils.Continentalness.FAR_INLAND))
+                        .erosion(ParameterUtils.Erosion.span(ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_6))
+                        .depth(Climate.Parameter.span(-1.0F, 0.2F))
+                        .weirdness(ParameterUtils.Weirdness.FULL_RANGE)
+                        .build().forEach(point -> builder.add(point, ModWorldgen.Biomes.CASCADING_FOREST_KEY));
+
+                // Flashing Forest is a biome on high peaks thanks to higher weirdness, more frequent lightning strikes during storms
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.FULL_RANGE)
+                        .humidity(ParameterUtils.Humidity.FULL_RANGE)
+                        .continentalness(ParameterUtils.Continentalness.MID_INLAND, ParameterUtils.Continentalness.FAR_INLAND)
+                        .erosion(ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_1, ParameterUtils.Erosion.EROSION_2)
+                        .depth(Climate.Parameter.span(-1.0F, 0.1F))
+                        .weirdness(Climate.Parameter.span(-1.0F, -0.4F), Climate.Parameter.span(0.4F, 1.0F))
+                        .build().forEach(point -> builder.add(point, ModWorldgen.Biomes.FLASHING_FOREST_KEY));
+
+                // Blazing Forest is a biome where heat and dryness are dominant, more frequent fires and lava pools
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.NEUTRAL, ParameterUtils.Temperature.WARM, ParameterUtils.Temperature.HOT)
+                        .humidity(ParameterUtils.Humidity.ARID, ParameterUtils.Humidity.DRY, ParameterUtils.Humidity.NEUTRAL)
+                        .continentalness(ParameterUtils.Continentalness.MID_INLAND, ParameterUtils.Continentalness.FAR_INLAND)
+                        .erosion(ParameterUtils.Erosion.span(ParameterUtils.Erosion.EROSION_2, ParameterUtils.Erosion.EROSION_5))
+                        .depth(Climate.Parameter.span(-1.0F, 0.2F))
+                        .weirdness(Climate.Parameter.span(-0.56666666F, 0.56666666F))
+                        .build().forEach(point -> builder.add(point, ModWorldgen.Biomes.BLAZING_FOREST_KEY));
+
+                // Flourishing Forest is a biome where warmth and humidity are dominant, more frequent flowers and lush vegetation
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.NEUTRAL, ParameterUtils.Temperature.WARM)
+                        .humidity(ParameterUtils.Humidity.NEUTRAL, ParameterUtils.Humidity.WET, ParameterUtils.Humidity.HUMID)
+                        .continentalness(ParameterUtils.Continentalness.INLAND)
+                        .erosion(ParameterUtils.Erosion.span(ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_4))
+                        .depth(Climate.Parameter.span(-0.4F, 0.3F))
+                        .weirdness(Climate.Parameter.span(-0.4F, 0.4F))
+                        .build().forEach(point -> builder.add(point, ModWorldgen.Biomes.FLOURISHING_FOREST_KEY));
+
+
+                // Vexing Caves is an underground biome with large plateaus to give room for vegetation, more frequent wilden mob spawns
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.FROZEN, ParameterUtils.Temperature.COOL, ParameterUtils.Temperature.NEUTRAL)
+                        .humidity(ParameterUtils.Humidity.FULL_RANGE)
+                        .continentalness(ParameterUtils.Continentalness.MUSHROOM_FIELDS, ParameterUtils.Continentalness.MID_INLAND, ParameterUtils.Continentalness.FAR_INLAND)
+                        .erosion(ParameterUtils.Erosion.span(ParameterUtils.Erosion.EROSION_0, ParameterUtils.Erosion.EROSION_3))
+                        .depth(Climate.Parameter.span(0.05F, .80F))
+                        .weirdness(ParameterUtils.Weirdness.FULL_RANGE)
+                        .build().forEach(point -> builder.add(point, ModWorldgen.Biomes.VEXING_CAVES_KEY));
+
+                // Fill in oceans in the region to prevent weirdness in all-water regions
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.FULL_RANGE)
+                        .humidity(ParameterUtils.Humidity.FULL_RANGE)
+                        .continentalness(ParameterUtils.Continentalness.MUSHROOM_FIELDS, ParameterUtils.Continentalness.DEEP_OCEAN, ParameterUtils.Continentalness.OCEAN, ParameterUtils.Continentalness.COAST)
+                        .erosion(ParameterUtils.Erosion.span(ParameterUtils.Erosion.EROSION_4, ParameterUtils.Erosion.EROSION_6))
+                        .depth(ParameterUtils.Depth.FULL_RANGE)
+                        .weirdness(ParameterUtils.Weirdness.FULL_RANGE)
+                        .build().forEach(point -> builder.add(point, Biomes.OCEAN));
+
+                // Add rivers in the valleys
+                new ParameterUtils.ParameterPointListBuilder()
+                        .temperature(ParameterUtils.Temperature.FULL_RANGE)
+                        .humidity(ParameterUtils.Humidity.FULL_RANGE)
+                        .continentalness(ParameterUtils.Continentalness.INLAND)
+                        .erosion(ParameterUtils.Erosion.FULL_RANGE)
+                        .depth(ParameterUtils.Depth.SURFACE)
+                        .weirdness(ParameterUtils.Weirdness.VALLEY)
+                        .build().forEach(point -> builder.add(point, Biomes.RIVER));
+
+                // Add our points to the mapper
+                builder.build().forEach(mapper);
+            }
+        });
+        SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, AdamsArsPlus.MODID, makeRules());
+    }
+
+    private static final SurfaceRules.RuleSource DIRT = makeStateRule(Blocks.DIRT);
+    private static final SurfaceRules.RuleSource GRASS_BLOCK = makeStateRule(Blocks.GRASS_BLOCK);
+
+    public static SurfaceRules.RuleSource makeRules() {
+        SurfaceRules.ConditionSource aboveOrHighUnderground = SurfaceRules.yBlockCheck(VerticalAnchor.aboveBottom(6), 0);
+        SurfaceRules.RuleSource grassSurface = SurfaceRules.sequence(
+                SurfaceRules.ifTrue(aboveOrHighUnderground, SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, GRASS_BLOCK)),
+                SurfaceRules.ifTrue(aboveOrHighUnderground, SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, DIRT)));
+        return SurfaceRules.ifTrue(SurfaceRules.isBiome(ModWorldgen.Biomes.FLOURISHING_FOREST_KEY, ModWorldgen.Biomes.VEXING_CAVES_KEY), grassSurface);
+    }
+
+    private static SurfaceRules.RuleSource makeStateRule(Block block) {
+        return SurfaceRules.state(block.defaultBlockState());
+    }
+}

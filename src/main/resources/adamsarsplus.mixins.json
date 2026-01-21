@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "package": "adamsmods.adamsarsplus.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "adamsarsplus.refmap.json",
+  "mixins": [
+    "ChillingPerkMixin",
+    "CutMixin",
+    "DynamicLightMixin",
+    "EvaporateMixin",
+    "FlareMixin",
+    "FoxInvoker",
+    "GrowMixin",
+    "ItemEntityMixin",
+    "KindlingPerkMixin",
+    "LightningMixin",
+    "RitualAwakeningMixin",
+    "ServerLevelMixin",
+    "ZombieInvoker"
+  ],
+  "minVersion": "0.8",
+  "client": [
+    "EntityRenderDispatcherMixin",
+    "SpellBookTextureMixin"
+  ]
+}

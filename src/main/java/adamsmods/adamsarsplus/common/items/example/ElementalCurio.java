@@ -1,0 +1,22 @@
+package adamsmods.adamsarsplus.common.items.example;
+
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import top.theillusivec4.curios.api.SlotContext;
+import top.theillusivec4.curios.api.type.capability.ICurioItem;
+
+public class ElementalCurio extends Item implements ICurioItem {
+    public ElementalCurio(Properties pProperties) {
+        super(pProperties);
+    }
+
+    /*
+     * Do not equip if in offhand
+     */
+    @Override
+    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
+        return stack != slotContext.entity().getItemInHand(InteractionHand.OFF_HAND);
+    }
+
+}
