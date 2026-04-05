@@ -1,6 +1,5 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.DamageUtil;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
@@ -15,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -23,11 +22,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class EffectDismantle extends AbstractEffect implements IDamageEffect {
-    public EffectDismantle(ResourceLocation tag, String description) {
-        super(tag, description);
-    }
 
-    public static final EffectDismantle INSTANCE = new EffectDismantle(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectdismantle"), "Dismantle");
+    public static final EffectDismantle INSTANCE = new EffectDismantle();
+    public EffectDismantle() {
+        super("glyph_effectdismantle", "Dismantle");
+    }
 
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @Nonnull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
@@ -51,7 +50,7 @@ public class EffectDismantle extends AbstractEffect implements IDamageEffect {
     }
 
     @Override
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         addDamageConfig(builder, 4);
         addAmpConfig(builder, 2);

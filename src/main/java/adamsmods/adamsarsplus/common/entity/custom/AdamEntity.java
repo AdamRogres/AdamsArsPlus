@@ -508,7 +508,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        //this.goalSelector.addGoal(1, new AdamDomainGoal<>(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 13));
+        this.goalSelector.addGoal(1, new AdamDomainGoal<>(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 13));
         this.goalSelector.addGoal(1, new AdamDomainGoalB<>(this, 1.0D, 20f, () -> (domainbCooldown <= 0) && (!this.hasEffect(DOMAIN_BURNOUT_EFFECT)), 0, 13));
 
         this.goalSelector.addGoal(2, new AdamCastingGoalA<>(this, 1.0D, 70f, () -> castingACooldown <= 0, 0, 15));
@@ -796,9 +796,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                if(this.canPerformAttack($$0)){
-                    this.checkAndPerformAttack($$0);
-                }
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -955,9 +953,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                if(this.canPerformAttack($$0)){
-                    this.checkAndPerformAttack($$0);
-                }
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -1113,9 +1109,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                if(this.canPerformAttack($$0)){
-                    this.checkAndPerformAttack($$0);
-                }
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -1911,6 +1905,196 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     shouldCountTillNextAttack = false;
                     AdamEntity.setCastingA(false);
                     AdamEntity.castAAnimationTimeout = 0;
+                }
+
+            }
+
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+        }
+    }
+
+    public class AdamDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
+        AdamEntity AdamEntity;
+
+        private final double speedModifier;
+        private final float attackRadiusSqr;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+        boolean hasAnimated;
+        int animatedTicks;
+        int delayTicks;
+        int animId;
+        boolean done;
+
+        Supplier<Boolean> canUse;
+
+        private int attackDelay = 10;
+        private int ticksUntilNextAttack = 10;
+        private int totalAnimation = 20;
+        private boolean shouldCountTillNextAttack = false;
+
+        public AdamDomainGoal(AdamEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks) {
+            this.AdamEntity = entity;
+            this.speedModifier = speed;
+            this.canUse = canUse;
+            this.animId = animId;
+            this.delayTicks = delayTicks;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.attackRadiusSqr = attackRange * attackRange;
+
+        }
+        private ParticleColor  AdamColor = new ParticleColor(0, 0, 0);
+
+        public Spell AdamCastSpell = new Spell()
+                .add(EffectDomain.INSTANCE)
+                .add(AugmentExtendTimeThree.INSTANCE)
+                .add(AugmentAOEThree.INSTANCE, 4)
+                .add(AugmentExtract.INSTANCE)
+                .add(AugmentOpenDomain.INSTANCE)
+
+                .add(FilterNotSelf.INSTANCE)
+                .add(EffectAnnihilate.INSTANCE)
+                .add(AugmentAmplify.INSTANCE,2)
+                .add(EffectBurst.INSTANCE)
+                .add(FilterNotSelf.INSTANCE)
+                .add(EffectAnnihilate.INSTANCE)
+                .add(AugmentAmplify.INSTANCE, 3)
+
+                .withColor(adamColor);
+
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+
+            this.AdamEntity.domainCooldown = random.nextInt(2000) + 1000;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.AdamEntity.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.AdamEntity.getNavigation().isDone()) && !this.done;
+        }
+
+        public void start() {
+            super.start();
+            this.AdamEntity.setAggressive(true);
+            attackDelay = 10;
+            ticksUntilNextAttack = 10;
+
+            LivingEntity $$0 = this.AdamEntity.getTarget();
+            if ($$0 != null) {
+                Vec3 $$1 = $$0.getEyePosition();
+                this.AdamEntity.moveControl.setWantedPosition($$1.x + AdamEntity.this.random.nextInt(15) - 7, $$1.y + 3, $$1.z + AdamEntity.this.random.nextInt(15) - 7, (double)this.speedModifier);
+            }
+        }
+
+        public void stop() {
+            super.stop();
+            this.AdamEntity.setUsingDomain(false);
+            this.AdamEntity.setAggressive(false);
+            this.animatedTicks = 0;
+            this.done = false;
+            this.hasAnimated = false;
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        public void tick() {
+            LivingEntity livingentity = this.AdamEntity.getTarget();
+            if (livingentity != null) {
+                double d0 = this.AdamEntity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+                boolean canSeeEnemy = this.AdamEntity.getSensing().hasLineOfSight(livingentity);
+                if (canSeeEnemy != this.seeTime > 0) {
+                    this.seeTime = 0;
+                }
+
+                if (canSeeEnemy) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.AdamEntity.getNavigation().stop();
+                    ++this.strafingTime;
+                } else {
+                    this.AdamEntity.getNavigation().moveTo(livingentity, this.speedModifier);
+                    this.strafingTime = -1;
+                }
+
+                if (this.strafingTime >= 10) {
+                    if ((double)this.AdamEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.AdamEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.AdamEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.AdamEntity.lookAt(livingentity, 30.0F, 30.0F);
+                } else {
+                    this.AdamEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+                }
+
+                if (this.seeTime >= 20 && !this.hasAnimated) {
+                    this.hasAnimated = true;
+                }
+
+                if (this.hasAnimated) {
+                    shouldCountTillNextAttack = true;
+                    this.AdamEntity.getLookControl().setLookAt(livingentity);
+
+                    if(isTimeToStartAttackAnimation()) {
+                        AdamEntity.setUsingDomain(true);
+                    }
+
+                    if(isTimeToAttack()) {
+                        performDomainAttack(this.AdamEntity, AdamCastSpell, AdamColor);
+                        this.done = true;
+                        resetAttackLoopCooldown();
+                    }
+
+                } else {
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    AdamEntity.setUsingDomain(false);
+                    AdamEntity.castDomainAnimationTimeout = 0;
                 }
 
             }

@@ -1,7 +1,7 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.EntityDivineSmite;
+import adamsmods.adamsarsplus.common.entity.EntityDivineSmite;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -20,19 +20,17 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.DIVINE_SMITE;
-
 public class EffectDivineSmite extends AbstractEffect implements IDamageEffect {
-    public EffectDivineSmite(ResourceLocation tag, String description) {
-        super(tag, description);
-    }
 
-    public static final EffectDivineSmite INSTANCE = new EffectDivineSmite(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectdivinesmite"), "Divine Smite");
+    public static final EffectDivineSmite INSTANCE = new EffectDivineSmite();
+    public EffectDivineSmite() {
+        super("glyph_effectdivinesmite", "Divine Smite");
+    }
 
     @Override
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         Vec3 pos = this.safelyGetHitPos(rayTraceResult);
-        EntityDivineSmite lightningBoltEntity = new EntityDivineSmite(DIVINE_SMITE.get(), world);
+        EntityDivineSmite lightningBoltEntity = new EntityDivineSmite(ModEntities.DIVINE_SMITE.get(), world);
         lightningBoltEntity.setPos(pos.x(), pos.y(), pos.z());
         lightningBoltEntity.setCause(shooter instanceof ServerPlayer ? (ServerPlayer)shooter : null);
         lightningBoltEntity.setAoe((float)spellStats.getAoeMultiplier());
@@ -47,10 +45,10 @@ public class EffectDivineSmite extends AbstractEffect implements IDamageEffect {
 
 
     @Override
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
-        this.addDamageConfig(builder, 9.0);
-        this.addAmpConfig(builder, 4.0);
+        addDamageConfig(builder, 9);
+        addAmpConfig(builder, 4);
     }
 
     @Nonnull

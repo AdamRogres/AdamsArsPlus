@@ -1,12 +1,10 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.entities.ai.*;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDismantle;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectDivineSmite;
-import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.method_glyph.PropagateDetonate;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -53,8 +51,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.CAM_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModEntities.CAM_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModPotions.LEAP_FATIGUE_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.LIGHTNING_STEPS_EFFECT;
 
 public class CamEntity extends Monster implements RangedAttackMob {
 
@@ -115,8 +114,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
         super.tick();
         this.setNoGravity(true);
 
-        if(this.hasEffect(LEAP_FATIGUE_EFFECT.get())){
-            this.addEffect(new MobEffectInstance(LIGHTNING_STEPS_EFFECT.get(), 100, 0, false, false));
+        if(this.hasEffect(LEAP_FATIGUE_EFFECT)){
+            this.addEffect(new MobEffectInstance(LIGHTNING_STEPS_EFFECT, 100, 0, false, false));
         }
 
         if(attackAACooldown > 0) {
@@ -256,14 +255,14 @@ public class CamEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING_AA, false);
-        this.entityData.define(ATTACKING_AB, false);
-        this.entityData.define(ATTACKING_B, false);
-        this.entityData.define(CASTING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING_AA, false);
+        pBuilder.define(ATTACKING_AB, false);
+        pBuilder.define(ATTACKING_B, false);
+        pBuilder.define(CASTING, false);
 
-        this.entityData.define(CASTING_DOMAIN, false);
+        pBuilder.define(CASTING_DOMAIN, false);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -363,7 +362,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -497,7 +496,6 @@ public class CamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -595,8 +593,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     CamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -653,7 +651,6 @@ public class CamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -749,8 +746,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     CamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -820,7 +817,6 @@ public class CamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -926,8 +922,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     CamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -988,7 +983,6 @@ public class CamEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -1131,7 +1125,6 @@ public class CamEntity extends Monster implements RangedAttackMob {
                 }
 
                 EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-                projectileSpell.setColor(color);
                 projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
                 projectileSpell.setPos(pos);
                 entity.level().addFreshEntity(projectileSpell);
@@ -1342,6 +1335,191 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     shouldCountTillNextAttack = false;
                     CamEntity.setCasting(false);
                     CamEntity.castingAnimationTimeout = 0;
+                }
+
+            }
+
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+        }
+    }
+
+    public class CamDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
+        CamEntity CamEntity;
+
+        private final double speedModifier;
+        private final float attackRadiusSqr;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+        boolean hasAnimated;
+        int animatedTicks;
+        int delayTicks;
+        int animId;
+        boolean done;
+
+        Supplier<Boolean> canUse;
+
+        private int attackDelay = 13;
+        private int ticksUntilNextAttack = 7;
+        private int totalAnimation = 20;
+        private boolean shouldCountTillNextAttack = false;
+
+        public CamDomainGoal(CamEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks) {
+            this.CamEntity = entity;
+            this.speedModifier = speed;
+            this.canUse = canUse;
+            this.animId = animId;
+            this.delayTicks = delayTicks;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.attackRadiusSqr = attackRange * attackRange;
+
+        }
+        private ParticleColor CamColor = new ParticleColor(255, 255, 255);
+
+        public Spell CamDomainSpell = new Spell()
+                .add(AugmentAccelerateThree.INSTANCE)
+                .add(EffectDomain.INSTANCE)
+                .add(AugmentExtendTimeThree.INSTANCE)
+                .add(AugmentAOEThree.INSTANCE, 2)
+                .add(AugmentExtract.INSTANCE)
+
+                .add(EffectLightning.INSTANCE)
+                .add(AugmentAmplify.INSTANCE,6)
+
+                .withColor(CamColor);
+
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+
+            this.CamEntity.domainCooldown = random.nextInt(2000) + 1000;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.CamEntity.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.CamEntity.getNavigation().isDone()) && !this.done;
+        }
+
+        public void start() {
+            super.start();
+            this.CamEntity.setAggressive(true);
+            attackDelay = 13;
+            ticksUntilNextAttack = 7;
+
+            LivingEntity $$0 = this.CamEntity.getTarget();
+            if ($$0 != null) {
+                Vec3 $$1 = $$0.getEyePosition();
+                this.CamEntity.moveControl.setWantedPosition($$1.x + CamEntity.this.random.nextInt(15) - 7, $$1.y + 3, $$1.z + CamEntity.this.random.nextInt(15) - 7, (double)this.speedModifier);
+            }
+        }
+
+        public void stop() {
+            super.stop();
+            this.CamEntity.setUsingDomain(false);
+            this.CamEntity.setAggressive(false);
+            this.animatedTicks = 0;
+            this.done = false;
+            this.hasAnimated = false;
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        public void tick() {
+            LivingEntity livingentity = this.CamEntity.getTarget();
+            if (livingentity != null) {
+                double d0 = this.CamEntity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+                boolean canSeeEnemy = this.CamEntity.getSensing().hasLineOfSight(livingentity);
+                if (canSeeEnemy != this.seeTime > 0) {
+                    this.seeTime = 0;
+                }
+
+                if (canSeeEnemy) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.CamEntity.getNavigation().stop();
+                    ++this.strafingTime;
+                } else {
+                    this.CamEntity.getNavigation().moveTo(livingentity, this.speedModifier);
+                    this.strafingTime = -1;
+                }
+
+                if (this.strafingTime >= 10) {
+                    if ((double)this.CamEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.CamEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.CamEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.CamEntity.lookAt(livingentity, 30.0F, 30.0F);
+                } else {
+                    this.CamEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+                }
+
+                if (this.seeTime >= 20 && !this.hasAnimated) {
+                    this.hasAnimated = true;
+                }
+
+                if (this.hasAnimated) {
+                    shouldCountTillNextAttack = true;
+                    this.CamEntity.getLookControl().setLookAt(livingentity);
+
+                    if(isTimeToStartAttackAnimation()) {
+                        CamEntity.setUsingDomain(true);
+                    }
+
+                    if(isTimeToAttack()) {
+                        performDomainAttack(this.CamEntity, CamDomainSpell, CamColor);
+                        this.done = true;
+                        resetAttackLoopCooldown();
+                    }
+
+                } else {
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    CamEntity.setUsingDomain(false);
+                    CamEntity.castDomainAnimationTimeout = 0;
                 }
 
             }

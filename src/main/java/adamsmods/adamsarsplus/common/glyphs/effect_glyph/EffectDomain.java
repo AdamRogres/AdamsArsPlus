@@ -1,11 +1,10 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.block.DomainShell;
-import com.adamsmods.adamsarsplus.block.ModBlocks;
-import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
-import com.adamsmods.adamsarsplus.entities.EntityDomainSpell;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentOpenDomain;
+import adamsmods.adamsarsplus.common.blocks.DomainShell;
+import adamsmods.adamsarsplus.common.blocks.DomainShellTile;
+import adamsmods.adamsarsplus.common.entity.EntityDomainSpell;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentOpenDomain;
+import adamsmods.adamsarsplus.registry.ModBlocks;
 import com.hollingsworth.arsnouveau.api.ANFakePlayer;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
@@ -24,23 +23,24 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.DOMAIN_BURNOUT_EFFECT;
-import static com.adamsmods.adamsarsplus.Config.Common.DOMAIN_BURNOUT;
+import static adamsmods.adamsarsplus.ConfigHandler.Common.DOMAIN_BURNOUT;
+import static adamsmods.adamsarsplus.registry.ModPotions.DOMAIN_BURNOUT_EFFECT;
 
 public class EffectDomain extends AbstractEffect {
-    public EffectDomain(ResourceLocation tag, String description) {
-        super(tag, description);
+
+    public static final EffectDomain INSTANCE = new EffectDomain();
+    public EffectDomain() {
+        super("glyph_effectdomain", "Domain");
     }
-    public static final EffectDomain INSTANCE = new EffectDomain(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectdomain"), "Domain");
 
     public boolean canUseDomian(LivingEntity playerEntity) {
-        return !isRealPlayer(playerEntity) || isRealPlayer(playerEntity) && (playerEntity.getEffect(DOMAIN_BURNOUT_EFFECT.get()) == null || (playerEntity instanceof Player player && player.isCreative()));
+        return !isRealPlayer(playerEntity) || isRealPlayer(playerEntity) && (playerEntity.getEffect(DOMAIN_BURNOUT_EFFECT) == null || (playerEntity instanceof Player player && player.isCreative()));
     }
 
     @Override
@@ -53,8 +53,6 @@ public class EffectDomain extends AbstractEffect {
         Vec3 hit = safelyGetHitPos(rayTraceResult);
         EntityDomainSpell entityDomainSpell = new EntityDomainSpell(world, shooter);
         spellContext.setCanceled(true);
-        if (spellContext.getCurrentIndex() >= spellContext.getSpell().recipe.size())
-            return;
         Spell newSpell = spellContext.getRemainingSpell();
         SpellContext newContext = spellContext.clone().withSpell(newSpell);
 
@@ -68,16 +66,15 @@ public class EffectDomain extends AbstractEffect {
         entityDomainSpell.shellblocks = 0;
         entityDomainSpell.refinement = spellStats.getAmpMultiplier();
 
-        entityDomainSpell.spellResolver = new SpellResolver(newContext);
+        entityDomainSpell.resolver().getNewResolver(newContext);
         entityDomainSpell.setPos(hit.x, hit.y, hit.z);
-        entityDomainSpell.setColor(spellContext.getColors());
 
         world.addFreshEntity(entityDomainSpell);
 
         int ticks = (int) (20.0 * (10.0 + spellStats.getDurationMultiplier()));
 
         if (DOMAIN_BURNOUT.get()) {
-            shooter.addEffect(new MobEffectInstance(DOMAIN_BURNOUT_EFFECT.get(), ticks));
+            shooter.addEffect(new MobEffectInstance(DOMAIN_BURNOUT_EFFECT, ticks));
         }
 
         //Create Sphere
@@ -100,7 +97,7 @@ public class EffectDomain extends AbstractEffect {
                                 BlockEntity var12 = world.getBlockEntity(p);
                                 if (var12 instanceof DomainShellTile) {
                                     DomainShellTile tile = (DomainShellTile)var12;
-                                    tile.color = spellContext.getColors();
+                                    //tile.color = spellContext.getSpell().color(); // Will need to think of new implementation
                                     tile.lengthModifier = spellStats.getDurationMultiplier();
                                     tile.refinement = spellStats.getAmpMultiplier();
 
@@ -150,7 +147,7 @@ public class EffectDomain extends AbstractEffect {
     }
 
     @Override
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         PER_SPELL_LIMIT = builder.comment("The maximum number of times this glyph may appear in a single spell").defineInRange("per_spell_limit", 1, 1, 1);
     }

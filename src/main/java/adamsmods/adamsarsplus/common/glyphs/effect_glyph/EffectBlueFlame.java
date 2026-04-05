@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.FireEntity;
+import adamsmods.adamsarsplus.common.entity.FireEntity;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +10,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -19,14 +18,18 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 public class EffectBlueFlame extends AbstractEffect {
-    public EffectBlueFlame(ResourceLocation tag, String description) {
-        super(tag, description);
+
+    public static final EffectBlueFlame INSTANCE = new EffectBlueFlame();
+
+    public EffectBlueFlame() {
+        super("glyph_effectblueflame", "Cremation");
     }
 
-    public static final EffectBlueFlame INSTANCE = new EffectBlueFlame(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectblueflame"), "Cremation");
-
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
+        addDamageConfig(builder, 4);
+        addAmpConfig(builder, 2);
     }
 
     public void summonFlame(Level world, HitResult rayTraceResult, @Nullable LivingEntity shooter, SpellContext spellContext, SpellStats stats){

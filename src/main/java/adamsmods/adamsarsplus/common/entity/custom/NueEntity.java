@@ -1,8 +1,7 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -48,12 +47,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 import static java.lang.Math.PI;
 
 public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
@@ -78,7 +78,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     AttackPhase attackPhase;
 
     public NueEntity(Level level, LivingEntity owner, boolean summon) {
-        super((EntityType) AdamsModEntities.NUE.get(), level);
+        super((EntityType) ModEntities.NUE.get(), level);
 
         this.owner = owner;
         this.setOwnerID(owner.getUUID());
@@ -93,7 +93,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     }
 
     public NueEntity(Level level, boolean summon) {
-        super((EntityType) AdamsModEntities.NUE.get(), level);
+        super((EntityType) ModEntities.NUE.get(), level);
 
         this.isSummon = summon;
         this.ritualStatus = false;
@@ -117,7 +117,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     }
 
     public EntityType<?> getType() {
-        return (EntityType)AdamsModEntities.NUE.get();
+        return (EntityType)ModEntities.NUE.get();
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -143,7 +143,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         super.tick();
 
         if(this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -215,12 +215,12 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(NueEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
-        this.entityData.define(FLYING, false);
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(IDLE, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        pBuilder.define(FLYING, false);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(IDLE, false);
     }
 
     @Override
@@ -274,7 +274,7 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         this.owner = owner;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -801,7 +801,6 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
     void performCastAttack(LivingEntity entity, LivingEntity target, Spell spell, ParticleColor color){
         EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
         DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-        projectileSpell.setColor(color);
 
         projectileSpell.shoot(entity,Mth.clamp(entity.getXRot() + 45, 45, 90), entity.getYRot(), 0.0F, 1.0f, 0.9f);
 

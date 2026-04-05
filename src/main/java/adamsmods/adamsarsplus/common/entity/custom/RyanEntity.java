@@ -1,14 +1,11 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.entities.ai.RyanDomainGoal;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAOEThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAmplifyTwo;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentExtendTimeTwo;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectBlueFlame;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectEruption;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectBlueFlame;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectDomain;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectEruption;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -17,10 +14,7 @@ import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.network.Networking;
 import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSensitive;
+import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -65,8 +59,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.FLAME_DEITY_EFFECT;
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.RYAN_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModEntities.RYAN_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModPotions.FLAME_DEITY_EFFECT;
+
 
 public class RyanEntity extends Monster implements RangedAttackMob {
 
@@ -114,8 +109,8 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
     @Override
     public void tick() {
-        if(!this.hasEffect(FLAME_DEITY_EFFECT.get())){
-            this.addEffect(new MobEffectInstance(FLAME_DEITY_EFFECT.get(), 100, 0, false, false));
+        if(!this.hasEffect(FLAME_DEITY_EFFECT)){
+            this.addEffect(new MobEffectInstance(FLAME_DEITY_EFFECT, 100, 0, false, false));
         }
 
         super.tick();
@@ -216,14 +211,14 @@ public class RyanEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(CASTING, false);
-        this.entityData.define(USING_DOMAIN, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(CASTING, false);
+        pBuilder.define(USING_DOMAIN, false);
 
-        this.entityData.define(HOVERING, false);
-        this.entityData.define(FLYING, false);
+        pBuilder.define(HOVERING, false);
+        pBuilder.define(FLYING, false);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -268,11 +263,11 @@ public class RyanEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new RyanDomainGoal(this, 1.0D, 10f, () -> domainCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(1, new RyanDomainGoal<>(this, 1.0D, 10f, () -> domainCooldown <= 0, 0, 15));
 
-        this.goalSelector.addGoal(2, new RyanCastingGoalA(this, 1.3D, 20f, () -> castCooldown <= 0, 0, 15));
-        this.goalSelector.addGoal(2, new RyanCastingGoalB(this, 1.3D, 20f, () -> castBCooldown <= 0, 0, 15));
-        this.goalSelector.addGoal(2, new RyanCastingGoalC(this, 1.3D, 20f, () -> castCCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new RyanCastingGoalA<>(this, 1.3D, 20f, () -> castCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new RyanCastingGoalB<>(this, 1.3D, 20f, () -> castBCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(2, new RyanCastingGoalC<>(this, 1.3D, 20f, () -> castCCooldown <= 0, 0, 15));
 
         this.goalSelector.addGoal(3, new RyanChargeAttackGoal(this, 1.5D, true, () -> true));
 
@@ -301,7 +296,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -407,7 +402,6 @@ public class RyanEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -503,8 +497,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     RyanEntity.this.moveControl.setWantedPosition($$2.x, $$2.y, $$2.z, (double)1.0F);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -593,7 +586,6 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -728,7 +720,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
                 .withColor(ryanColor);
 
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             this.ryanEntity.castBCooldown = random.nextInt(400) + 160;
             int time = 100;
@@ -738,7 +730,6 @@ public class RyanEntity extends Monster implements RangedAttackMob {
             AdamsArsPlus.setInterval(() -> {
 
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-                projectileSpell.setColor(color);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(RyanEntity.this.random.nextInt(19) - 9, 8, RyanEntity.this.random.nextInt(19) - 9));
                 entity.level().addFreshEntity(projectileSpell);
@@ -846,7 +837,6 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
                 if (this.seeTime >= 20 && !this.hasAnimated) {
                     this.hasAnimated = true;
-                    Networking.sendToNearby(this.ryanEntity.level(), this.ryanEntity, new PacketAnimEntity(this.ryanEntity.getId(), this.animId));
                 }
 
                 if (this.hasAnimated) {
@@ -858,7 +848,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.ryanEntity, 1.0F, ryanCastSpell, ryanColor);
+                        performCastAttack(this.ryanEntity, ryanCastSpell, ryanColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -945,7 +935,6 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                 }
 
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-                projectileSpell.setColor(color);
                 projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
                 projectileSpell.setPos(pos);
                 entity.level().addFreshEntity(projectileSpell);
@@ -1036,5 +1025,192 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
         }
 
+    }
+
+    public class RyanDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
+        RyanEntity RyanEntity;
+
+        private final double speedModifier;
+        private final float attackRadiusSqr;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+        boolean hasAnimated;
+        int animatedTicks;
+        int delayTicks;
+        int animId;
+        boolean done;
+
+        Supplier<Boolean> canUse;
+
+        private int attackDelay = 10;
+        private int ticksUntilNextAttack = 10;
+        private int totalAnimation = 20;
+        private boolean shouldCountTillNextAttack = false;
+
+        public RyanDomainGoal(RyanEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks) {
+            this.RyanEntity = entity;
+            this.speedModifier = speed;
+            this.canUse = canUse;
+            this.animId = animId;
+            this.delayTicks = delayTicks;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.attackRadiusSqr = attackRange * attackRange;
+
+        }
+        private ParticleColor RyanColor = new ParticleColor(255, 0, 0);
+
+        public Spell RyanDomainSpell = new Spell()
+                .add(AugmentAccelerateThree.INSTANCE)
+                .add(EffectDomain.INSTANCE)
+                .add(AugmentExtendTimeThree.INSTANCE)
+                .add(AugmentAOEThree.INSTANCE, 2)
+                .add(AugmentExtract.INSTANCE)
+                .add(AugmentAccelerateTwo.INSTANCE)
+
+                .add(EffectIgnite.INSTANCE)
+                .add(EffectFlare.INSTANCE)
+                .add(AugmentAmplify.INSTANCE,8)
+
+                .withColor(RyanColor);
+
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+
+            this.RyanEntity.domainCooldown = random.nextInt(2000) + 1000;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.RyanEntity.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.RyanEntity.getNavigation().isDone()) && !this.done;
+        }
+
+        public void start() {
+            super.start();
+            this.RyanEntity.setAggressive(true);
+            attackDelay = 13;
+            ticksUntilNextAttack = 7;
+
+            LivingEntity $$0 = this.RyanEntity.getTarget();
+            if ($$0 != null) {
+                Vec3 $$1 = $$0.getEyePosition();
+                this.RyanEntity.moveControl.setWantedPosition($$1.x + RyanEntity.this.random.nextInt(15) - 7, $$1.y + 3, $$1.z + RyanEntity.this.random.nextInt(15) - 7, (double)this.speedModifier);
+            }
+        }
+
+        public void stop() {
+            super.stop();
+            this.RyanEntity.setUsingDomain(false);
+            this.RyanEntity.setAggressive(false);
+            this.animatedTicks = 0;
+            this.done = false;
+            this.hasAnimated = false;
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        public void tick() {
+            LivingEntity livingentity = this.RyanEntity.getTarget();
+            if (livingentity != null) {
+                double d0 = this.RyanEntity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+                boolean canSeeEnemy = this.RyanEntity.getSensing().hasLineOfSight(livingentity);
+                if (canSeeEnemy != this.seeTime > 0) {
+                    this.seeTime = 0;
+                }
+
+                if (canSeeEnemy) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.RyanEntity.getNavigation().stop();
+                    ++this.strafingTime;
+                } else {
+                    this.RyanEntity.getNavigation().moveTo(livingentity, this.speedModifier);
+                    this.strafingTime = -1;
+                }
+
+                if (this.strafingTime >= 10) {
+                    if ((double)this.RyanEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.RyanEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.RyanEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.RyanEntity.lookAt(livingentity, 30.0F, 30.0F);
+                } else {
+                    this.RyanEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+                }
+
+                if (this.seeTime >= 20 && !this.hasAnimated) {
+                    this.hasAnimated = true;
+                }
+
+                if (this.hasAnimated) {
+                    shouldCountTillNextAttack = true;
+                    this.RyanEntity.getLookControl().setLookAt(livingentity);
+
+                    if(isTimeToStartAttackAnimation()) {
+                        RyanEntity.setUsingDomain(true);
+                    }
+
+                    if(isTimeToAttack()) {
+                        performDomainAttack(this.RyanEntity, RyanDomainSpell, RyanColor);
+                        this.done = true;
+                        resetAttackLoopCooldown();
+                    }
+
+                } else {
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    RyanEntity.setUsingDomain(false);
+                    RyanEntity.castDomainAnimationTimeout = 0;
+                }
+
+            }
+
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+        }
     }
 }

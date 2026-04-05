@@ -13,6 +13,7 @@ import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.util.RandomSource;
@@ -39,11 +40,14 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.hollingsworth.arsnouveau.common.entity.SummonSkeleton.OWNER_UNIQUE_ID;
 
 public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISummon {
     private final RangedBowAttackGoal<SummonSkeleton_m> bowGoal = new RangedBowAttackGoal(this, (double)1.0F, 20, 15.0F);
@@ -59,15 +63,15 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
             super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            double d0 = this.getAttackReachSqr(pEnemy);
-            if (pDistToEnemySqr <= d0 && this.getTicksUntilNextAttack() <= 0) {
+        protected void checkAndPerformAttack(LivingEntity target) {
+            if (this.canPerformAttack(target)) {
                 this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.mob.doHurtTarget(pEnemy);
+                this.mob.doHurtTarget(target);
 
-                performSpellAttack(this.mob, 1.0F, spell.getSpell(), spell.getColors(), pEnemy);
+                performSpellAttack(this.mob, spell.getSpell(), target);
             }
+
         }
 
         public void stop() {
@@ -97,8 +101,8 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         this.meleeGoal = new NamelessClass_1(this, 2.2, true);
     }
 
-    void performSpellAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color, LivingEntity enemy){
-        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+    void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
 
         resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
     }
@@ -109,8 +113,8 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
 
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
         this.populateDefaultEquipmentSlots(this.getRandom(), difficultyIn);
-        this.populateDefaultEquipmentEnchantments(this.getRandom(), difficultyIn);
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        this.populateDefaultEquipmentEnchantments(worldIn, this.getRandom(), difficultyIn);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance pDifficulty) {
@@ -196,7 +200,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
 
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -280,9 +284,9 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         }
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UNIQUE_ID, Optional.empty());
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UNIQUE_ID, Optional.empty());
     }
 
     public void addAdditionalSaveData(CompoundTag compound) {

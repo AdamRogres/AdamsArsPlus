@@ -1,42 +1,42 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDurationDown;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.ERUPTION_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.ERUPTION_EFFECT;
 
 public class EffectEruption extends AbstractEffect implements IPotionEffect {
-    public static EffectEruption INSTANCE = new EffectEruption(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effecteruption"), "Eruption");
 
-    public EffectEruption(ResourceLocation tag, String description) {
-        super(tag, description);
+    public EffectEruption() {
+        super("glyph_effecteruption", "Eruption");
     }
+    public static EffectEruption INSTANCE = new EffectEruption();
 
     @Override
-    public void applyConfigPotion(LivingEntity entity, MobEffect potionEffect, SpellStats spellStats) {
+    public void applyConfigPotion(LivingEntity entity, Holder<MobEffect> potionEffect, SpellStats spellStats) {
         this.applyConfigPotion(entity, potionEffect, spellStats, false);
     }
 
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         Entity var8 = rayTraceResult.getEntity();
         if (var8 instanceof LivingEntity living) {
-            this.applyConfigPotion(living, (MobEffect) ERUPTION_EFFECT.get(), spellStats);
+            this.applyConfigPotion(living, ERUPTION_EFFECT, spellStats);
         }
     }
 
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         this.addPotionConfig(builder, 7);
         this.addExtendTimeConfig(builder, 3);

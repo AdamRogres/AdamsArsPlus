@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
@@ -30,6 +30,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.HOLY_LEGION_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.HOLY_LEGION_EFFECT;
+
 
 public class TerraprismaEntity extends Monster implements IFollowingSummon, ISummon {
     private LivingEntity owner;
@@ -60,7 +62,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
     public int iTime = 0;
 
     public TerraprismaEntity(Level level, LivingEntity owner, boolean summon) {
-        super((EntityType) AdamsModEntities.TERRA_ENTITY.get(), level);
+        super((EntityType) ModEntities.TERRA_ENTITY.get(), level);
 
         this.owner = owner;
         this.limitedLifespan = true;
@@ -77,7 +79,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
     }
 
     public EntityType<?> getType() {
-        return (EntityType)AdamsModEntities.TERRA_ENTITY.get();
+        return (EntityType)ModEntities.TERRA_ENTITY.get();
     }
 
     protected PathNavigation createNavigation(Level pLevel) {
@@ -141,7 +143,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         }
 
         if(this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(HOLY_LEGION_EFFECT.get())) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(HOLY_LEGION_EFFECT)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -219,20 +221,20 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(TerraprismaEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
-        this.entityData.define(ATTACKING_A, false);
-        this.entityData.define(ATTACKING_B, false);
-        this.entityData.define(ATTACKING_C, false);
-        this.entityData.define(COLOR, "white");
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        pBuilder.define(ATTACKING_A, false);
+        pBuilder.define(ATTACKING_B, false);
+        pBuilder.define(ATTACKING_C, false);
+        pBuilder.define(COLOR, "white");
     }
 
     @Override
     public void die(DamageSource cause) {
         super.die(cause);
         onSummonDeath(level(), cause, false);
-        this.getOwner().removeEffect(HOLY_LEGION_EFFECT.get());
+        this.getOwner().removeEffect(HOLY_LEGION_EFFECT);
     }
 
     public boolean hurt(DamageSource pSource, float pAmount) {
@@ -256,7 +258,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         this.owner = owner;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -436,7 +438,6 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;

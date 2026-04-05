@@ -22,6 +22,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -31,14 +33,17 @@ import java.util.List;
 import java.util.Set;
 
 public class EffectConjureBlade extends AbstractEffect {
-    public EffectConjureBlade(ResourceLocation tag, String description) {
-        super(tag, description);
+
+    public static final EffectConjureBlade INSTANCE = new EffectConjureBlade();
+    public EffectConjureBlade() {
+        super("glyph_effectconjureblade", "Conjure Blade");
     }
 
-    public static final EffectConjureBlade INSTANCE = new EffectConjureBlade(new ResourceLocation(AdamsArsPlus.MODID, "glyph_effectconjureblade"), "Conjure Blade");
-
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
+        addDamageConfig(builder, 2);
+        addAmpConfig(builder, 2);
     }
 
     public void summonBlade(Level world, HitResult rayTraceResult, @Nullable LivingEntity shooter, SpellContext spellContext, SpellStats stats){

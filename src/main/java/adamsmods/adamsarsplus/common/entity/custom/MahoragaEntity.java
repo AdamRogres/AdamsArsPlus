@@ -1,15 +1,14 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAmplifyThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentLesserAOE;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectAnnihilate;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectFracture;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectLimitless;
-import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentAccelerateThree;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentAccelerateTwo;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentAmplifyThree;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentLesserAOE;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectAnnihilate;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectFracture;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectLimitless;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -26,6 +25,7 @@ import com.hollingsworth.arsnouveau.common.spell.effect.EffectKnockback;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -66,13 +66,14 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModPotions.*;
 import static java.lang.Math.PI;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.item.Items.NETHERITE_SWORD;
@@ -128,7 +129,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             SynchedEntityData.defineId(MahoragaEntity.class, EntityDataSerializers.BOOLEAN);
 
     public MahoragaEntity(Level level, LivingEntity owner, boolean summon) {
-        super((EntityType) AdamsModEntities.MAHORAGA.get(), level);
+        super((EntityType) ModEntities.MAHORAGA.get(), level);
 
         ItemStack weapon = NETHERITE_SWORD.asItem().getDefaultInstance();
         weapon.enchant(Enchantments.SMITE, 10);
@@ -151,7 +152,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     }
 
     public MahoragaEntity(Level level, boolean summon) {
-        super((EntityType) AdamsModEntities.MAHORAGA.get(), level);
+        super((EntityType) ModEntities.MAHORAGA.get(), level);
 
         ItemStack weapon = NETHERITE_SWORD.asItem().getDefaultInstance();
         weapon.enchant(Enchantments.SMITE, 10);
@@ -178,7 +179,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     }
 
     public EntityType<?> getType() {
-        return (EntityType) AdamsModEntities.MAHORAGA.get();
+        return (EntityType) ModEntities.MAHORAGA.get();
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -280,14 +281,14 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             }
         }
         if(this.regenCount > 0 && !this.hasEffect(REGENERATION)){
-            this.addEffect(new MobEffectInstance((MobEffect) REGENERATION, 40, regenCount - 1, false, false));
+            this.addEffect(new MobEffectInstance(REGENERATION, 40, regenCount - 1, false, false));
         }
 
         // Adaptive Effect Removal
         if(effectAdaptCheck(this)){}
 
         if (this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -470,18 +471,18 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(MahoragaEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
-        this.entityData.define(ATTACKINGA, false);
-        this.entityData.define(ATTACKINGBAA, false);
-        this.entityData.define(ATTACKINGBAB, false);
-        this.entityData.define(ATTACKINGBBA, false);
-        this.entityData.define(ATTACKINGC, false);
-        this.entityData.define(ROAR, false);
-        this.entityData.define(WHEEL, false);
-        this.entityData.define(SEALED, false);
-        this.entityData.define(UNSEALED, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        pBuilder.define(ATTACKINGA, false);
+        pBuilder.define(ATTACKINGBAA, false);
+        pBuilder.define(ATTACKINGBAB, false);
+        pBuilder.define(ATTACKINGBBA, false);
+        pBuilder.define(ATTACKINGC, false);
+        pBuilder.define(ROAR, false);
+        pBuilder.define(WHEEL, false);
+        pBuilder.define(SEALED, false);
+        pBuilder.define(UNSEALED, false);
     }
 
     @Override
@@ -555,7 +556,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         this.owner = owner;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -787,7 +788,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 if(entity.getActiveEffects().stream().toList().get(i).getEffect() == entity.adaptedEffects[n]){
                     entity.removeEffect(entity.adaptedEffects[n]);
                     return true;
-                } else if(entity.adaptedEffects[n] == null && !entity.getActiveEffects().stream().toList().get(i).getEffect().isBeneficial()){
+                } else if(entity.adaptedEffects[n] == null && !entity.getActiveEffects().stream().toList().get(i).getEffect().value().isBeneficial()){
                     if(canAdaptCheck(entity)){
                         entity.adaptedEffects[n] = entity.getActiveEffects().stream().toList().get(i).getEffect();
                     }
@@ -836,10 +837,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
     public void applyDisruption(MahoragaEntity entity, LivingEntity target){
         if(entity.canDisrupt){
-            target.addEffect(new MobEffectInstance(DISRUPTION_EFFECT.get(), 200));
+            target.addEffect(new MobEffectInstance(DISRUPTION_EFFECT, 200));
         } else {
             for(int i = 0; i < target.getActiveEffects().size(); i++){
-                if(target.getActiveEffects().stream().toList().get(i).getEffect().isBeneficial()){
+                if(target.getActiveEffects().stream().toList().get(i).getEffect().value().isBeneficial()){
                    if(entity.canAdaptCheck(entity)){
                        entity.canDisrupt = true;
                    }
@@ -865,7 +866,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -952,7 +953,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -968,7 +968,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                     if(pEnemy.isBlocking()){
                         if(pEnemy instanceof Player playerEnemy){
                             playerEnemy.getCooldowns().addCooldown(Items.SHIELD, 60);
-                            playerEnemy.disableShield(false);
+                            playerEnemy.disableShield();
                         }
                     }
                     else {
@@ -1107,7 +1107,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -1268,7 +1267,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -1420,11 +1418,11 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         void performCastAttack(LivingEntity entity, LivingEntity target){
             if(target instanceof Player player && player.isBlocking()){
-                player.disableShield(false);
+                player.disableShield();
 
                 EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), knockbackSpell, entity, new LivingCaster(entity)).withColors(knockbackColor));
                 resolver.onResolveEffect(entity.level(), new EntityHitResult(target));
-            } else if(target.hasEffect(LIMITLESS_EFFECT.get())){
+            } else if(target.hasEffect(LIMITLESS_EFFECT)){
                 if(!this.Entity.canSlashAttack){
                     if(canAdaptCheck(this.Entity)){
                         this.Entity.canSlashAttack = true;
@@ -1629,7 +1627,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -1743,12 +1740,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity target){
-            if(target.hasEffect(LIMITLESS_EFFECT.get())){
-                target.removeEffect(LIMITLESS_EFFECT.get());
+            if(target.hasEffect(LIMITLESS_EFFECT)){
+                target.removeEffect(LIMITLESS_EFFECT);
             }
 
             if(spell != null) {
-                EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(spell.color));
+                EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(slashSpellcolor));
                 summonProjectiles(entity.level(), entity, spell, resolver);
             }
 

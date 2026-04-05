@@ -1,13 +1,11 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.ai.*;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAOEThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAmplifyTwo;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectFracture;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectRaiseEarth;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectSwapTarget;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectDomain;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectFracture;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectRaiseEarth;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectSwapTarget;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -55,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.NICK_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModEntities.NICK_ENTITY;
 
 public class NickEntity extends Monster implements RangedAttackMob {
 
@@ -264,14 +262,14 @@ public class NickEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING_A, false);
-        this.entityData.define(ATTACKING_BA, false);
-        this.entityData.define(ATTACKING_BB, false);
-        this.entityData.define(ATTACKING_C, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING_A, false);
+        pBuilder.define(ATTACKING_BA, false);
+        pBuilder.define(ATTACKING_BB, false);
+        pBuilder.define(ATTACKING_C, false);
 
-        this.entityData.define(CASTING_DOMAIN, false);
+        pBuilder.define(CASTING_DOMAIN, false);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -353,7 +351,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -485,7 +483,6 @@ public class NickEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -575,8 +572,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     NickEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, (double)this.speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -642,7 +638,6 @@ public class NickEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -656,7 +651,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                         performAttack(pEnemy);
                         if(!pEnemy.isBlocking()){
-                            performSpellAttack(this.mob, 1.0F, nickAttackBASpell, nickColor, pEnemy);
+                            performSpellAttack(this.mob, nickAttackBASpell, nickColor, pEnemy);
                         }
                     } else {
                         this.resetAttackLoopCooldown();
@@ -707,7 +702,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         }
 
-        void performSpellAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color, LivingEntity enemy){
+        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
@@ -734,8 +729,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     NickEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, (double)this.speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -797,7 +791,6 @@ public class NickEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -811,7 +804,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                         performAttack(pEnemy);
                         if(!pEnemy.isBlocking()){
-                            performSpellAttack(this.mob, 1.0F, nickAttackBBSpell, nickColor, pEnemy);
+                            performSpellAttack(this.mob, nickAttackBBSpell, nickColor, pEnemy);
                         }
                     } else {
                         this.resetAttackLoopCooldown();
@@ -862,7 +855,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         }
 
-        void performSpellAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color, LivingEntity enemy){
+        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
@@ -888,8 +881,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     NickEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, (double)this.speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -955,7 +947,6 @@ public class NickEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -1057,8 +1048,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     NickEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, (double)this.speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+                this.checkAndPerformAttack($$0, $$1);
             }
 
             if(shouldCountTillNextAttack){
@@ -1115,7 +1105,6 @@ public class NickEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -1205,6 +1194,197 @@ public class NickEntity extends Monster implements RangedAttackMob {
             }
 
         }
+    }
 
+    public class NickDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
+        NickEntity NickEntity;
+
+        private final double speedModifier;
+        private final float attackRadiusSqr;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+        boolean hasAnimated;
+        int animatedTicks;
+        int delayTicks;
+        int animId;
+        boolean done;
+
+        Supplier<Boolean> canUse;
+
+        private int attackDelay = 24;
+        private int ticksUntilNextAttack = 24;
+        private int totalAnimation = 48;
+        private boolean shouldCountTillNextAttack = false;
+
+        public NickDomainGoal(NickEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks) {
+            this.NickEntity = entity;
+            this.speedModifier = speed;
+            this.canUse = canUse;
+            this.animId = animId;
+            this.delayTicks = delayTicks;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.attackRadiusSqr = attackRange * attackRange;
+
+        }
+        private ParticleColor NickColor = new ParticleColor(0, 150, 0);
+
+        public Spell NickDomainSpell = new Spell()
+                .add(AugmentAccelerateThree.INSTANCE)
+                .add(EffectDomain.INSTANCE)
+                .add(AugmentExtendTimeThree.INSTANCE)
+                .add(AugmentAOEThree.INSTANCE, 2)
+                .add(AugmentExtract.INSTANCE)
+                .add(AugmentAccelerateTwo.INSTANCE)
+
+                .add(EffectGravity.INSTANCE)
+                .add(AugmentExtendTime.INSTANCE)
+                .add(EffectSnare.INSTANCE)
+
+                .add(EffectCrush.INSTANCE)
+                .add(EffectBurst.INSTANCE)
+                .add(AugmentSensitive.INSTANCE)
+                .add(EffectCrush.INSTANCE)
+
+                .withColor(NickColor);
+
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+
+            this.NickEntity.domainCooldown = random.nextInt(2000) + 1000;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.NickEntity.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.NickEntity.getNavigation().isDone()) && !this.done;
+        }
+
+        public void start() {
+            super.start();
+            this.NickEntity.setAggressive(true);
+            attackDelay = 24;
+            ticksUntilNextAttack = 24;
+
+            LivingEntity $$0 = this.NickEntity.getTarget();
+            if ($$0 != null) {
+                Vec3 $$1 = $$0.getEyePosition();
+                this.NickEntity.moveControl.setWantedPosition($$1.x + NickEntity.this.random.nextInt(15) - 7, $$1.y + 3, $$1.z + NickEntity.this.random.nextInt(15) - 7, (double)this.speedModifier);
+            }
+        }
+
+        public void stop() {
+            super.stop();
+            this.NickEntity.setUsingDomain(false);
+            this.NickEntity.setAggressive(false);
+            this.animatedTicks = 0;
+            this.done = false;
+            this.hasAnimated = false;
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        public void tick() {
+            LivingEntity livingentity = this.NickEntity.getTarget();
+            if (livingentity != null) {
+                double d0 = this.NickEntity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+                boolean canSeeEnemy = this.NickEntity.getSensing().hasLineOfSight(livingentity);
+                if (canSeeEnemy != this.seeTime > 0) {
+                    this.seeTime = 0;
+                }
+
+                if (canSeeEnemy) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.NickEntity.getNavigation().stop();
+                    ++this.strafingTime;
+                } else {
+                    this.NickEntity.getNavigation().moveTo(livingentity, this.speedModifier);
+                    this.strafingTime = -1;
+                }
+
+                if (this.strafingTime >= 10) {
+                    if ((double)this.NickEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.NickEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.NickEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.NickEntity.lookAt(livingentity, 30.0F, 30.0F);
+                } else {
+                    this.NickEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+                }
+
+                if (this.seeTime >= 20 && !this.hasAnimated) {
+                    this.hasAnimated = true;
+                }
+
+                if (this.hasAnimated) {
+                    shouldCountTillNextAttack = true;
+                    this.NickEntity.getLookControl().setLookAt(livingentity);
+
+                    if(isTimeToStartAttackAnimation()) {
+                        NickEntity.setUsingDomain(true);
+                    }
+
+                    if(isTimeToAttack()) {
+                        performDomainAttack(this.NickEntity, NickDomainSpell, NickColor);
+                        this.done = true;
+                        resetAttackLoopCooldown();
+                    }
+
+                } else {
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    NickEntity.setUsingDomain(false);
+                    NickEntity.castDomainAnimationTimeout = 0;
+                }
+
+            }
+
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+        }
     }
 }

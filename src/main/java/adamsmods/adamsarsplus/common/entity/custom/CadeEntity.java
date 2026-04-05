@@ -1,10 +1,12 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.entities.ai.*;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectIceburst;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectAnnihilate;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectDomain;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectIceburst;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.FilterNotSelf;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -48,14 +50,15 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.WALKING_BLIZZARD_EFFECT;
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.CADE_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModEntities.CADE_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModPotions.WALKING_BLIZZARD_EFFECT;
 
 public class CadeEntity extends Monster implements RangedAttackMob {
 
@@ -103,8 +106,8 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         super.tick();
         this.setNoGravity(true);
 
-        if(!this.hasEffect(WALKING_BLIZZARD_EFFECT.get())){
-            this.addEffect(new MobEffectInstance(WALKING_BLIZZARD_EFFECT.get(), 100, 1, false, false));
+        if(!this.hasEffect(WALKING_BLIZZARD_EFFECT)){
+            this.addEffect(new MobEffectInstance(WALKING_BLIZZARD_EFFECT, 100, 1, false, false));
         }
 
         if(castACooldown > 0) {
@@ -208,11 +211,11 @@ public class CadeEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CASTING_A, false);
-        this.entityData.define(CASTING_B, false);
-        this.entityData.define(CASTING_DOMAIN, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(CASTING_A, false);
+        pBuilder.define(CASTING_B, false);
+        pBuilder.define(CASTING_DOMAIN, false);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -262,7 +265,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new CadeDomainGoal(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 15));
+        this.goalSelector.addGoal(1, new CadeDomainGoal<>(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 15));
         this.goalSelector.addGoal(2, new CadeCastingGoalE<>(this, 1.3D, 20f, () -> castECooldown <= 0, 0, 15));
         this.goalSelector.addGoal(2, new CadeCastingGoalD<>(this, 1.3D, 20f, () -> castDCooldown <= 0, 0, 15));
         this.goalSelector.addGoal(2, new CadeCastingGoalC<>(this, 1.3D, 20f, () -> castCCooldown <= 0, 0, 15));
@@ -296,7 +299,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -432,10 +435,9 @@ public class CadeEntity extends Monster implements RangedAttackMob {
 
                 .withColor(cadeColor);
 
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -506,7 +508,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.CadeEntity, 1.0F, cadeCastASpell, cadeColor);
+                        performCastAttack(this.CadeEntity, cadeCastASpell, cadeColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -580,10 +582,9 @@ public class CadeEntity extends Monster implements RangedAttackMob {
 
                 .withColor(cadeColor);
 
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -654,7 +655,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.CadeEntity, 1.0F, cadeCastBSpell, cadeColor);
+                        performCastAttack(this.CadeEntity, cadeCastBSpell, cadeColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -736,7 +737,6 @@ public class CadeEntity extends Monster implements RangedAttackMob {
             AdamsArsPlus.setInterval(() -> {
 
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-                projectileSpell.setColor(color);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(CadeEntity.this.random.nextInt(19) - 9, 8, CadeEntity.this.random.nextInt(19) - 9));
                 entity.level().addFreshEntity(projectileSpell);
@@ -844,7 +844,6 @@ public class CadeEntity extends Monster implements RangedAttackMob {
 
                 if (this.seeTime >= 20 && !this.hasAnimated) {
                     this.hasAnimated = true;
-                    Networking.sendToNearby(this.CadeEntity.level(), this.CadeEntity, new PacketAnimEntity(this.CadeEntity.getId(), this.animId));
                 }
 
                 if (this.hasAnimated) {
@@ -934,7 +933,6 @@ public class CadeEntity extends Monster implements RangedAttackMob {
             AdamsArsPlus.setInterval(() -> {
 
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-                projectileSpell.setColor(color);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(CadeEntity.this.random.nextInt(19) - 9, 8, CadeEntity.this.random.nextInt(19) - 9));
                 entity.level().addFreshEntity(projectileSpell);
@@ -1042,7 +1040,6 @@ public class CadeEntity extends Monster implements RangedAttackMob {
 
                 if (this.seeTime >= 20 && !this.hasAnimated) {
                     this.hasAnimated = true;
-                    Networking.sendToNearby(this.CadeEntity.level(), this.CadeEntity, new PacketAnimEntity(this.CadeEntity.getId(), this.animId));
                 }
 
                 if (this.hasAnimated) {
@@ -1127,7 +1124,6 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 0.3f, 0.8f);
 
@@ -1218,6 +1214,197 @@ public class CadeEntity extends Monster implements RangedAttackMob {
 
         }
 
+    }
+
+    public class CadeDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
+        CadeEntity CadeEntity;
+
+        private final double speedModifier;
+        private final float attackRadiusSqr;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+        boolean hasAnimated;
+        int animatedTicks;
+        int delayTicks;
+        int animId;
+        boolean done;
+
+        Supplier<Boolean> canUse;
+
+        private int attackDelay = 10;
+        private int ticksUntilNextAttack = 10;
+        private int totalAnimation = 20;
+        private boolean shouldCountTillNextAttack = false;
+
+        public CadeDomainGoal(CadeEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks) {
+            this.CadeEntity = entity;
+            this.speedModifier = speed;
+            this.canUse = canUse;
+            this.animId = animId;
+            this.delayTicks = delayTicks;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.attackRadiusSqr = attackRange * attackRange;
+
+        }
+        private ParticleColor CadeColor = new ParticleColor(150, 150, 255);
+
+        public Spell CadeDomainSpell = new Spell()
+                .add(AugmentAccelerateThree.INSTANCE)
+                .add(EffectDomain.INSTANCE)
+                .add(AugmentExtendTimeThree.INSTANCE)
+                .add(AugmentAOEThree.INSTANCE, 2)
+                .add(AugmentExtract.INSTANCE)
+                .add(AugmentAccelerateTwo.INSTANCE)
+
+                .add(EffectFreeze.INSTANCE)
+
+                .add(EffectBurst.INSTANCE)
+                .add(AugmentAOE.INSTANCE)
+                .add(AugmentSensitive.INSTANCE)
+                .add(EffectConjureWater.INSTANCE)
+                .add(EffectFreeze.INSTANCE)
+
+                .withColor(CadeColor);
+
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+
+            this.CadeEntity.domainCooldown = random.nextInt(2000) + 1000;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.CadeEntity.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.CadeEntity.getNavigation().isDone()) && !this.done;
+        }
+
+        public void start() {
+            super.start();
+            this.CadeEntity.setAggressive(true);
+            attackDelay = 10;
+            ticksUntilNextAttack = 10;
+
+            LivingEntity $$0 = this.CadeEntity.getTarget();
+            if ($$0 != null) {
+                Vec3 $$1 = $$0.getEyePosition();
+                this.CadeEntity.moveControl.setWantedPosition($$1.x + CadeEntity.this.random.nextInt(15) - 7, $$1.y + 3, $$1.z + CadeEntity.this.random.nextInt(15) - 7, (double)this.speedModifier);
+            }
+        }
+
+        public void stop() {
+            super.stop();
+            this.CadeEntity.setUsingDomain(false);
+            this.CadeEntity.setAggressive(false);
+            this.animatedTicks = 0;
+            this.done = false;
+            this.hasAnimated = false;
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        public void tick() {
+            LivingEntity livingentity = this.CadeEntity.getTarget();
+            if (livingentity != null) {
+                double d0 = this.CadeEntity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+                boolean canSeeEnemy = this.CadeEntity.getSensing().hasLineOfSight(livingentity);
+                if (canSeeEnemy != this.seeTime > 0) {
+                    this.seeTime = 0;
+                }
+
+                if (canSeeEnemy) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.CadeEntity.getNavigation().stop();
+                    ++this.strafingTime;
+                } else {
+                    this.CadeEntity.getNavigation().moveTo(livingentity, this.speedModifier);
+                    this.strafingTime = -1;
+                }
+
+                if (this.strafingTime >= 10) {
+                    if ((double)this.CadeEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.CadeEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.CadeEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.CadeEntity.lookAt(livingentity, 30.0F, 30.0F);
+                } else {
+                    this.CadeEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+                }
+
+                if (this.seeTime >= 20 && !this.hasAnimated) {
+                    this.hasAnimated = true;
+                }
+
+                if (this.hasAnimated) {
+                    shouldCountTillNextAttack = true;
+                    this.CadeEntity.getLookControl().setLookAt(livingentity);
+
+                    if(isTimeToStartAttackAnimation()) {
+                        CadeEntity.setUsingDomain(true);
+                    }
+
+                    if(isTimeToAttack()) {
+                        performDomainAttack(this.CadeEntity, CadeDomainSpell, CadeColor);
+                        this.done = true;
+                        resetAttackLoopCooldown();
+                    }
+
+                } else {
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    CadeEntity.setUsingDomain(false);
+                    CadeEntity.castDomainAnimationTimeout = 0;
+                }
+
+            }
+
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+        }
     }
     
 }

@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
-import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
@@ -40,9 +39,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +50,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModPotions.MANA_EXHAUST_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 
 public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon {
     // Ten Shadows Reward
@@ -76,7 +76,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
             SynchedEntityData.defineId(RabbitEEntity.class, EntityDataSerializers.STRING);
 
     public RabbitEEntity(Level level, LivingEntity owner, boolean summon, String color, boolean copy) {
-        super((EntityType) AdamsModEntities.RABBIT_ESCAPE.get(), level);
+        super((EntityType) ModEntities.RABBIT_ESCAPE.get(), level);
 
         this.owner = owner;
         this.setOwnerID(owner.getUUID());
@@ -92,7 +92,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
     }
 
     public RabbitEEntity(Level level, boolean summon, String color) {
-        super((EntityType) AdamsModEntities.RABBIT_ESCAPE.get(), level);
+        super((EntityType) ModEntities.RABBIT_ESCAPE.get(), level);
 
         this.isSummon = summon;
         this.ritualStatus = false;
@@ -112,7 +112,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
     }
 
     public EntityType<?> getType() {
-        return (EntityType) AdamsModEntities.RABBIT_ESCAPE.get();
+        return (EntityType) ModEntities.RABBIT_ESCAPE.get();
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -142,7 +142,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
         super.tick();
 
         if (this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -161,14 +161,14 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
 
         if (summonCooldown > 0) {
             summonCooldown--;
-        } else if (!this.level().isClientSide && !this.isCopy && !this.hasEffect(MANA_EXHAUST_EFFECT.get())) {
+        } else if (!this.level().isClientSide && !this.isCopy && !this.hasEffect(MANA_EXHAUST_EFFECT)) {
             RabbitEEntity tsentity = new RabbitEEntity(this.level(), this, this.isSummon, "copy", true);
             if (this.isSummon && this.getOwner() != null) {
                 tsentity = new RabbitEEntity(this.level(), this.getOwner(), this.isSummon, "copy", true);
             }
 
             tsentity.moveTo(this.blockPosition().offset(this.level().random.nextInt(0, 10) - 5, this.level().random.nextInt(0, 10) - 5, this.level().random.nextInt(0, 10) - 5), 0.0F, 0.0F);
-            tsentity.finalizeSpawn((ServerLevelAccessor) this.level(), this.level().getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+            tsentity.finalizeSpawn((ServerLevelAccessor) this.level(), this.level().getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
             tsentity.setTicksLeft(this.level().random.nextInt(100, 200));
 
             this.summon(tsentity, this.blockPosition());
@@ -215,11 +215,11 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(RabbitEEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
-        this.entityData.define(HOPPING, false);
-        this.entityData.define(COLOR, "main");
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        pBuilder.define(HOPPING, false);
+        pBuilder.define(COLOR, "main");
     }
 
     @Override
@@ -275,7 +275,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
         this.owner = owner;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -502,7 +502,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
         return f + this.getJumpBoostPower();
     }
 
-    protected void jumpFromGround() {
+    public void jumpFromGround() {
         super.jumpFromGround();
         double d0 = this.moveControl.getSpeedModifier();
         if (d0 > (double) 0.0F) {
@@ -793,13 +793,13 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
 
         public void start() {
             this.timeToRecalcPath = 0;
-            this.oldWaterCost = this.summon.getSelfEntity().getPathfindingMalus(BlockPathTypes.WATER);
-            this.summon.getSelfEntity().setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+            //this.oldWaterCost = this.summon.getSelfEntity().getPathfindingMalus(BlockPathTypes.WATER);
+            //this.summon.getSelfEntity().setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
         }
 
         public void stop() {
             this.navigator.stop();
-            this.summon.getSelfEntity().setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
+            //this.summon.getSelfEntity().setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterCost);
         }
 
         public void tick() {

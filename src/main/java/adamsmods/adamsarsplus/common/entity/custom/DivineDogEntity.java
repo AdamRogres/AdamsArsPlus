@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
-import com.adamsmods.adamsarsplus.entities.ai.*;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
@@ -15,12 +14,14 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -29,15 +30,19 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.TENSHADOWS_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 
 public class DivineDogEntity extends Monster implements IFollowingSummon, ISummon {
     private LivingEntity owner;
@@ -62,7 +67,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     public int sprintCooldown;
 
     public DivineDogEntity(Level level, LivingEntity owner, String color, boolean summon) {
-        super((EntityType) AdamsModEntities.DIVINE_DOG.get(), level);
+        super((EntityType) ModEntities.DIVINE_DOG.get(), level);
 
         this.owner = owner;
         this.limitedLifespan = true;
@@ -76,7 +81,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     }
 
     public EntityType<?> getType() {
-        return (EntityType)AdamsModEntities.DIVINE_DOG.get();
+        return (EntityType)ModEntities.DIVINE_DOG.get();
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -108,7 +113,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         super.tick();
 
         if(this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -187,13 +192,13 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(DivineDogEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
-        this.entityData.define(SPRINTING, false);
-        this.entityData.define(BITING, false);
-        this.entityData.define(LUNGING, false);
-        this.entityData.define(COLOR, "white");
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        pBuilder.define(SPRINTING, false);
+        pBuilder.define(BITING, false);
+        pBuilder.define(LUNGING, false);
+        pBuilder.define(COLOR, "white");
     }
 
     @Override
@@ -220,7 +225,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         this.owner = owner;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -388,5 +393,253 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             world.sendParticles(ParticleTypes.SQUID_INK, d0, d1, d2, 2, ((double)(world.random.nextFloat() * 1.0F) - (double)0.5F) / (double)3.0F, ((double)(world.random.nextFloat() * 1.0F) - (double)0.5F) / (double)3.0F, ((double)(world.random.nextFloat() * 1.0F) - (double)0.5F) / (double)3.0F, (double)0.1F);
         }
 
+    }
+
+    public class DDogAttackGoal extends MeleeAttackGoal {
+        private final DivineDogEntity entity;
+
+        private int attackDelay = 10;
+        private int ticksUntilNextAttack = 10;
+        private int totalAnimation = 15;
+        private boolean shouldCountTillNextAttack = false;
+
+        Supplier<Boolean> canUse;
+        boolean done;
+
+        public DDogAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen, Supplier<Boolean> canUse) {
+            super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
+            entity = ((DivineDogEntity) pMob);
+            this.canUse = canUse;
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            attackDelay = 10;
+            ticksUntilNextAttack = 10;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+        }
+
+        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+                shouldCountTillNextAttack = true;
+
+                if(isTimeToStartAttackAnimation()) {
+                    entity.setBiting(true);
+                }
+
+                if(isTimeToAttack()) {
+                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+
+                    performAttack(pEnemy);
+                }
+            } else {
+                resetAttackCooldown();
+                shouldCountTillNextAttack = false;
+                entity.setBiting(false);
+                entity.biteAnimationTimeout = 0;
+            }
+        }
+
+        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
+            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        protected double getAttackReachSqr(LivingEntity pAttackTarget) {
+            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 1.5F);
+        }
+
+        protected void performAttack(LivingEntity pEnemy) {
+            this.resetAttackLoopCooldown();
+            this.mob.swing(InteractionHand.MAIN_HAND);
+            this.mob.doHurtTarget(pEnemy);
+            this.done = true;
+            this.entity.sprintCooldown = 0;
+        }
+
+
+        @Override
+        public void tick() {
+            super.tick();
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
+
+            this.entity.sprintCooldown = Math.min(this.entity.sprintCooldown + 1, 80);
+        }
+
+        @Override
+        public void stop() {
+            entity.setBiting(false);
+            this.done = false;
+            super.stop();
+        }
+    }
+
+    public class DDogLungeAttackGoal extends MeleeAttackGoal {
+        private final DivineDogEntity entity;
+
+        Supplier<Boolean> canUse;
+        boolean done;
+
+        public DDogLungeAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen, Supplier<Boolean> canUse) {
+            super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
+            entity = ((DivineDogEntity) pMob);
+            this.canUse = canUse;
+        }
+
+        @Override
+        public void start() {
+            super.start();
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+        }
+
+        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+                this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+                performAttack(pEnemy);
+                entity.setLunging(false);
+
+            } else {
+                resetAttackCooldown();
+            }
+        }
+
+        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
+            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
+        }
+
+        protected double getAttackReachSqr(LivingEntity pAttackTarget) {
+            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 1.5F);
+        }
+
+        protected void performAttack(LivingEntity pEnemy) {
+            this.resetAttackCooldown();
+            this.mob.swing(InteractionHand.MAIN_HAND);
+            this.mob.doHurtTarget(pEnemy);
+            if(pEnemy instanceof Player playerEnemy){
+                playerEnemy.getCooldowns().addCooldown(Items.SHIELD, 60);
+                playerEnemy.disableShield();
+            }
+
+            this.done = true;
+        }
+
+
+        @Override
+        public void tick() {
+            super.tick();
+
+        }
+
+        @Override
+        public void stop() {
+            this.done = false;
+            super.stop();
+        }
+    }
+
+    public class DDogSprintGoal extends MeleeAttackGoal {
+        private final DivineDogEntity entity;
+
+        Supplier<Boolean> canUse;
+        boolean done;
+
+        public DDogSprintGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen, Supplier<Boolean> canUse) {
+            super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
+            entity = ((DivineDogEntity) pMob);
+            this.canUse = canUse;
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            entity.setSprinting(true);
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+        }
+
+        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
+            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+
+                if(isTimeToAttack()) {
+                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+
+                    performAttack(pEnemy);
+                }
+            }
+        }
+
+        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
+            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
+        }
+
+        protected double getAttackReachSqr(LivingEntity pAttackTarget) {
+            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 3.5F);
+        }
+
+        protected void performAttack(LivingEntity pEnemy) {
+            this.resetAttackCooldown();
+
+            Vec3 $$0 = this.mob.getDeltaMovement();
+            Vec3 $$1 = new Vec3(pEnemy.getX() - this.mob.getX(), (double)0.0F, pEnemy.getZ() - this.mob.getZ());
+            if ($$1.lengthSqr() > 1.0E-7) {
+                $$1 = $$1.normalize().scale(0.5).add($$0.scale(0.2));
+            }
+
+            this.mob.setDeltaMovement($$1.x, 0.4, $$1.z);
+            entity.lungeAnimationTimeout = 0;
+            entity.setLunging(true);
+
+            this.entity.sprintCooldown = 0;
+            this.done = true;
+        }
+
+        @Override
+        public void stop() {
+            entity.setSprinting(false);
+            this.done = false;
+            super.stop();
+        }
     }
 }

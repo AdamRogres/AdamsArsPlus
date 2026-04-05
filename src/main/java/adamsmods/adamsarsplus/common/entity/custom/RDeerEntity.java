@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.entities.AdamsModEntities;
-import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -50,6 +49,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +57,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModPotions.*;
 import static java.lang.Math.*;
 
 public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
@@ -72,7 +72,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             SynchedEntityData.defineId(RDeerEntity.class, EntityDataSerializers.BOOLEAN);
 
     public RDeerEntity(Level level, LivingEntity owner, boolean summon) {
-        super((EntityType) AdamsModEntities.ROUND_DEER.get(), level);
+        super((EntityType) ModEntities.ROUND_DEER.get(), level);
 
         this.owner = owner;
         this.setOwnerID(owner.getUUID());
@@ -81,7 +81,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     }
 
     public RDeerEntity(Level level, boolean summon) {
-        super((EntityType) AdamsModEntities.ROUND_DEER.get(), level);
+        super((EntityType) ModEntities.ROUND_DEER.get(), level);
 
         this.isSummon = summon;
         this.ritualStatus = false;
@@ -92,7 +92,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     }
 
     public EntityType<?> getType() {
-        return (EntityType) AdamsModEntities.ROUND_DEER.get();
+        return (EntityType) ModEntities.ROUND_DEER.get();
     }
 
     public final AnimationState idleAnimationState = new AnimationState();
@@ -118,7 +118,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         super.tick();
 
         if (this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT.get())) {
+            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
@@ -149,10 +149,10 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
                             ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 2, false, true));
                         }
                     } else {
-                        if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
+                        if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT)){
                             continue;
                         }
-                        ((LivingEntity) entity).addEffect(new MobEffectInstance((MobEffect) MANA_EXHAUST_EFFECT.get(), 60, 0, false, true));
+                        ((LivingEntity) entity).addEffect(new MobEffectInstance(MANA_EXHAUST_EFFECT, 60, 0, false, true));
                     }
                 }
             }
@@ -195,10 +195,10 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(RDeerEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
-        this.entityData.define(ATTACKING, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(OWNER_UUID, Optional.of(Util.NIL_UUID));
+        pBuilder.define(ATTACKING, false);
     }
 
     @Override
@@ -258,7 +258,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         this.owner = owner;
     }
 
-    public Team getTeam() {
+    public PlayerTeam getTeam() {
         return this.getSummoner() != null ? this.getSummoner().getTeam() : super.getTeam();
     }
 
@@ -505,7 +505,6 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -521,7 +520,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
                     if(pEnemy.isBlocking()){
                         if(pEnemy instanceof Player playerEnemy){
                             playerEnemy.getCooldowns().addCooldown(Items.SHIELD, 60);
-                            playerEnemy.disableShield(false);
+                            playerEnemy.disableShield();
                         }
                     }
                     else {

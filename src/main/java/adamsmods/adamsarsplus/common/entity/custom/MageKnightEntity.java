@@ -1,5 +1,6 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.glyphs.method_glyph.MethodDetonate;
 import adamsmods.adamsarsplus.datagen.CommunityMages;
 import adamsmods.adamsarsplus.util.SpellString;
@@ -58,6 +59,7 @@ import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.ConfigHandler.Common.*;
 import static adamsmods.adamsarsplus.registry.ModEntities.*;
+import static adamsmods.adamsarsplus.registry.ModItems.MAGE_TOME;
 
 public class MageKnightEntity extends Monster {
 
@@ -370,14 +372,14 @@ public class MageKnightEntity extends Monster {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(BLOCKING, false);
-        this.entityData.define(IDLE_TO_BLOCK, false);
-        this.entityData.define(REFLECT, false);
-        this.entityData.define(COUNTER, false);
-        this.entityData.define(INDEX, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(BLOCKING, false);
+        pBuilder.define(IDLE_TO_BLOCK, false);
+        pBuilder.define(REFLECT, false);
+        pBuilder.define(COUNTER, false);
+        pBuilder.define(INDEX, 0);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -746,7 +748,6 @@ public class MageKnightEntity extends Monster {
             this.mageEntity.castCooldown = 10 + random.nextInt(this.spellCooldown.get());
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
 
