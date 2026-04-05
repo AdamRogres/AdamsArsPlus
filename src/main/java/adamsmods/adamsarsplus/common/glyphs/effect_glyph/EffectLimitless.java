@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.ArsNouveauRegistry;
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.DamageUtil;
@@ -9,12 +8,10 @@ import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,7 +21,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -33,19 +30,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModPotions.LIMITLESS_EFFECT;
 
 public class EffectLimitless extends AbstractEffect implements IDamageEffect {
-    public static EffectLimitless INSTANCE = new EffectLimitless(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectlimitless"), "Limitless");
+
+    public EffectLimitless() {
+        super("glyph_effectlimitless", "Limitless");
+    }
+    public static EffectLimitless INSTANCE = new EffectLimitless();
+
     private static final String LIMITLESS_KEY = "adams_limitless_frozen";
     private static final String LIMITLESS_VX = "adams_limitless_prev_vx";
     private static final String LIMITLESS_VY = "adams_limitless_prev_vy";
     private static final String LIMITLESS_VZ = "adams_limitless_prev_vz";
     private static final ConcurrentHashMap<UUID, Vec3> savedVelocities = new ConcurrentHashMap();
-
-    public EffectLimitless(ResourceLocation tag, String description) {
-        super(tag, description);
-    }
 
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
@@ -75,7 +73,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 int amp     = (int)(spellStats.getAmpMultiplier());
                 int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
 
-                shooter.addEffect(new MobEffectInstance((MobEffect)ArsNouveauRegistry.LIMITLESS_EFFECT.get(), time, amp));
+                shooter.addEffect(new MobEffectInstance(LIMITLESS_EFFECT, time, amp));
                 int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
 
                 AtomicInteger ticks = new AtomicInteger(0);
@@ -87,7 +85,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                         this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                     }
 
-                }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT.get())));
+                }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT)));
             } else if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
                 double amp = spellStats.hasBuff(AugmentDampen.INSTANCE) ? (spellStats.getAmpMultiplier() / 3) : (spellStats.getAmpMultiplier() / -3);
                 int radius = (int) (1 + spellStats.getAoeMultiplier());
@@ -135,7 +133,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
             int amp     = (int)(spellStats.getAmpMultiplier());
             int time    = (int)(20 + 20 * spellStats.getDurationMultiplier());
 
-            shooter.addEffect(new MobEffectInstance((MobEffect)ArsNouveauRegistry.LIMITLESS_EFFECT.get(), time, amp));
+            shooter.addEffect(new MobEffectInstance(LIMITLESS_EFFECT, time, amp));
             int radius = (int)((double)1.0F + spellStats.getAoeMultiplier());
 
             AtomicInteger ticks = new AtomicInteger(0);
@@ -147,7 +145,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                     this.restoreLSphere(shooter.blockPosition(), world, shooter, radius);
                 }
 
-            }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT.get())));
+            }, 1, time, () -> !(shooter.hasEffect(LIMITLESS_EFFECT)));
         } else {
             this.makeLSphere(rayTraceResult.getBlockPos(), world, shooter, spellStats, spellContext, resolver);
         }
@@ -409,7 +407,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
     }
 
     @Override
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         addPotionConfig(builder, 2);
         addExtendTimeConfig(builder, 1);

@@ -1,0 +1,105 @@
+package adamsmods.adamsarsplus.registry;
+
+
+import adamsmods.adamsarsplus.common.capability.ITSrankCap;
+import adamsmods.adamsarsplus.common.capability.TSrankCapAttacher;
+import com.hollingsworth.arsnouveau.common.capability.ANPlayerDataCap;
+import com.hollingsworth.arsnouveau.common.capability.IPlayerCap;
+import com.hollingsworth.arsnouveau.common.network.Networking;
+import com.hollingsworth.arsnouveau.common.network.PacketSyncPlayerCap;
+import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+
+public class AdamCapabilityRegistry {
+    public static final Capability<ITSrankCap> TSRANK_CAPABILITY = CapabilityManager.get(new CapabilityToken<ITSrankCap>() {
+    });
+    public static final Direction DEFAULT_FACING = null;
+
+    public AdamCapabilityRegistry() {
+    }
+
+    public static LazyOptional<ITSrankCap> getTsTier(LivingEntity entity) {
+        return entity == null ? LazyOptional.empty() : entity.getCapability(TSRANK_CAPABILITY);
+    }
+
+    @Mod.EventBusSubscriber(
+            modid = AdamsArsPlus.MOD_ID
+    )
+    public static class EventHandler {
+        public EventHandler() {
+        }
+
+        @SubscribeEvent
+        public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+            if (event.getObject() instanceof Player) {
+                TSrankCapAttacher.attach(event);
+            }
+
+        }
+
+        @SubscribeEvent
+        public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+            event.register(ITSrankCap.class);
+        }
+
+        @SubscribeEvent
+        public static void playerClone(PlayerEvent.Clone event) {
+            Player oldPlayer = event.getOriginal();
+            oldPlayer.revive();
+            AdamCapabilityRegistry.getTsTier(oldPlayer).ifPresent((oldRank) -> AdamCapabilityRegistry.getTsTier(event.getEntity()).ifPresent((newRank) -> {
+                newRank.setTsTier(oldRank.getTsTier());
+            }));
+
+            event.getOriginal().invalidateCaps();
+        }
+
+        @SubscribeEvent
+        public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
+            if (event.getEntity() instanceof ServerPlayer) {
+                syncPlayerCap(event.getEntity());
+            }
+
+        }
+
+        @SubscribeEvent
+        public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+            if (event.getEntity() instanceof ServerPlayer) {
+                syncPlayerCap(event.getEntity());
+            }
+
+        }
+
+        @SubscribeEvent
+        public static void onPlayerStartTrackingEvent(PlayerEvent.StartTracking event) {
+            if (event.getTarget() instanceof Player && event.getEntity() instanceof ServerPlayer) {
+                syncPlayerCap(event.getEntity());
+            }
+
+        }
+
+        @SubscribeEvent
+        public static void onPlayerDimChangedEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
+            if (event.getEntity() instanceof ServerPlayer) {
+                syncPlayerCap(event.getEntity());
+            }
+
+        }
+
+        public static void syncPlayerCap(Player player) {
+            IPlayerCap cap = (IPlayerCap)CapabilityRegistry.getPlayerDataCap(player).orElse(new ANPlayerDataCap());
+            CompoundTag tag = (CompoundTag)cap.serializeNBT();
+            if (player instanceof ServerPlayer serverPlayer) {
+                Networking.sendToPlayerClient(new PacketSyncPlayerCap(tag), serverPlayer);
+            }
+
+        }
+    }
+}

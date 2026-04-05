@@ -1,6 +1,5 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.IWrappedCaster;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
@@ -18,11 +17,11 @@ import net.minecraft.world.phys.EntityHitResult;
 import java.util.Set;
 
 public class EffectSwapTarget extends AbstractEffect {
-    public static EffectSwapTarget INSTANCE = new EffectSwapTarget(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectswaptarget"), "Swap Target");
 
-    public EffectSwapTarget(ResourceLocation tag, String description) {
-        super(tag, description);
+    public EffectSwapTarget() {
+        super("glyph_effectswaptarget", "Swap Target");
     }
+    public static EffectSwapTarget INSTANCE = new EffectSwapTarget();
 
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
@@ -32,7 +31,7 @@ public class EffectSwapTarget extends AbstractEffect {
 
         if (entity instanceof LivingEntity && world instanceof ServerLevel) {
 
-            if (spellContext.getCurrentIndex() < spellContext.getSpell().recipe.size() && BlockUtil.destroyRespectsClaim(shooter, world, entity.blockPosition().below())) {
+            if (spellContext.getCurrentIndex() < spellContext.getSpell().size() && BlockUtil.destroyRespectsClaim(shooter, world, entity.blockPosition().below())) {
                 Spell newSpell = spellContext.getRemainingSpell();
 
                 SpellContext newContext = (new SpellContext(world, newSpell, (LivingEntity) entity, wrappedCaster));

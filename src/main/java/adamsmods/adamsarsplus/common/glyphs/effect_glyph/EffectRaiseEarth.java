@@ -1,6 +1,5 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.DamageUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
@@ -21,7 +20,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -35,11 +34,12 @@ import java.util.function.Predicate;
 import static net.minecraft.world.level.block.Blocks.AIR;
 
 public class EffectRaiseEarth extends AbstractEffect implements IDamageEffect {
-    public EffectRaiseEarth(ResourceLocation tag, String description) {
-        super(tag, description);
-    }
 
-    public static final EffectRaiseEarth INSTANCE = new EffectRaiseEarth(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectraiseearth"), "Raise Earth");
+
+    public EffectRaiseEarth() {
+        super("glyph_effectraiseearth", "Raise Earth");
+    }
+    public static final EffectRaiseEarth INSTANCE = new EffectRaiseEarth();
 
     final static int maxCheckUp = 4;
 
@@ -286,7 +286,7 @@ public class EffectRaiseEarth extends AbstractEffect implements IDamageEffect {
     }
 
     @Override
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         addDamageConfig(builder, 14);
         addAmpConfig(builder, 8);

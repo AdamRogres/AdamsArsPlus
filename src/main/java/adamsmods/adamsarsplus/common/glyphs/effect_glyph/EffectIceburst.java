@@ -1,6 +1,5 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.DamageUtil;
@@ -15,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -23,7 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -31,15 +29,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.ICEBURST_EFFECT;
-import static com.hollingsworth.arsnouveau.client.particle.ParticleSparkleData.random;
+import static adamsmods.adamsarsplus.registry.ModPotions.ICEBURST_EFFECT;
+import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
 public class EffectIceburst extends AbstractEffect implements IDamageEffect {
-    public static EffectIceburst INSTANCE = new EffectIceburst(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effecticeburst"), "Iceburst");
 
-    public EffectIceburst(ResourceLocation tag, String description) {
-        super(tag, description);
+    public EffectIceburst() {
+        super("glyph_effecticeburst", "Iceburst");
     }
+    public static EffectIceburst INSTANCE = new EffectIceburst();
 
     @Override
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
@@ -47,8 +45,8 @@ public class EffectIceburst extends AbstractEffect implements IDamageEffect {
         int radius = (int) aoe;
         int MAX_DAMAGE_PROCS = (int) spellStats.getAmpMultiplier() * 2 + 1;
 
-        if(shooter.getEffect((MobEffect) ICEBURST_EFFECT.get()) == null) {
-            shooter.addEffect(new MobEffectInstance(ICEBURST_EFFECT.get(), 20, MAX_DAMAGE_PROCS));
+        if(shooter.getEffect(ICEBURST_EFFECT) == null) {
+            shooter.addEffect(new MobEffectInstance(ICEBURST_EFFECT, 20, MAX_DAMAGE_PROCS));
         }
 
         Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
@@ -103,13 +101,13 @@ public class EffectIceburst extends AbstractEffect implements IDamageEffect {
             if (!e.equals(shooter)) {
                 attemptDamage(world, shooter, spellStats, context, resolver, e, damageType, damage);
 
-                if(shooter.getEffect((MobEffect) ICEBURST_EFFECT.get())  != null) {
-                    MobEffectInstance effectInstance = ((LivingEntity)shooter).getEffect((MobEffect) ICEBURST_EFFECT.get());
+                if(shooter.getEffect(ICEBURST_EFFECT)  != null) {
+                    MobEffectInstance effectInstance = ((LivingEntity)shooter).getEffect(ICEBURST_EFFECT);
                     int amp = effectInstance != null ? effectInstance.getAmplifier() : -1;
 
                     if (amp != 0) {
-                        ((LivingEntity)shooter).removeEffect((MobEffect) ICEBURST_EFFECT.get());
-                        ((LivingEntity)shooter).addEffect(new MobEffectInstance((MobEffect) ICEBURST_EFFECT.get(), 20, amp - 1));
+                        ((LivingEntity)shooter).removeEffect(ICEBURST_EFFECT);
+                        ((LivingEntity)shooter).addEffect(new MobEffectInstance(ICEBURST_EFFECT, 20, amp - 1));
 
                         e.invulnerableTime = 0;
                     }
@@ -148,7 +146,7 @@ public class EffectIceburst extends AbstractEffect implements IDamageEffect {
     }
 
     @Override
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
     }
 
@@ -156,11 +154,9 @@ public class EffectIceburst extends AbstractEffect implements IDamageEffect {
     @Override
     public Set<AbstractAugment> getCompatibleAugments() {
         return augmentSetOf(
-                //AugmentExtendTime.INSTANCE,
-                //AugmentDurationDown.INSTANCE,
-                AugmentAOE.INSTANCE,
-                AugmentAmplify.INSTANCE,
-                AugmentPierce.INSTANCE
+            AugmentAOE.INSTANCE,
+            AugmentAmplify.INSTANCE,
+            AugmentPierce.INSTANCE
         );
     }
 

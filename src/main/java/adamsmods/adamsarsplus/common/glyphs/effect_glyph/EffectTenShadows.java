@@ -1,8 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.custom.*;
-import com.adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
+import adamsmods.adamsarsplus.common.entity.custom.*;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDurationDown;
@@ -25,21 +23,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 
 public class EffectTenShadows extends AbstractEffect{
-    public static EffectTenShadows INSTANCE = new EffectTenShadows(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effecttenshadows"), "Ten Shadows");
 
-    public EffectTenShadows(ResourceLocation tag, String description) {
-        super(tag, description);
+    public EffectTenShadows() {
+        super("glyph_effecttenshadows", "Ten Shadows");
     }
+    public static EffectTenShadows INSTANCE = new EffectTenShadows();
 
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
 
@@ -59,38 +57,38 @@ public class EffectTenShadows extends AbstractEffect{
 
                     int duration = 1200 + (int)(spellStats.getDurationMultiplier() * 300);
 
-                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), duration));
-                    shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), duration * 2));
+                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, duration));
+                    shooter.addEffect(new MobEffectInstance(ModPotions.SUMMONING_SICKNESS_EFFECT, duration * 2));
                 }
                 case 3 -> {
                     // Round Deer
                     RDeerEntity tsentity = new RDeerEntity(world, shooter, true);
                     tsentity.moveTo(blockpos, 0.0F, 0.0F);
-                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
 
-                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
+                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
                 }
                 case 2 -> {
                     // Rabbit Escape
                     RabbitEEntity tsentity = new RabbitEEntity(world, shooter, true, "main", false);
                     tsentity.moveTo(blockpos, 0.0F, 0.0F);
-                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
 
-                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
+                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
                 }
                 case 1 -> {
                     // Nue
                     NueEntity tsentity = new NueEntity(world, shooter, true);
                     tsentity.moveTo(blockpos, 0.0F, 0.0F);
-                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                    tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
 
-                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
+                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
                 }
                 default -> {
                     // Divine Dogs
@@ -99,16 +97,16 @@ public class EffectTenShadows extends AbstractEffect{
                     for(int i = 0; i < 2; ++i) {
                         DivineDogEntity tsentity = new DivineDogEntity(world, shooter, ddColor[i], true);
                         tsentity.moveTo(blockpos.offset(i, 0, 0), 0.0F, 0.0F);
-                        tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
+                        tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                         tsentity.setOwner(shooter);
                         this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
                     }
-                    shooter.addEffect(new MobEffectInstance((MobEffect) TENSHADOWS_EFFECT.get(), -1));
+                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
                 }
             }
-        } else if(shooter.hasEffect(TENSHADOWS_EFFECT.get())){
-            shooter.removeEffect(TENSHADOWS_EFFECT.get());
-            shooter.addEffect(new MobEffectInstance((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get(), 200));
+        } else if(shooter.hasEffect(TENSHADOWS_EFFECT)){
+            shooter.removeEffect(TENSHADOWS_EFFECT);
+            shooter.addEffect(new MobEffectInstance(ModPotions.SUMMONING_SICKNESS_EFFECT, 200));
         }
     }
 
@@ -116,7 +114,7 @@ public class EffectTenShadows extends AbstractEffect{
         boolean var10000;
         label25: {
             if (this.isRealPlayer(playerEntity)) {
-                if (playerEntity.getEffect((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get()) == null && playerEntity.getEffect((MobEffect)TENSHADOWS_EFFECT.get()) == null) {
+                if (playerEntity.getEffect(ModPotions.SUMMONING_SICKNESS_EFFECT) == null && playerEntity.getEffect(TENSHADOWS_EFFECT) == null) {
                     break label25;
                 }
             } else {
@@ -153,7 +151,8 @@ public class EffectTenShadows extends AbstractEffect{
         return RetRank;
     }
 
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         this.addGenericInt(builder, 15, "Base duration in seconds", "duration");
         this.addExtendTimeConfig(builder, 10);

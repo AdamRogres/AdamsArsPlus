@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.custom.SummonSkeleton_m;
+import adamsmods.adamsarsplus.common.entity.custom.SummonSkeleton_m;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDurationDown;
@@ -9,6 +8,7 @@ import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSplit;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectLinger;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectWall;
+import com.hollingsworth.arsnouveau.common.util.HolderHelper;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -34,16 +34,16 @@ import java.util.Set;
 import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.ENCHANTERS_SWORD;
 
 public class EffectSummonUndead_boss extends AbstractEffect {
-    public static EffectSummonUndead_boss INSTANCE = new EffectSummonUndead_boss(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectsummonundead_m"), "Summon Undead");
 
-    public EffectSummonUndead_boss(ResourceLocation tag, String description) {
-        super(tag, description);
+    public EffectSummonUndead_boss() {
+        super("glyph_effectsummonundead_m", "Summon Undead");
     }
+    public static EffectSummonUndead_boss INSTANCE = new EffectSummonUndead_boss();
 
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
 
         spellContext.setCanceled(true);
-        if (spellContext.getCurrentIndex() >= spellContext.getSpell().recipe.size())
+        if (spellContext.getCurrentIndex() >= spellContext.getSpell().size())
             return;
         Spell newSpell = spellContext.getRemainingSpell();
         SpellContext newContext = spellContext.clone().withSpell(newSpell);
@@ -60,7 +60,7 @@ public class EffectSummonUndead_boss extends AbstractEffect {
                     ItemStack weapon = ENCHANTERS_SWORD.asItem().getDefaultInstance();
 
                     if (spellStats.getAmpMultiplier() > (double)0.0F) {
-                        weapon.enchant(Enchantments.SHARPNESS, Math.max(4, (int)spellStats.getAmpMultiplier()) - 1);
+                        weapon.enchant(HolderHelper.unwrap(world, Enchantments.SHARPNESS), Math.max(4, (int) spellStats.getAmpMultiplier()) - 1);
                     }
 
                     SummonSkeleton_m undeadentity = new SummonSkeleton_m(world, shooter, weapon, newContext);
@@ -71,7 +71,7 @@ public class EffectSummonUndead_boss extends AbstractEffect {
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, undeadentity);
                 }
 
-                shooter.addEffect(new MobEffectInstance((MobEffect) ModPotions.SUMMONING_SICKNESS_EFFECT.get(), ticks));
+                shooter.addEffect(new MobEffectInstance(ModPotions.SUMMONING_SICKNESS_EFFECT, ticks));
             }
         }
     }
@@ -80,7 +80,7 @@ public class EffectSummonUndead_boss extends AbstractEffect {
         boolean var10000;
         label25: {
             if (this.isRealPlayer(playerEntity)) {
-                if (playerEntity.getEffect((MobEffect)ModPotions.SUMMONING_SICKNESS_EFFECT.get()) == null) {
+                if (playerEntity.getEffect(ModPotions.SUMMONING_SICKNESS_EFFECT) == null) {
                     break label25;
                 }
 
@@ -102,7 +102,8 @@ public class EffectSummonUndead_boss extends AbstractEffect {
         return var10000;
     }
 
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         this.addGenericInt(builder, 15, "Base duration in seconds", "duration");
         this.addExtendTimeConfig(builder, 10);

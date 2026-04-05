@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
@@ -9,50 +9,40 @@ import com.hollingsworth.arsnouveau.common.spell.augment.AugmentDurationDown;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentExtendTime;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentPierce;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.SIMPLE_DOMAIN_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.SIMPLE_DOMAIN_EFFECT;
 
 public class EffectSimpleDomain extends AbstractEffect implements IPotionEffect {
-    public static EffectSimpleDomain INSTANCE = new EffectSimpleDomain(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectsimpledomain"), "Simple Domain");
 
-    public EffectSimpleDomain(ResourceLocation tag, String description) {
-        super(tag, description);
+    public EffectSimpleDomain() {
+        super("glyph_effectsimpledomain", "Simple Domain");
     }
+    public static EffectSimpleDomain INSTANCE = new EffectSimpleDomain();
 
     @Override
-    public void applyConfigPotion(LivingEntity entity, MobEffect potionEffect, SpellStats spellStats) {
+    public void applyConfigPotion(LivingEntity entity, Holder<MobEffect> potionEffect, SpellStats spellStats) {
         this.applyConfigPotion(entity, potionEffect, spellStats, false);
-    }
-
-    @Override
-    public void applyPotion(LivingEntity entity, MobEffect potionEffect, SpellStats stats, int baseDurationSeconds, int durationBuffSeconds, boolean showParticles) {
-        if (entity != null) {
-            int ticks = baseDurationSeconds * 20 + durationBuffSeconds * stats.getDurationInTicks();
-            int amp = (int)stats.getAoeMultiplier();
-            entity.addEffect(new MobEffectInstance(potionEffect, ticks, amp, false, showParticles, true));
-        }
     }
 
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         Entity var8 = rayTraceResult.getEntity();
         if (var8 instanceof LivingEntity living) {
-            this.applyConfigPotion(living, (MobEffect) SIMPLE_DOMAIN_EFFECT.get(), spellStats);
+            this.applyConfigPotion(living, SIMPLE_DOMAIN_EFFECT, spellStats);
 
             if(spellStats.hasBuff(AugmentPierce.INSTANCE)){
                 spellContext.setCanceled(true);
-                if (spellContext.getCurrentIndex() >= spellContext.getSpell().recipe.size())
+                if (spellContext.getCurrentIndex() >= spellContext.getSpell().size())
                     return;
                 Spell newSpell = spellContext.getRemainingSpell();
                 SpellContext newContext = spellContext.clone().withSpell(newSpell);
@@ -83,17 +73,18 @@ public class EffectSimpleDomain extends AbstractEffect implements IPotionEffect 
 
                     if (BlockUtil.distanceFrom(entityBlockPos, pos) <= radius + 0.5) {
                         EntityHitResult entityHitResult = new EntityHitResult(entity);
-                        EntitySpellResolver newResolver = new EntitySpellResolver(new SpellContext(entity.level(), context.getSpell(), entity, new LivingCaster(entity)).withColors(context.getColors()));
+                        EntitySpellResolver newResolver = new EntitySpellResolver(new SpellContext(entity.level(), context.getSpell(), entity, new LivingCaster(entity)));
                         newResolver.onResolveEffect(world, entityHitResult);
 
-                        playerEntity.removeEffect((MobEffect) SIMPLE_DOMAIN_EFFECT.get());
+                        playerEntity.removeEffect(SIMPLE_DOMAIN_EFFECT);
                         break;
                     }
                 }
-        }, targetDelay, finalDuration, () -> !(playerEntity.hasEffect(SIMPLE_DOMAIN_EFFECT.get())));
+        }, targetDelay, finalDuration, () -> !(playerEntity.hasEffect(SIMPLE_DOMAIN_EFFECT)));
     }
 
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
         this.addPotionConfig(builder, 3);
         this.addExtendTimeConfig(builder, 1);

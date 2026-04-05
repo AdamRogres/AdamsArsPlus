@@ -1,22 +1,20 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.MeteorProjectile;
-import com.adamsmods.api.IPropagator;
+import adamsmods.adamsarsplus.common.entity.MeteorProjectile;
+import com.alexthw.sauce.api.IPropagator;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.TileCaster;
 import com.hollingsworth.arsnouveau.common.block.BasicSpellTurret;
 import com.hollingsworth.arsnouveau.common.block.tile.RotatingTurretTile;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -26,16 +24,15 @@ import java.util.List;
 import java.util.Set;
 
 public class EffectMeteorSwarm extends AbstractEffect implements IPropagator {
-    public EffectMeteorSwarm(ResourceLocation tag, String description) {
-        super(tag, description);
+
+    public EffectMeteorSwarm() {
+        super("glyph_effectmeteorswarm", "Meteor Swarm");
     }
+    public static final EffectMeteorSwarm INSTANCE = new EffectMeteorSwarm();
 
-    public static final EffectMeteorSwarm INSTANCE = new EffectMeteorSwarm(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectmeteorswarm"), "Meteor Swarm");
-
-    public ForgeConfigSpec.IntValue DETONATE_TTL;
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
         super.buildConfig(builder);
-        this.DETONATE_TTL = builder.comment("Max lifespan of the projectile, in seconds.").defineInRange("max_lifespan", 60, 0, Integer.MAX_VALUE);
     }
 
     @Override
@@ -85,29 +82,31 @@ public class EffectMeteorSwarm extends AbstractEffect implements IPropagator {
 
     }
 
-    public void sendPacket(Level world, HitResult rayTraceResult, @Nullable LivingEntity shooter, SpellContext spellContext, SpellStats stats) {
+    public void sendPacket(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats stats, SpellContext spellContext, SpellResolver resolver) {
+        SpellContext newContext = spellContext.makeChildContext();
+        var mutable_spell = newContext.getSpell().mutable();
+        mutable_spell.recipe.addFirst(DUMMY);
+        newContext.withSpell(mutable_spell.immutable());
+        SpellResolver newResolver = resolver.getNewResolver(newContext);
         spellContext.setCanceled(true);
-        if (spellContext.getCurrentIndex() < spellContext.getSpell().recipe.size()) {
-            Spell newSpell = new Spell(new ArrayList<>(spellContext.getSpell().recipe.subList(spellContext.getCurrentIndex(), spellContext.getSpell().recipe.size())));
-            SpellContext newContext = spellContext.clone().withSpell(newSpell);
-            SpellResolver resolver = new EntitySpellResolver(newContext);
-            //List<AbstractAugment> newAugments = new ArrayList<AbstractAugment>();
-            propagate(world, rayTraceResult, shooter, stats, resolver);
-        }
+        AbstractCastMethod newCastType = getCastType();
+        if (newCastType != null)
+            newResolver.castType = newCastType;
+        propagate(world, rayTraceResult, shooter, stats, newResolver);
     }
 
     @Override
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        this.sendPacket(world, rayTraceResult, shooter, spellContext,spellStats);
+        this.sendPacket(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
     }
 
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        this.sendPacket(world, rayTraceResult, shooter, spellContext,spellStats);
+        this.sendPacket(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
     }
 
     public int getProjectileLifespan() {
-        return this.DETONATE_TTL != null ? (Integer)this.DETONATE_TTL.get() : 60;
+        return 60;
     }
 
     @Nonnull
