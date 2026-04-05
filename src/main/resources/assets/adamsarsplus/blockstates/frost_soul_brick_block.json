@@ -1,0 +1,7 @@
+{
+  "variants" : {
+    "" : {
+      "model": "adamsarsplus:block/frost_soul_brick_block"
+    }
+  }
+}

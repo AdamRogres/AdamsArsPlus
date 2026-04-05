@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "adamsarsplus:block/void_soul_brick_block_1",
+    "top": "adamsarsplus:block/void_soul_brick_block_1",
+    "side": "adamsarsplus:block/void_soul_brick_block_1"
+  }
+}

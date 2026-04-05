@@ -1,0 +1,11 @@
+{
+  "variants" : {
+    "" : [
+      { "model": "adamsarsplus:block/earth_soul_brick_block" },
+      { "model": "adamsarsplus:block/earth_soul_brick_block_1" },
+      { "model": "adamsarsplus:block/earth_soul_brick_block_2" },
+      { "model": "adamsarsplus:block/earth_soul_brick_block_3" },
+      { "model": "adamsarsplus:block/earth_soul_brick_block_4" }
+    ]
+  }
+}

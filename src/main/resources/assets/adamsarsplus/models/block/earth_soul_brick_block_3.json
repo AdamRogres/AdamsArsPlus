@@ -1,0 +1,7 @@
+{
+  "parent":"block/cube_all",
+  "textures":{
+    "all":"adamsarsplus:block/earth_soul_brick_block_3",
+    "particle":"adamsarsplus:block/earth_soul_brick_block"
+  }
+}

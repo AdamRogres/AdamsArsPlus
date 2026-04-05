@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "adamsarsplus:item/armor/camr_leggings_tint",
+    "layer1": "adamsarsplus:item/armor/camr_leggings_gold"
+  }
+}

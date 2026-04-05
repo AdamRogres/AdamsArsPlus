@@ -1,0 +1,309 @@
+{
+  "mageOwner": [
+    {
+       "name":  "MistakeMaker",
+      "color":  "purple",
+      "spell":  "exchange-rotate-leap-delay-pull-amp-launch-launch",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld"
+    },
+    {
+       "name":  "Lyrloch the Dark",
+      "color":  "black",
+      "spell":  "wither-amp-amp-amp-hex-amp-amp-amp-amp",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "overworld-void"
+    },
+    {
+       "name":  "Pointy",
+      "color":  "pink",
+      "spell":  "linger-accelerate_three-harm-swap_target-heal-amp-amp-amp-amp-dispel",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "overworld-holy"
+    },
+    {
+       "name":  "Gojo",
+      "color":  "light_blue",
+      "spell":  "limitless-aoe_three-amp-amp-pierce-dampen",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "overworld-void"
+    },
+    {
+      "name":  "Glow",
+      "color":  "yellow_sword",
+      "spell":  "rune-snare-extend-light",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld-holy"
+    },
+    {
+      "name":  "Bailey",
+      "color":  "white",
+      "spell":  "launch-amp-amp-delay-explosion-amp",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "overworld-griefing-flame"
+    },
+    {
+      "name":  "Arachne",
+      "color":  "light_gray",
+      "spell":  "split-split-snare-extend-extend-harm-extend",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld-earth"
+    },
+    {
+      "name":  "Warp",
+      "color":  "magenta",
+      "spell":  "pierce-blink-explosion-aoe",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "overworld-griefing"
+    },
+    {
+      "name":  "Farfalla",
+      "color":  "blue",
+      "spell":  "accelerate_three-ignite-delay-conjure_water-freeze",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld-frost"
+    },
+    {
+      "name":  "Gootastic",
+      "color":  "green",
+      "spell":  "launch-amp-amp-delay-pull-amp-amp",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Toxin",
+      "color":  "lime_sword",
+      "spell":  "hex-harm-extend",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld"
+    },
+    {
+      "name":  "Shadow",
+      "color":  "black_sword",
+      "spell":  "intangible-aoe-aoe-pierce-pierce-pierce-pierce-pierce-extend",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld-void"
+    },
+    {
+      "name":  "Vault",
+      "color":  "white_sword",
+      "spell":  "launch-delay-leap-slowfall-burst-windshear",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Fireball!",
+      "color":  "red",
+      "spell":  "ignite-explosion-amp-amp-aoe-aoe",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "overworld-griefing-flame"
+    },
+    {
+      "name":  "Renew",
+      "color":  "pink_sword",
+      "spell":  "swap_target-rune-dispel-heal-amp",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld-holy"
+    },
+    {
+      "name":  "Yeet",
+      "color":  "gray",
+      "spell":  "orbit-launch-amp-amp-delay-knockback-amp-amp",
+      "coold":  "medium",
+      "type":   "self",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Takeoff",
+      "color":  "light_blue_sword",
+      "spell":  "launch-launch-glide",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld"
+    },
+    {
+      "name":  "Kirin",
+      "color":  "yellow",
+      "spell":  "orbit-blink-amp-summon_undead-harm",
+      "coold":  "long",
+      "type":   "self",
+      "tier":   "overworld-holy"
+    },
+    {
+      "name":  "Xacris",
+      "color":  "gray",
+      "spell":  "burst-aoe-sensitive-dampen-mageblock",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-earth"
+    },
+    {
+      "name":  "Xacris",
+      "color":  "gray",
+      "spell":  "linger-sensitive-extend_three-aoe_three-firework-amp",
+      "coold":  "medium",
+      "type":   "detonate",
+      "tier":   "overworld-flame"
+    },
+    {
+      "name":  "Othy",
+      "color":  "red",
+      "spell":  "burst-aoe_three-meteor_swarm-ignite-flare",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-flame"
+    },
+    {
+      "name":  "Aurellia",
+      "color":  "white",
+      "spell":  "linger-sensitive-fangs-lightning-amp-amp-extend_three",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Alex",
+      "color":  "orange",
+      "spell":  "domain-extract-aoe_three-accelerate_two-snare-harm",
+      "coold":  "long",
+      "type":   "self",
+      "tier":   "overworld-earth"
+    },
+    {
+      "name":  "Poseidon",
+      "color":  "light_blue",
+      "spell":  "light-burst-aoe_two-sensitive-conjure_water-freeze-ice_burst-conjure_water",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "overworld-frost"
+    },
+    {
+      "name":  "Chem",
+      "color":  "lime",
+      "spell":  "domain-extract-aoe_two-rune-launch-launch-launch-launch",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Ivy",
+      "color":  "pink",
+      "spell":  "burst-sensitive-animate-extend_three-extend_three",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-griefing-holy"
+    },
+    {
+      "name":  "Darkfira",
+      "color":  "cyan",
+      "spell":  "burst-sensitive-aoe_three-conjure_water-freeze-lightning-amp",
+      "coold":  "long",
+      "type":   "detonate",
+      "tier":   "overworld-frost"
+    },
+    {
+      "name":  "Spinoftw",
+      "color":  "magenta",
+      "spell":  "conjure_water-heal-amp_two-mage_block-aoe_three",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-frost"
+    },
+    {
+      "name":  "Lyrellion",
+      "color":  "black",
+      "spell":  "wall-sensitive-mageblock-pierce-amp-limitless-pierce-amp",
+      "coold":  "medium",
+      "type":   "detonate",
+      "tier":   "overworld-void"
+    },
+    {
+      "name":  "Silvanus",
+      "color":  "blue",
+      "spell":  "glow-extend_three-ignite-extend_three",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld-flame"
+    },
+    {
+      "name":  "Uni",
+      "color":  "cyan",
+      "spell":  "orbit-split-aoe_three-knockback-amp_three-harm-amp_three",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Crowdroverworld",
+      "color":  "black",
+      "spell":  "domain-aoe_three-extract-snare-wither",
+      "coold":  "long",
+      "type":   "self",
+      "tier":   "overworld-void"
+    },
+    {
+      "name":  "Chosen Architect",
+      "color":  "white",
+      "spell":  "split-split-break-aoe-aoe-pierce-pierce",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld-earth"
+    },
+    {
+      "name":  "Lufia",
+      "color":  "purple",
+      "spell":  "accelerate_three-pierce-pierce-pierce-intangible-aoe_three",
+      "coold":  "short",
+      "type":   "projectile",
+      "tier":   "overworld-lightning"
+    },
+    {
+      "name":  "Mystifi",
+      "color":  "gray",
+      "spell":  "linger-sensitive-extend_two-intangible-pierce-pierce-extend_two",
+      "coold":  "medium",
+      "type":   "projectile",
+      "tier":   "overworld-earth"
+    },
+    {
+      "name":  "Plauged",
+      "color":  "red",
+      "spell":  "explosion-amp_two-aoe_three-aoe_three",
+      "coold":  "medium",
+      "type":   "self",
+      "tier":   "overworld-griefing-flame"
+    },
+    {
+      "name":  "Bugcolez",
+      "color":  "yellow",
+      "spell":  "orbit-aoe_three-orbit-aoe_two-orbit-fangs",
+      "coold":  "short",
+      "type":   "self",
+      "tier":   "overworld-earth"
+    },
+    {
+      "name":  "Sloppybox",
+      "color":  "red",
+      "spell":  "ignite-flare-rune-smelt-pierce-pierce-pierce-pierce-aoe_two",
+      "coold":  "short",
+      "type":   "melee",
+      "tier":   "overworld-flame"
+    }
+
+  ]
+}

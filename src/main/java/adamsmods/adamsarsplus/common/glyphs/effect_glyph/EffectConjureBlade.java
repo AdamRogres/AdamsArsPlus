@@ -1,7 +1,7 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.BladeProjectile;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.BladeProjectile;
 import com.hollingsworth.arsnouveau.api.item.inv.FilterableItemHandler;
 import com.hollingsworth.arsnouveau.api.item.inv.InteractType;
 import com.hollingsworth.arsnouveau.api.item.inv.InventoryManager;
@@ -21,8 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.util.FakePlayer;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -36,7 +35,7 @@ public class EffectConjureBlade extends AbstractEffect {
         super(tag, description);
     }
 
-    public static final EffectConjureBlade INSTANCE = new EffectConjureBlade(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_effectconjureblade"), "Conjure Blade");
+    public static final EffectConjureBlade INSTANCE = new EffectConjureBlade(new ResourceLocation(AdamsArsPlus.MODID, "glyph_effectconjureblade"), "Conjure Blade");
 
     public void buildConfig(ForgeConfigSpec.Builder builder) {
         super.buildConfig(builder);

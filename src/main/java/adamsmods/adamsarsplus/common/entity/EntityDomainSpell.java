@@ -1,7 +1,8 @@
 package adamsmods.adamsarsplus.common.entity;
 
-import com.adamsmods.adamsarsplus.block.tile.DomainShellTile;
-import com.adamsmods.adamsarsplus.lib.AdamsEntityTags;
+import adamsmods.adamsarsplus.common.blocks.DomainShellTile;
+import adamsmods.adamsarsplus.common.lib.AdamsEntityTags;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import net.minecraft.core.BlockPos;
@@ -19,13 +20,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.SIMPLE_DOMAIN_EFFECT;
-import static com.adamsmods.adamsarsplus.Config.Common.MAX_DOMAIN_ENTITIES;
+import static adamsmods.adamsarsplus.ConfigHandler.Common.MAX_DOMAIN_ENTITIES;
+import static adamsmods.adamsarsplus.registry.ModPotions.SIMPLE_DOMAIN_EFFECT;
 
 
 public class EntityDomainSpell extends EntityProjectileSpell {
@@ -48,11 +48,11 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     }
 
     public EntityDomainSpell(Level worldIn, double x, double y, double z) {
-        super(AdamsModEntities.DOMAIN_SPELL.get(), worldIn, x, y, z);
+        super(ModEntities.DOMAIN_SPELL.get(), worldIn, x, y, z);
     }
 
     public EntityDomainSpell(Level worldIn, LivingEntity shooter) {
-        super(AdamsModEntities.DOMAIN_SPELL.get(), worldIn, shooter);
+        super(ModEntities.DOMAIN_SPELL.get(), worldIn, shooter);
     }
 
     public void setAccelerates(int accelerates) {
@@ -97,18 +97,36 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         int radius = 4 + flatAoe;
         Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
 
-        if (!level().isClientSide && age % Math.max(20 - 2 * getAccelerates(), 2) == 0) {
+        if (!level.isClientSide && age % Math.max(20 - 2 * getAccelerates(), 2) == 0) {
             if (getOpen()) {
                 for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
                     if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
                         if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
-                            if(level().getBlockState(p).getBlock() == Blocks.AIR){
-                                if(level().getRandom().nextIntBetweenInclusive(0, 100) > Math.min(5 * radius, 85)){
-                                    spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                            if(level.getBlockState(p).getBlock() == Blocks.AIR){
+                                if(level.getRandom().nextIntBetweenInclusive(0, 100) > Math.min(5 * radius, 85)){
+                                    if (!level.isClientSide) {
+                                        resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new
+                                                BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                                    } else {
+                                        resolveEmitter.setPositionOffset(p.subtract(getOnPos()).getCenter());
+                                        resolveEmitter.tick(level);
+                                    }
+                                    if (!level.isClientSide) {
+                                        resolveSound.playSound(level, getX(), getY(), getZ());
+                                    }
                                 }
                             } else {
-                                if(level().getRandom().nextIntBetweenInclusive(0, 100) > Math.min(3 * radius, 60)){
-                                    spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                                if(level.getRandom().nextIntBetweenInclusive(0, 100) > Math.min(3 * radius, 60)){
+                                    if (!level.isClientSide) {
+                                        resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new
+                                                BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+                                    } else {
+                                        resolveEmitter.setPositionOffset(p.subtract(getOnPos()).getCenter());
+                                        resolveEmitter.tick(level);
+                                    }
+                                    if (!level.isClientSide) {
+                                        resolveSound.playSound(level, getX(), getY(), getZ());
+                                    }
                                 }
                             }
 
@@ -122,7 +140,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                 if (entity.equals(this) || entity.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST))
                     continue;
                 if (entity instanceof LivingEntity){
-                    if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT.get())){
+                    if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT)){
                         continue;
                     }
                 } else {
@@ -130,8 +148,17 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                 }
 
                 if(!getDome() || (blockPosition().getY() - 2 < entity.getBlockY())) {
-                    if (!getFilter() || !(spellResolver.spellContext.getUnwrappedCaster().equals(entity))) {
-                        spellResolver.onResolveEffect(level(), new EntityHitResult(entity));
+                    if (!getFilter() || !(resolver().spellContext.getUnwrappedCaster().equals(entity))) {
+                        if (!level.isClientSide) {
+                            resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new EntityHitResult(entity));
+                        }
+                        resolveEmitter.setPositionOffset(entity.blockPosition().subtract(getOnPos()).getCenter());
+                        if (level.isClientSide) {
+                            resolveEmitter.tick(level);
+                        }
+                        if (!level.isClientSide) {
+                            resolveSound.playSound(level, getX(), getY(), getZ());
+                        }
                     }
                 }
 
@@ -184,27 +211,17 @@ public class EntityDomainSpell extends EntityProjectileSpell {
         return 0;
     }
 
-   // @Override
-   // public void playParticles() {
-   //     ParticleUtil.spawnRitualAreaEffect(getOnPos(), level(), random, getParticleColor(), Math.round(getAoe()), 5, 20);
-   //     ParticleUtil.spawnLight(level(), getParticleColor(), position().add(0, 0.5, 0), 10);
-    //}
-
-    public EntityDomainSpell(PlayMessages.SpawnEntity packet, Level world) {
-        super(AdamsModEntities.DOMAIN_SPELL.get(), world);
-    }
-
     @Override
     public EntityType<?> getType() {
-        return AdamsModEntities.DOMAIN_SPELL.get();
+        return ModEntities.DOMAIN_SPELL.get();
     }
 
     @Override
     protected void onHit(HitResult result) {
-        if (!level().isClientSide && result instanceof BlockHitResult && !this.isRemoved()) {
+        if (!level().isClientSide && result instanceof BlockHitResult blockHitResult && !this.isRemoved()) {
             BlockState state = level().getBlockState(((BlockHitResult) result).getBlockPos());
             if (state.is(BlockTags.PORTALS)) {
-                state.getBlock().entityInside(state, level(), ((BlockHitResult) result).getBlockPos(), this);
+                state.entityInside(level, blockHitResult.getBlockPos(), this);
                 return;
             }
             this.setLanded(true);
@@ -256,14 +273,14 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(ACCELERATES, 0);
-        entityData.define(AOE, 0f);
-        entityData.define(LANDED, false);
-        entityData.define(OPEN, false);
-        entityData.define(DOME, false);
-        entityData.define(FILTER_SELF, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ACCELERATES, 0);
+        pBuilder.define(AOE, 0f);
+        pBuilder.define(LANDED, false);
+        pBuilder.define(OPEN, false);
+        pBuilder.define(DOME, false);
+        pBuilder.define(FILTER_SELF, false);
     }
 
     @Override

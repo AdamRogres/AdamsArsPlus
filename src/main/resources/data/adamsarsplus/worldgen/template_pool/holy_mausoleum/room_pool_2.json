@@ -1,0 +1,15 @@
+{
+  "name": "adanmsarsplus:holy_mausoleum/room_pool_2",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "adamsarsplus:holy_mausoleum_lobby",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

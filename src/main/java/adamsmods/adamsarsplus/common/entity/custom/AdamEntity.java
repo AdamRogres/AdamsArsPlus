@@ -1,10 +1,11 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.adamsarsplus.entities.ai.*;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
+
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.common.entity.ai.AdamDomainGoal;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -58,8 +59,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.ADAM_ENTITY;
+
+import static adamsmods.adamsarsplus.registry.ModEntities.ADAM_ENTITY;
+import static adamsmods.adamsarsplus.registry.ModPotions.DISRUPTION_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.DOMAIN_BURNOUT_EFFECT;
 import static java.lang.Math.*;
 
 public class AdamEntity extends Monster implements RangedAttackMob {
@@ -386,16 +389,16 @@ public class AdamEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING_AA, false);
-        this.entityData.define(ATTACKING_AB, false);
-        this.entityData.define(ATTACKING_B, false);
-        this.entityData.define(BLOCKING, false);
-        this.entityData.define(CASTING_A, false);
-        this.entityData.define(CASTING_B, false);
-        this.entityData.define(CASTING_DOMAIN, false);
-        this.entityData.define(CASTING_BARRIER, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING_AA, false);
+        pBuilder.define(ATTACKING_AB, false);
+        pBuilder.define(ATTACKING_B, false);
+        pBuilder.define(BLOCKING, false);
+        pBuilder.define(CASTING_A, false);
+        pBuilder.define(CASTING_B, false);
+        pBuilder.define(CASTING_DOMAIN, false);
+        pBuilder.define(CASTING_BARRIER, false);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -505,8 +508,8 @@ public class AdamEntity extends Monster implements RangedAttackMob {
     protected void registerGoals(){
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new AdamDomainGoal<>(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 13));
-        this.goalSelector.addGoal(1, new AdamDomainGoalB<>(this, 1.0D, 20f, () -> (domainbCooldown <= 0) && (!this.hasEffect(DOMAIN_BURNOUT_EFFECT.get())), 0, 13));
+        //this.goalSelector.addGoal(1, new AdamDomainGoal<>(this, 1.0D, 20f, () -> domainCooldown <= 0, 0, 13));
+        this.goalSelector.addGoal(1, new AdamDomainGoalB<>(this, 1.0D, 20f, () -> (domainbCooldown <= 0) && (!this.hasEffect(DOMAIN_BURNOUT_EFFECT)), 0, 13));
 
         this.goalSelector.addGoal(2, new AdamCastingGoalA<>(this, 1.0D, 70f, () -> castingACooldown <= 0, 0, 15));
         this.goalSelector.addGoal(2, new AdamCastingGoalB<>(this, 1.0D, 70f, () -> castingBCooldown <= 0, 0, 15));
@@ -545,7 +548,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -702,7 +705,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -766,7 +768,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             this.mob.doHurtTarget(pEnemy);
             this.done = true;
 
-            pEnemy.addEffect(new MobEffectInstance(DISRUPTION_EFFECT.get(), 100, 0, true, true));
+            pEnemy.addEffect(new MobEffectInstance(DISRUPTION_EFFECT, 100, 0, true, true));
         }
 
         void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
@@ -793,14 +795,17 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+
+                if(this.canPerformAttack($$0)){
+                    this.checkAndPerformAttack($$0);
+                }
             }
 
             if(shouldCountTillNextAttack){
                 this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
             }
         }
+
     }
 
     class AdamAttackGoalAB extends MeleeAttackGoal {
@@ -858,7 +863,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -923,7 +927,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             this.mob.doHurtTarget(pEnemy);
             this.done = true;
 
-            pEnemy.addEffect(new MobEffectInstance(DISRUPTION_EFFECT.get(), 100, 0, true, true));
+            pEnemy.addEffect(new MobEffectInstance(DISRUPTION_EFFECT, 100, 0, true, true));
         }
 
         void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
@@ -950,8 +954,10 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+
+                if(this.canPerformAttack($$0)){
+                    this.checkAndPerformAttack($$0);
+                }
             }
 
             if(shouldCountTillNextAttack){
@@ -1015,7 +1021,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
             if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
                 shouldCountTillNextAttack = true;
@@ -1080,7 +1085,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             this.mob.doHurtTarget(pEnemy);
             this.done = true;
 
-            pEnemy.addEffect(new MobEffectInstance(DISRUPTION_EFFECT.get(), 100, 0, true, true));
+            pEnemy.addEffect(new MobEffectInstance(DISRUPTION_EFFECT, 100, 0, true, true));
         }
 
         void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
@@ -1107,8 +1112,10 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+
+                if(this.canPerformAttack($$0)){
+                    this.checkAndPerformAttack($$0);
+                }
             }
 
             if(shouldCountTillNextAttack){
@@ -1222,10 +1229,9 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
                 .withColor(AdamColor);
 
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.5f, 0.8f);
 
@@ -1313,7 +1319,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.AdamEntity, 1.0F, AdamCastSpell, AdamColor);
+                        performCastAttack(this.AdamEntity, AdamCastSpell, AdamColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -1470,7 +1476,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.5f, 0.8f);
 
@@ -1630,7 +1635,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             AdamsArsPlus.setInterval(() -> {
 
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-                projectileSpell.setColor(color);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(AdamEntity.this.random.nextInt(19) - 9, AdamEntity.this.random.nextInt(19), AdamEntity.this.random.nextInt(19) - 9));
                 entity.level().addFreshEntity(projectileSpell);
@@ -1738,7 +1742,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
                 if (this.seeTime >= 20 && !this.hasAnimated) {
                     this.hasAnimated = true;
-                    Networking.sendToNearby(this.AdamEntity.level(), this.AdamEntity, new PacketAnimEntity(this.AdamEntity.getId(), this.animId));
                 }
 
                 if (this.hasAnimated) {
@@ -1815,7 +1818,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 3f, 0.8f);
 
@@ -2076,7 +2078,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
                 if (this.seeTime >= 20 && !this.hasAnimated) {
                     this.hasAnimated = true;
-                    Networking.sendToNearby(this.AdamEntity.level(), this.AdamEntity, new PacketAnimEntity(this.AdamEntity.getId(), this.animId));
                 }
 
                 if (this.hasAnimated) {

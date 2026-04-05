@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "adamsarsplus:block/holy_soul_brick_block",
+    "top": "adamsarsplus:block/holy_soul_brick_block",
+    "side": "adamsarsplus:block/holy_soul_brick_block"
+  }
+}

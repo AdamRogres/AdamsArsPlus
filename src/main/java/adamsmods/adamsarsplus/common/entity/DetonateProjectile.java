@@ -1,6 +1,7 @@
 package adamsmods.adamsarsplus.common.entity;
 
-import com.adamsmods.adamsarsplus.glyphs.method_glyph.MethodDetonate;
+import adamsmods.adamsarsplus.common.glyphs.method_glyph.MethodDetonate;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
 import com.hollingsworth.arsnouveau.common.block.PortalBlock;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
@@ -16,8 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.network.PlayMessages;
+
 
 import javax.annotation.Nullable;
 
@@ -33,16 +33,8 @@ public class DetonateProjectile extends EntityProjectileSpell {
     }
 
     public DetonateProjectile(Level world, SpellResolver resolver) {
-        super(AdamsModEntities.DETONATE_SPELL.get(), world, resolver);
+        super(ModEntities.DETONATE_SPELL.get(), world, resolver);
     }
-
-    public DetonateProjectile(PlayMessages.SpawnEntity packet, Level world) {
-        super(AdamsModEntities.DETONATE_SPELL.get(), world);
-    }
-
-  //  public DetonateProjectile(PlayMessages.SpawnEntity spawnEntity, Level level) {
-    //    super(spawnEntity, level);
- //   }
 
     @Override
     public int getExpirationTime() {
@@ -51,11 +43,8 @@ public class DetonateProjectile extends EntityProjectileSpell {
 
     @Override
     public EntityType<?> getType() {
-        return AdamsModEntities.DETONATE_SPELL.get();
+        return ModEntities.DETONATE_SPELL.get();
     }
-
-    public int maxProcs = 20;
-    public int totalProcs;
 
     @Override
     public void tick() {
@@ -71,30 +60,35 @@ public class DetonateProjectile extends EntityProjectileSpell {
         if (raytraceresult != null && raytraceresult.getType() != HitResult.Type.MISS) {
             nextPosition = raytraceresult.getLocation();
         }
-
         EntityHitResult entityraytraceresult = this.findHitEntity(thisPosition, nextPosition);
         if (entityraytraceresult != null) {
             raytraceresult = entityraytraceresult;
         }
 
-        if (raytraceresult != null && raytraceresult.getType() != HitResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+        if (raytraceresult != null && raytraceresult.getType() != HitResult.Type.MISS && !net.neoforged.neoforge.event.EventHooks.onProjectileImpact(this, raytraceresult)) {
             this.onHit(raytraceresult);
             this.hasImpulse = true;
         }
+        if (raytraceresult != null && raytraceresult.getType() == HitResult.Type.MISS && raytraceresult instanceof BlockHitResult blockHitResult
+                && canTraversePortals()) {
+            BlockRegistry.PORTAL_BLOCK.get().onProjectileHit(level, level.getBlockState(BlockPos.containing(raytraceresult.getLocation())),
+                    blockHitResult, this);
 
-        if (raytraceresult != null && raytraceresult.getType() == HitResult.Type.MISS && raytraceresult instanceof BlockHitResult blockHitResult) {
-            if (this.canTraversePortals()) {
-                ((PortalBlock)BlockRegistry.PORTAL_BLOCK.get()).onProjectileHit(this.level(), this.level().getBlockState(BlockPos.containing(raytraceresult.getLocation())), blockHitResult, this);
-            }
         }
-
     }
 
     public void castSpells() {
         BlockPos p = this.blockPosition();
 
-        if (!this.level().isClientSide() && this.spellResolver != null) {
-            spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+        if (!level.isClientSide) {
+            resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new
+                    BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
+        } else {
+            resolveEmitter.setPositionOffset(p.subtract(getOnPos()).getCenter());
+            resolveEmitter.tick(level);
+        }
+        if (!level.isClientSide) {
+            resolveSound.playSound(level, getX(), getY(), getZ());
         }
     }
 
@@ -121,9 +115,9 @@ public class DetonateProjectile extends EntityProjectileSpell {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(DELAY, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(DELAY, 0);
     }
 
 }

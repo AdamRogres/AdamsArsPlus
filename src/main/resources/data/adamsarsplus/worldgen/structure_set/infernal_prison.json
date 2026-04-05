@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "adamsarsplus:infernal_prison",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1323465882,
+    "spacing": 36,
+    "separation": 18,
+    "type": "minecraft:random_spread"
+  }
+}

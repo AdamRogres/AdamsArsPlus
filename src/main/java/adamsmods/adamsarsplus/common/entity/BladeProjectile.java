@@ -1,10 +1,16 @@
 package adamsmods.adamsarsplus.common.entity;
 
+import adamsmods.adamsarsplus.registry.ModEntities;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -18,10 +24,14 @@ import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.world.item.Items.IRON_SWORD;
 
@@ -32,7 +42,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
     public double amp;
 
     public BladeProjectile(Level world, ItemStack item, Entity shooter, double Amp){
-        super(AdamsModEntities.BLADE_PROJ.get(), world);
+        super(ModEntities.BLADE_PROJ.get(), world);
 
         this.setOwner(shooter);
         this.setItem(item);
@@ -48,7 +58,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     @Override
     public EntityType<?> getType() {
-        return AdamsModEntities.BLADE_PROJ.get();
+        return ModEntities.BLADE_PROJ.get();
     }
 
     @Override
@@ -72,12 +82,15 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         if(entity instanceof LivingEntity){
             LivingEntity livingTarget = (LivingEntity) entity;
 
-            if(this.doHurtTarget(livingTarget, (LivingEntity) this.getOwner())){
+
+
+            if(this.doHurtTarget((ServerLevel) pResult.getEntity().level, livingTarget, (LivingEntity) this.getOwner())){
                 this.getItem().getItem().hurtEnemy(this.getItem(), livingTarget, (LivingEntity) this.getOwner());
             }
         }
     }
 
+    /*
     public boolean doHurtTarget(Entity target, LivingEntity attacker) {
         float f = 2;
 
@@ -85,12 +98,12 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
         for (AttributeModifier modifier : this.getItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE))
         {
-            f += (float) modifier.getAmount();
+            f += (float) modifier.amount();
         }
         float f1 = 0;
         for (AttributeModifier modifier : this.getItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_KNOCKBACK))
         {
-            f1 += (float) modifier.getAmount();
+            f1 += (float) modifier.amount();
         }
 
         if (target instanceof LivingEntity) {
@@ -127,16 +140,79 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
         return flag;
     }
+    */
 
-    private void maybeDisableShield(Player pPlayer, ItemStack pMobItemStack, ItemStack pPlayerItemStack, LivingEntity attacker) {
-        if (!pMobItemStack.isEmpty() && !pPlayerItemStack.isEmpty() && pMobItemStack.getItem() instanceof AxeItem && pPlayerItemStack.is(Items.SHIELD)) {
-            float f = 0.25F + (float)EnchantmentHelper.getBlockEfficiency(attacker) * 0.05F;
-            if (this.random.nextFloat() < f) {
-                pPlayer.getCooldowns().addCooldown(Items.SHIELD, 100);
-                this.level().broadcastEntityEvent(pPlayer, (byte)30);
+    public boolean doHurtTarget(ServerLevel level, Entity target, LivingEntity attacker) {
+        float f = 2;
+        f += (float) this.amp;
+
+        ItemAttributeModifiers modifiers = this.getItem().get(DataComponents.ATTRIBUTE_MODIFIERS);
+        float f1 = 0;
+
+        if (modifiers != null) {
+            for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
+                if (entry.slot().test(EquipmentSlot.MAINHAND)) {
+                    if (entry.attribute().value().equals(Attributes.ATTACK_DAMAGE)) {
+                        f += (float) entry.modifier().amount();
+                    }
+                    if (entry.attribute().value().equals(Attributes.ATTACK_KNOCKBACK)) {
+                        f1 += (float) entry.modifier().amount();
+                    }
+                }
             }
         }
 
+        ItemEnchantments enchantments = this.getItem().get(DataComponents.ENCHANTMENTS);
+
+        Registry<Enchantment> enchantmentRegistry = level.registryAccess()
+                .registryOrThrow(Registries.ENCHANTMENT);
+
+        if (target instanceof LivingEntity) {
+            f += enchantments.getLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.SHARPNESS));
+            f1 += enchantments.getLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.KNOCKBACK));
+            int i = enchantments.getLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.FIRE_ASPECT));
+
+            if (i > 0) {
+                target.setRemainingFireTicks(i * 80);
+            }
+        }
+
+        boolean flag;
+        if (this.getOwner() == null) {
+            flag = target.hurt(this.damageSources().arrow(this, this), f);
+        } else {
+            flag = target.hurt(attacker.damageSources().mobAttack(attacker), f);
+            attacker.setLastHurtMob(target);
+        }
+
+        if (flag) {
+            if (f1 > 0.0F && target instanceof LivingEntity livingTarget) {
+                livingTarget.knockback(
+                        (double)(f1 * 0.5F),
+                        (double) Mth.sin(this.getYRot() * ((float) Math.PI / 180F)),
+                        (double)(-Mth.cos(this.getYRot() * ((float) Math.PI / 180F)))
+                );
+                this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, 1.0, 0.6));
+            }
+
+            if (target instanceof Player player) {
+                maybeDisableShield(player, this.getItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY, attacker);
+            }
+
+            DamageSource damageSource = this.getOwner() == null
+                    ? this.damageSources().arrow(this, this)
+                    : attacker.damageSources().mobAttack(attacker);
+            EnchantmentHelper.doPostAttackEffectsWithItemSource(level, target, damageSource, this.getItem());
+        }
+
+        return flag;
+    }
+
+    private void maybeDisableShield(Player pPlayer, ItemStack pMobItemStack, ItemStack pPlayerItemStack, LivingEntity attacker) {
+        if (!pMobItemStack.isEmpty() && !pPlayerItemStack.isEmpty() && pMobItemStack.getItem() instanceof AxeItem && pPlayerItemStack.is(Items.SHIELD)) {
+            pPlayer.getCooldowns().addCooldown(Items.SHIELD, 100);
+            this.level().broadcastEntityEvent(pPlayer, (byte)30);
+        }
     }
 
     public void shootEntity(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy) {
@@ -146,20 +222,20 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
     }
 
-    public void addAdditionalSaveData(CompoundTag pCompound) {
+    public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
 
-        ItemStack $$1 = this.getItemRaw();
-        if (!$$1.isEmpty()) {
-            pCompound.put("Item", $$1.save(new CompoundTag()));
+        ItemStack stack = this.getItemRaw();
+        if (!stack.isEmpty()) {
+            pCompound.put("Item", stack.save(this.level().registryAccess()));
         }
     }
 
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
 
-        ItemStack $$1 = ItemStack.of(pCompound.getCompound("Item"));
-        this.setItem($$1);
+        ItemStack stack = ItemStack.parseOptional(this.level().registryAccess(), pCompound.getCompound("Item"));
+        this.setItem(stack);
     }
 
     @Override
@@ -167,10 +243,14 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         return ItemStack.EMPTY;
     }
 
+    @Override
+    protected ItemStack getDefaultPickupItem() {
+        return null;
+    }
+
     public void setItem(ItemStack pStack) {
-        if (!pStack.is(this.getDefaultItem()) || pStack.hasTag()) {
+        if (!pStack.is(this.getDefaultItem())) {
             this.getEntityData().set(DATA_ITEM_STACK, pStack.copyWithCount(1));
-            this.setItemSlot(EquipmentSlot.MAINHAND, pStack.copyWithCount(1));
         }
 
     }
@@ -188,9 +268,10 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         return $$0.isEmpty() ? new ItemStack(IRON_SWORD) : $$0;
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.getEntityData().define(DATA_ITEM_STACK, ItemStack.EMPTY);
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ITEM_STACK, ItemStack.EMPTY);
     }
 
     static {

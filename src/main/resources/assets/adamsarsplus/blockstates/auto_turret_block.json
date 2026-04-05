@@ -1,0 +1,7 @@
+{
+  "variants" : {
+    "" : {
+      "model": "adamsarsplus:block/auto_turret_block"
+    }
+  }
+}

@@ -4,7 +4,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.EyeOfEnder;
 import net.minecraft.world.level.Level;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.EYE_OF_SOUL;
+import static adamsmods.adamsarsplus.registry.ModEntities.EYE_OF_SOUL;
 
 public class EyeOfSoulSeeking extends EyeOfEnder {
 

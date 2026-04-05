@@ -1,5 +1,6 @@
 package adamsmods.adamsarsplus.common.entity;
 
+import adamsmods.adamsarsplus.registry.ModEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class FireEntity extends Monster {
 
@@ -28,7 +30,7 @@ public class FireEntity extends Monster {
             SynchedEntityData.defineId(FireEntity.class, EntityDataSerializers.FLOAT);
 
     public FireEntity(Level world, float size, int damage, double accelerates, int lifeTime, boolean sensitive) {
-        super(AdamsModEntities.FIRE_ENTITY.get(), world);
+        super(ModEntities.FIRE_ENTITY.get(), world);
 
         this.size = size;
         this.accelerates = accelerates;
@@ -45,7 +47,7 @@ public class FireEntity extends Monster {
 
     @Override
     public EntityType<?> getType() {
-        return AdamsModEntities.FIRE_ENTITY.get();
+        return ModEntities.FIRE_ENTITY.get();
     }
 
     @Override
@@ -75,7 +77,7 @@ public class FireEntity extends Monster {
                         continue;
                     }
                     entity.hurt(entity.damageSources().inFire(), 4 + 2 * damage);
-                    entity.setSecondsOnFire(20);
+                    entity.setRemainingFireTicks(20 * 4);
                 }
             }
             this.setSize(this.size);
@@ -96,9 +98,9 @@ public class FireEntity extends Monster {
     public float getSize(){ return this.entityData.get(SIZE); }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(SIZE, 0f);
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(SIZE, 0f);
     }
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {

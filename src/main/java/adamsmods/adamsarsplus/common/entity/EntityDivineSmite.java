@@ -1,15 +1,13 @@
 package adamsmods.adamsarsplus.common.entity;
 
+import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,20 +16,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PlayMessages;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adamsmods.adamsarsplus.entities.AdamsModEntities.DIVINE_SMITE;
-import static com.hollingsworth.arsnouveau.setup.registry.ModPotions.SHOCKED_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModEntities.DIVINE_SMITE;
 
 public class EntityDivineSmite extends LightningBolt {
     float aoe;
@@ -99,33 +93,32 @@ public class EntityDivineSmite extends LightningBolt {
             } else if (!this.effectOnly) {
                 List<Entity> list = this.level().getEntities(this, new AABB(this.getX() - (double)3.0F, this.getY() - (double)3.0F, this.getZ() - (double)3.0F, this.getX() + (double)3.0F, this.getY() + (double)6.0F + (double)3.0F, this.getZ() + (double)3.0F), Entity::isAlive);
 
-                for(Entity entity : list) {
-                    if (!ForgeEventFactory.onEntityStruckByLightning(entity, this)) {
+                for (Entity entity : list) {
+                    if (!net.neoforged.neoforge.event.EventHooks.onEntityStruckByLightning(entity, this)) {
                         float origDamage = this.getDamage();
                         this.setDamage(this.getDamage(entity));
                         EntityStruckByLightningEvent event = new EntityStruckByLightningEvent(entity, this);
-                        MinecraftForge.EVENT_BUS.post(event);
-                        if (!event.isCanceled()) {
-                            entity.thunderHit((ServerLevel)this.level(), this);
-                            this.setDamage(origDamage);
+                        NeoForge.EVENT_BUS.post(event);
+                        if (event.isCanceled())
+                            continue;
+                        entity.thunderHit((ServerLevel) this.level, this);
+                        this.setDamage(origDamage);
 
+                        if (!this.level.isClientSide && !this.hitEntities.contains(entity.getId()) && entity instanceof LivingEntity livingEntity && livingEntity.getEffect(ModPotions.SHOCKED_EFFECT)  != null) {
+                            MobEffectInstance effectInstance = ((LivingEntity)entity).getEffect(ModPotions.SHOCKED_EFFECT);
+                            int amp = effectInstance != null ? effectInstance.getAmplifier() : -1;
 
-                            if (!this.level().isClientSide && !this.hitEntities.contains(entity.getId()) && entity instanceof LivingEntity livingEntity && livingEntity.getEffect((MobEffect) SHOCKED_EFFECT.get())  != null) {
-                                MobEffectInstance effectInstance = ((LivingEntity)entity).getEffect((MobEffect) SHOCKED_EFFECT.get());
-                                int amp = effectInstance != null ? effectInstance.getAmplifier() : -1;
-
-                                if(amp == 0){
-                                    ((LivingEntity) entity).removeEffect((MobEffect) SHOCKED_EFFECT.get());
-                                } else{
-                                    ((LivingEntity) entity).removeEffect((MobEffect) SHOCKED_EFFECT.get());
-                                    ((LivingEntity)entity).addEffect(new MobEffectInstance((MobEffect) SHOCKED_EFFECT.get(), 200 + 200 * this.extendTimes, Math.min(2, amp - 1)));
-                                }
-                            }
-
-                            if (!this.level().isClientSide && !this.hitEntities.contains(entity.getId())) {
-                                this.hitEntities.add(entity.getId());
+                            if(amp == 0){
+                                ((LivingEntity) entity).removeEffect(ModPotions.SHOCKED_EFFECT);
+                            } else{
+                                ((LivingEntity) entity).removeEffect(ModPotions.SHOCKED_EFFECT);
+                                ((LivingEntity)entity).addEffect(new MobEffectInstance(ModPotions.SHOCKED_EFFECT, 200 + 200 * this.extendTimes, Math.min(2, amp - 1)));
                             }
                         }
+
+                        if (!level.isClientSide && !hitEntities.contains(entity.getId()))
+                            hitEntities.add(entity.getId());
+
                     }
                 }
 
@@ -145,8 +138,8 @@ public class EntityDivineSmite extends LightningBolt {
         float baseDamage = this.getDamage() + this.ampScalar * this.amps;
         int multiplier = 1;
 
-        if(entity instanceof LivingEntity livingEntity && livingEntity.getEffect((MobEffect) SHOCKED_EFFECT.get())  != null){
-            MobEffectInstance effectInstance = (livingEntity).getEffect((MobEffect) SHOCKED_EFFECT.get());
+        if(entity instanceof LivingEntity livingEntity && livingEntity.getEffect(ModPotions.SHOCKED_EFFECT)  != null){
+            MobEffectInstance effectInstance = (livingEntity).getEffect(ModPotions.SHOCKED_EFFECT);
             multiplier = (effectInstance != null ? effectInstance.getAmplifier() : -1) + 1;
         }
 
@@ -171,11 +164,4 @@ public class EntityDivineSmite extends LightningBolt {
 
     public EntityType<?> getType() { return (EntityType) DIVINE_SMITE.get(); }
 
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
-
-    public EntityDivineSmite(PlayMessages.SpawnEntity packet, Level world) {
-        super((EntityType) DIVINE_SMITE.get(), world);
-    }
 }

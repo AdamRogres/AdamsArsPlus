@@ -23,4 +23,17 @@ Todo:
 - Add capability for ten shadows rank
 - Add Tag provider
 - Add commands
-- 
+
+- Domain rework:
+- Boss improvements:
+  - Adam no gravity fix
+  - Smarter use of domains
+  - Passive regen and persistancy
+  - Movement burst option to combat hit and run strategies
+  - Config options for boss difficulty for dynamic modpack challenge
+- Add visual and pre-adapt function for the General's Wheel
+- Make simple domain and domain available earlier
+- Nerf Dismantle
+- Put cap on how fast limitless can accelerate something (arrow cheese)
+- Make passive limitless nullify damage outside of domains
+- Try and reduce lag of spells from Nick (earth archmage)
