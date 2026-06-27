@@ -2,6 +2,7 @@ package adamsmods.adamsarsplus.common.rituals;
 
 import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.entity.custom.*;
+import adamsmods.adamsarsplus.datagen.AdamsStructureTagProvider;
 import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import static adamsmods.adamsarsplus.datagen.AdamsItemTagsProvider.MAGE_RITUAL;
 import static adamsmods.adamsarsplus.registry.ModItems.*;
 
 public class RitualMageSummon extends AbstractRitual {
@@ -66,7 +68,7 @@ public class RitualMageSummon extends AbstractRitual {
                             this.summon(boss, this.getPos().above());
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }
@@ -102,7 +104,7 @@ public class RitualMageSummon extends AbstractRitual {
                             this.summon(boss, this.getPos().above());
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }
@@ -138,7 +140,7 @@ public class RitualMageSummon extends AbstractRitual {
                             this.summon(boss, this.getPos().above());
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }
@@ -174,7 +176,7 @@ public class RitualMageSummon extends AbstractRitual {
                             this.summon(boss, this.getPos().above());
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }
@@ -210,7 +212,7 @@ public class RitualMageSummon extends AbstractRitual {
                             this.summon(boss, this.getPos().above());
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }
@@ -246,7 +248,7 @@ public class RitualMageSummon extends AbstractRitual {
                             this.summon(boss, this.getPos().above());
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }

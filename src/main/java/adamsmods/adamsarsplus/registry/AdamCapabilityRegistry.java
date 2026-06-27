@@ -1,64 +1,51 @@
 package adamsmods.adamsarsplus.registry;
 
 
-import adamsmods.adamsarsplus.common.capability.ITSrankCap;
-import adamsmods.adamsarsplus.common.capability.TSrankCapAttacher;
-import com.hollingsworth.arsnouveau.common.capability.ANPlayerDataCap;
-import com.hollingsworth.arsnouveau.common.capability.IPlayerCap;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketSyncPlayerCap;
-import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.capability.TSrankCap;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+import java.util.function.Supplier;
 
 public class AdamCapabilityRegistry {
-    public static final Capability<ITSrankCap> TSRANK_CAPABILITY = CapabilityManager.get(new CapabilityToken<ITSrankCap>() {
-    });
-    public static final Direction DEFAULT_FACING = null;
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES;
+    public static final Supplier<AttachmentType<TSrankCap>> TSRANK_CAP_ID;
 
-    public AdamCapabilityRegistry() {
+    static {
+        ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, AdamsArsPlus.MODID);
+        TSRANK_CAP_ID = ATTACHMENT_TYPES.register("tsrank_cap", () -> AttachmentType.serializable(TSrankCap::new).copyOnDeath().build());
+
     }
 
-    public static LazyOptional<ITSrankCap> getTsTier(LivingEntity entity) {
-        return entity == null ? LazyOptional.empty() : entity.getCapability(TSRANK_CAPABILITY);
+/*
+    public static Optional<ITSrankCap> getTsTier(LivingEntity entity) {
+        if (entity == null) return Optional.empty();
+        return Optional.ofNullable(entity.getData(TSrankCapAttacher.TSRANK_CAPABILITY));
     }
 
-    @Mod.EventBusSubscriber(
-            modid = AdamsArsPlus.MOD_ID
-    )
+    @EventBusSubscriber(modid = AdamsArsPlus.MODID)
     public static class EventHandler {
-        public EventHandler() {
-        }
 
         @SubscribeEvent
         public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
             if (event.getObject() instanceof Player) {
-                TSrankCapAttacher.attach(event);
+                // In 1.21 NeoForge, attachments are added directly
+                event.addCapability(TSRANK_CAP_ID, new TSrankCapAttacher());
             }
-
-        }
-
-        @SubscribeEvent
-        public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-            event.register(ITSrankCap.class);
         }
 
         @SubscribeEvent
         public static void playerClone(PlayerEvent.Clone event) {
             Player oldPlayer = event.getOriginal();
-            oldPlayer.revive();
-            AdamCapabilityRegistry.getTsTier(oldPlayer).ifPresent((oldRank) -> AdamCapabilityRegistry.getTsTier(event.getEntity()).ifPresent((newRank) -> {
-                newRank.setTsTier(oldRank.getTsTier());
-            }));
+            Player newPlayer = event.getEntity();
 
-            event.getOriginal().invalidateCaps();
+            // In 1.21, no revive()/invalidateCaps() needed
+            // Data is accessed directly via getData()
+            ITSrankCap oldRank = oldPlayer.getData(TSrankCapAttacher.TSRANK_CAPABILITY);
+            ITSrankCap newRank = newPlayer.getData(TSrankCapAttacher.TSRANK_CAPABILITY);
+            newRank.setTsTier(oldRank.getTsTier());
         }
 
         @SubscribeEvent
@@ -66,7 +53,6 @@ public class AdamCapabilityRegistry {
             if (event.getEntity() instanceof ServerPlayer) {
                 syncPlayerCap(event.getEntity());
             }
-
         }
 
         @SubscribeEvent
@@ -74,7 +60,6 @@ public class AdamCapabilityRegistry {
             if (event.getEntity() instanceof ServerPlayer) {
                 syncPlayerCap(event.getEntity());
             }
-
         }
 
         @SubscribeEvent
@@ -82,7 +67,6 @@ public class AdamCapabilityRegistry {
             if (event.getTarget() instanceof Player && event.getEntity() instanceof ServerPlayer) {
                 syncPlayerCap(event.getEntity());
             }
-
         }
 
         @SubscribeEvent
@@ -90,16 +74,17 @@ public class AdamCapabilityRegistry {
             if (event.getEntity() instanceof ServerPlayer) {
                 syncPlayerCap(event.getEntity());
             }
-
         }
 
         public static void syncPlayerCap(Player player) {
-            IPlayerCap cap = (IPlayerCap)CapabilityRegistry.getPlayerDataCap(player).orElse(new ANPlayerDataCap());
-            CompoundTag tag = (CompoundTag)cap.serializeNBT();
+            // Same sync logic, just updated cap access
+            ITSrankCap cap = player.getData(TSrankCapAttacher.TSRANK_CAPABILITY);
+            CompoundTag tag = (CompoundTag) cap.serializeNBT(player.level().registryAccess());
             if (player instanceof ServerPlayer serverPlayer) {
                 Networking.sendToPlayerClient(new PacketSyncPlayerCap(tag), serverPlayer);
             }
-
         }
     }
+
+ */
 }

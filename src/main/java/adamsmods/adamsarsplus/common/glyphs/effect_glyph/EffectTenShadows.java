@@ -1,5 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
+import adamsmods.adamsarsplus.common.capability.TSrankCap;
 import adamsmods.adamsarsplus.common.entity.custom.*;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
@@ -30,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static adamsmods.adamsarsplus.common.capability.TSrankCap.getTsTier;
 import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 
 public class EffectTenShadows extends AbstractEffect{
@@ -135,9 +137,7 @@ public class EffectTenShadows extends AbstractEffect{
         if(entity instanceof Player){
             Player player = (Player)entity;
 
-            AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
-                Rank.set(pRank.getTsTier());
-            });
+            Rank.set(getTsTier(player).tsTier);
 
             if(spell.getAmpMultiplier() > Rank.get()){
                 PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.rankinvalid"));

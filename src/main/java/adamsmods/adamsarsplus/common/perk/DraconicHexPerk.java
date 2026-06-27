@@ -1,6 +1,7 @@
 package adamsmods.adamsarsplus.common.perk;
 
-import com.adamsmods.api.APerkSlot;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.util.APerkSlot;
 import com.hollingsworth.arsnouveau.api.perk.IEffectResolvePerk;
 import com.hollingsworth.arsnouveau.api.perk.Perk;
 import com.hollingsworth.arsnouveau.api.perk.PerkInstance;
@@ -18,11 +19,10 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
-import static com.adamsmods.adamsarsplus.AdamsArsPlus.MOD_ID;
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.ERUPTION_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.ERUPTION_EFFECT;
 
 public class DraconicHexPerk extends Perk implements IEffectResolvePerk {
-    public static final DraconicHexPerk INSTANCE = new DraconicHexPerk(new ResourceLocation(MOD_ID, "thread_draconic"));
+    public static final DraconicHexPerk INSTANCE = new DraconicHexPerk(AdamsArsPlus.prefix("thread_draconic"));
     public DraconicHexPerk(ResourceLocation key) { super(key); }
 
     public String getLangName() {
@@ -46,8 +46,8 @@ public class DraconicHexPerk extends Perk implements IEffectResolvePerk {
                 Entity var12 = entityHitResult.getEntity();
                 if (var12 instanceof LivingEntity livingEntity) {
                     if (damageEffect.canDamage(shooter, spellStats, spellContext, resolver, entityHitResult.getEntity()) && shooter != entityHitResult.getEntity()) {
-                        livingEntity.addEffect(new MobEffectInstance((MobEffect) ModPotions.HEX_EFFECT.get(), perkInstance.getSlot().value * 10 * 20, perkInstance.getSlot().value - 4));
-                        livingEntity.addEffect(new MobEffectInstance((MobEffect) ERUPTION_EFFECT.get(), perkInstance.getSlot().value * 10 * 20, 0));
+                        livingEntity.addEffect(new MobEffectInstance(ModPotions.HEX_EFFECT, perkInstance.getSlot().value() * 10 * 20, perkInstance.getSlot().value() - 4));
+                        livingEntity.addEffect(new MobEffectInstance(ERUPTION_EFFECT, perkInstance.getSlot().value() * 10 * 20, 0));
                     }
                 }
             }

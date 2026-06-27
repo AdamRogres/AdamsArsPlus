@@ -1,23 +1,20 @@
 package adamsmods.adamsarsplus.common.glyphs.method_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
-import com.adamsmods.api.IPropagator;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import com.alexthw.sauce.api.IPropagator;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.TileCaster;
 import com.hollingsworth.arsnouveau.common.block.BasicSpellTurret;
 import com.hollingsworth.arsnouveau.common.block.tile.RotatingTurretTile;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentPierce;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSplit;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -28,16 +25,10 @@ import java.util.Set;
 
 public class PropagateDetonate extends AbstractEffect implements IPropagator {
 
-    public PropagateDetonate(ResourceLocation tag, String description) {
-        super(tag, description);
+    public PropagateDetonate() {
+        super("glyph_propdetonate", "Detonate");
     }
-    public static final PropagateDetonate INSTANCE = new PropagateDetonate(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_propdetonate"), "Detonate");
-
-    public ForgeConfigSpec.IntValue DETONATE_TTL;
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
-        super.buildConfig(builder);
-        this.DETONATE_TTL = builder.comment("Max lifespan of the projectile, in seconds.").defineInRange("max_lifespan", 60, 0, Integer.MAX_VALUE);
-    }
+    public static final PropagateDetonate INSTANCE = new PropagateDetonate();
 
     @Override
     public void propagate(Level world, HitResult hitResult, LivingEntity shooter, SpellStats stats, SpellResolver resolver) {
@@ -80,25 +71,27 @@ public class PropagateDetonate extends AbstractEffect implements IPropagator {
 
     }
 
-    public void sendPacket(Level world, HitResult rayTraceResult, @Nullable LivingEntity shooter, SpellContext spellContext, SpellStats stats) {
+    public void sendPacket(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats stats, SpellContext spellContext, SpellResolver resolver) {
+        SpellContext newContext = spellContext.makeChildContext();
+        var mutable_spell = newContext.getSpell().mutable();
+        mutable_spell.recipe.addFirst(DUMMY);
+        newContext.withSpell(mutable_spell.immutable());
+        SpellResolver newResolver = resolver.getNewResolver(newContext);
         spellContext.setCanceled(true);
-        if (spellContext.getCurrentIndex() < spellContext.getSpell().recipe.size()) {
-            Spell newSpell = new Spell(new ArrayList<>(spellContext.getSpell().recipe.subList(spellContext.getCurrentIndex(), spellContext.getSpell().recipe.size())));
-            SpellContext newContext = spellContext.clone().withSpell(newSpell);
-            SpellResolver resolver = new EntitySpellResolver(newContext);
-            //List<AbstractAugment> newAugments = new ArrayList<AbstractAugment>();
-            propagate(world, rayTraceResult, shooter, stats, resolver);
-        }
+        AbstractCastMethod newCastType = getCastType();
+        if (newCastType != null)
+            newResolver.castType = newCastType;
+        propagate(world, rayTraceResult, shooter, stats, newResolver);
     }
 
     @Override
     public void onResolveBlock(BlockHitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        this.sendPacket(world, rayTraceResult, shooter, spellContext,spellStats);
+        this.sendPacket(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
     }
 
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
-        this.sendPacket(world, rayTraceResult, shooter, spellContext,spellStats);
+        this.sendPacket(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
     }
 
     @Override

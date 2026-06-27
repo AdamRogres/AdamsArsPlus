@@ -1,7 +1,7 @@
 package adamsmods.adamsarsplus.common.items.eyes;
 
-import com.adamsmods.adamsarsplus.datagen.AdamsStructureTagProvider;
-import com.adamsmods.adamsarsplus.entities.EyeOfSoulSeeking;
+import adamsmods.adamsarsplus.common.entity.EyeOfSoulSeeking;
+import adamsmods.adamsarsplus.datagen.AdamsStructureTagProvider;
 import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;

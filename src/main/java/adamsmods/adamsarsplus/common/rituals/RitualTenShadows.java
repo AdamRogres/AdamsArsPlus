@@ -1,8 +1,11 @@
 package adamsmods.adamsarsplus.common.rituals;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.custom.*;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.EffectTenShadows;
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.custom.MahoragaEntity;
+import adamsmods.adamsarsplus.common.entity.custom.NueEntity;
+import adamsmods.adamsarsplus.common.entity.custom.RDeerEntity;
+import adamsmods.adamsarsplus.common.entity.custom.RabbitEEntity;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectTenShadows;
 import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
 import com.hollingsworth.arsnouveau.api.util.SpellUtil;
@@ -22,10 +25,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ForgeEventFactory;
 
-import static com.adamsmods.adamsarsplus.datagen.AdamsItemTagsProvider.TS_RITUAL;
-import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
+import static adamsmods.adamsarsplus.datagen.AdamsItemTagsProvider.TS_RITUAL;
+import static adamsmods.adamsarsplus.registry.ModItems.MANA_DIAMOND;
+
 
 public class RitualTenShadows extends AbstractRitual {
     public static final String ID = "ritual_ten_shadows";
@@ -61,7 +64,7 @@ public class RitualTenShadows extends AbstractRitual {
                         this.summon(boss, this.getPos().above(7));
 
                         for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                            if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                            if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                 BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                             }
                         }
@@ -73,7 +76,7 @@ public class RitualTenShadows extends AbstractRitual {
                         this.summon(boss, this.getPos().above());
 
                         for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                            if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                            if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                 BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                             }
                         }
@@ -85,7 +88,7 @@ public class RitualTenShadows extends AbstractRitual {
                         this.summon(boss, this.getPos().above());
 
                         for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
-                            if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                            if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                 BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                             }
                         }
@@ -117,7 +120,7 @@ public class RitualTenShadows extends AbstractRitual {
                             boss.playSound(SoundEvents.IRON_DOOR_OPEN, 1.5F, 1F);
 
                             for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(8).north(11).above(), this.getPos().west(8).south(5).above(8))) {
-                                if (ForgeEventFactory.getMobGriefingEvent(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                                if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
                                     BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
                                 }
                             }

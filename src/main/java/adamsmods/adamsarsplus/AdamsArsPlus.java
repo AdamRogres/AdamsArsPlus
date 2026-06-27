@@ -1,10 +1,8 @@
 package adamsmods.adamsarsplus;
 
 import adamsmods.adamsarsplus.client.example.ClientEvents;
-import adamsmods.adamsarsplus.registry.example.ModAdvTriggers;
 import adamsmods.adamsarsplus.registry.ModPotions;
 import adamsmods.adamsarsplus.registry.ModRegistry;
-import adamsmods.adamsarsplus.util.example.CompatUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -44,7 +42,7 @@ public class AdamsArsPlus {
             NeoForge.EVENT_BUS.addListener(new ClientEvents()::openBackpackGui);
             modEventBus.addListener(this::doClientStuff);
         }
-        ModAdvTriggers.init();
+        //ModAdvTriggers.init();
     }
 
     public static ResourceLocation prefix(String path) {
@@ -54,7 +52,7 @@ public class AdamsArsPlus {
     public void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             ArsNouveauRegistry.postInit();
-            CompatUtils.checkCompats();
+            //CompatUtils.checkCompats();
         });
     }
 

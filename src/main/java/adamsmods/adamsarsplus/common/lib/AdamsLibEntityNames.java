@@ -18,6 +18,7 @@ public class AdamsLibEntityNames {
     public static final String NICK = "nick";
     public static final String CAM = "cam";
     public static final String MATT = "matt";
+    public static final String JOSH = "josh";
     public static final String ADAM = "adam";
 
     // Mages

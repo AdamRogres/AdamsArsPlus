@@ -47,6 +47,7 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<NickEntity>> NICK_ENTITY;
     public static final DeferredHolder<EntityType<?>, EntityType<CamEntity>> CAM_ENTITY;
     public static final DeferredHolder<EntityType<?>, EntityType<MattEntity>> MATT_ENTITY;
+    public static final DeferredHolder<EntityType<?>, EntityType<JoshEntity>> JOSH_ENTITY;
     public static final DeferredHolder<EntityType<?>, EntityType<AdamEntity>> ADAM_ENTITY;
 
     public static final DeferredHolder<EntityType<?>, EntityType<MysteriousMageEntity>> MAGE_ENTITY;
@@ -167,6 +168,12 @@ public class ModEntities {
                 AdamsLibEntityNames.MATT,
                 EntityType.Builder.<MattEntity>of(MattEntity::new, MobCategory.MONSTER)
                         .sized(0.8f, 2.2f));
+
+        JOSH_ENTITY = registerEntity(
+                AdamsLibEntityNames.JOSH,
+                EntityType.Builder.<JoshEntity>of(JoshEntity::new, MobCategory.MONSTER)
+                        .sized(1.7f, 3.7f)
+                        .fireImmune());
 
         ADAM_ENTITY = registerEntity(
                 AdamsLibEntityNames.ADAM,

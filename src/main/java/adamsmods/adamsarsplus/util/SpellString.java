@@ -1,8 +1,8 @@
 package adamsmods.adamsarsplus.util;
 
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.*;
-import com.adamsmods.adamsarsplus.glyphs.effect_glyph.*;
-import com.adamsmods.adamsarsplus.glyphs.method_glyph.PropagateDetonate;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.method_glyph.PropagateDetonate;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;

@@ -1,8 +1,9 @@
 package adamsmods.adamsarsplus.common.mob_effects;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,16 +11,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.WALKING_BLIZZARD_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.ERUPTION_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.WALKING_BLIZZARD_EFFECT;
 
-@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
+@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class WalkingBlizzardEffect extends MobEffect {
 
     public WalkingBlizzardEffect() {
@@ -38,13 +40,15 @@ public class WalkingBlizzardEffect extends MobEffect {
     }
 
     @SubscribeEvent
-    public static void entityHurt(LivingHurtEvent e) {
-        if (e.getEntity().hasEffect((MobEffect)WALKING_BLIZZARD_EFFECT.get())) {
-            if(e.getEntity().getEffect(WALKING_BLIZZARD_EFFECT.get()).getAmplifier() == 1){
-                e.setAmount(0);
+    public static void entityHurt(LivingDamageEvent.Pre e) {
+        if (e.getEntity().hasEffect(WALKING_BLIZZARD_EFFECT)) {
+            if(e.getEntity().getEffect(WALKING_BLIZZARD_EFFECT).getAmplifier() == 1){
+                var container = e.getContainer();
+                container.setNewDamage(0);
+
                 e.getEntity().invulnerableTime = 40;
-                e.getEntity().removeEffect(WALKING_BLIZZARD_EFFECT.get());
-                e.getEntity().addEffect(new MobEffectInstance(WALKING_BLIZZARD_EFFECT.get(), 600, 0, false, false, true));
+                e.getEntity().removeEffect(WALKING_BLIZZARD_EFFECT);
+                e.getEntity().addEffect(new MobEffectInstance(WALKING_BLIZZARD_EFFECT, 600, 0, false, false, true));
 
                 Level world;
                 world = e.getEntity().level();
@@ -56,7 +60,6 @@ public class WalkingBlizzardEffect extends MobEffect {
         }
     }
 
-    @Override
     public List<ItemStack> getCurativeItems() {
         return new ArrayList<>();
     }

@@ -1,16 +1,17 @@
 package adamsmods.adamsarsplus.common.items;
 
+import adamsmods.adamsarsplus.common.components.ModDataComponents;
 import com.hollingsworth.arsnouveau.api.item.ArsNouveauCurio;
 import com.hollingsworth.arsnouveau.api.item.ICasterTool;
 import com.hollingsworth.arsnouveau.api.item.ISpellModifierItem;
 import com.hollingsworth.arsnouveau.api.mana.IManaDiscountEquipment;
-import com.hollingsworth.arsnouveau.api.nbt.ItemstackData;
 import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellStats;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
-import net.minecraft.nbt.CompoundTag;
+import com.hollingsworth.arsnouveau.setup.config.Config;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -21,11 +22,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool, ISpellModifierItem, IManaDiscountEquipment {
@@ -34,9 +34,6 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
     }
 
     public EnchantersStopwatch() {
-    }
-
-    public void registerControllers(AnimatableManager.ControllerRegistrar data) {
     }
 
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand handIn) {
@@ -71,12 +68,15 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
     }
 
     public void setWatchTime(Player playerEntity, ItemStack stack, int increment) {
-        StopWatchData stopWatchData = new StopWatchData(stack);
-        stopWatchData.setTime(Math.max(0, stopWatchData.getTime() + increment));
 
-        String message = "Cast Time: " + Integer.toString(stopWatchData.getTime());
+        int curTime = (stack.has(ModDataComponents.CONFIG_INTERVAL)) ? stack.get(ModDataComponents.CONFIG_INTERVAL) : 0;
+        int newTime = Math.max(0, curTime + increment);
 
-        if (stopWatchData.getTime() > 0) {
+        stack.set(ModDataComponents.CONFIG_INTERVAL, newTime);
+
+        String message = "Cast Time: " + Integer.toString(newTime);
+
+        if (newTime > 0) {
             PortUtil.sendMessage(playerEntity, Component.literal(message));
         } else {
             PortUtil.sendMessage(playerEntity, Component.translatable("ars_nouveau.off"));
@@ -85,11 +85,11 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
     }
 
     public void curioTick(SlotContext slotContext, ItemStack stack) {
-        StopWatchData data = new StopWatchData(stack);
-        int time = data.getTime() * 20;
+        int data = (stack.has(ModDataComponents.CONFIG_INTERVAL)) ? stack.get(ModDataComponents.CONFIG_INTERVAL) : 0;
+        int time = data * 20;
 
         LivingEntity wearer = slotContext.entity();
-        ISpellCaster caster = this.getSpellCaster(stack);
+        var caster = this.getSpellCaster(stack);
         if (wearer != null && time > 0) {
             Level var6 = slotContext.entity().level();
             if (var6 instanceof ServerLevel) {
@@ -113,65 +113,24 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
         PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.watch.invalid"));
     }
 
-    public boolean setSpell(ISpellCaster caster, Player player, InteractionHand hand, ItemStack stack, Spell spell) {
-        ArrayList<AbstractSpellPart> recipe = new ArrayList();
-        recipe.addAll(spell.recipe);
-        spell.recipe = recipe;
-        return ICasterTool.super.setSpell(caster, player, hand, stack, spell);
-    }
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip2, @NotNull TooltipFlag flagIn) {
+        if (Screen.hasShiftDown() || !Config.GLYPH_TOOLTIPS.get())
+            getInformation(stack, context, tooltip2, flagIn);
 
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip2, TooltipFlag flagIn) {
-        this.getInformation(stack, worldIn, tooltip2, flagIn);
-        if (stack.hasTag()) {
-            StopWatchData data = new StopWatchData(stack);
-            if (data.getTime() > 0) {
-                String message = "Cast Time: " + Integer.toString(data.getTime());
-                tooltip2.add(Component.literal(message));
-            } else {
-                tooltip2.add(Component.translatable("ars_nouveau.off"));
-            }
+        int data = (stack.has(ModDataComponents.CONFIG_INTERVAL)) ? stack.get(ModDataComponents.CONFIG_INTERVAL) : 0;
+        if (data > 0) {
+            String message = "Cast Time: " + Integer.toString(data);
+            tooltip2.add(Component.literal(message));
+        } else {
+            tooltip2.add(Component.translatable("ars_nouveau.off"));
         }
-        super.appendHoverText(stack, worldIn, tooltip2, flagIn);
+
+        super.appendHoverText(stack, context, tooltip2, flagIn);
     }
 
     public SpellStats.Builder applyItemModifiers(ItemStack stack, SpellStats.Builder builder, AbstractSpellPart spellPart, HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellContext spellContext) {
         return builder;
-    }
-
-    public static class StopWatchData extends ItemstackData {
-        @Nullable
-        private int castTime;
-
-        public StopWatchData(ItemStack stack) {
-            super(stack);
-            CompoundTag tag1 = this.getItemTag(stack);
-            if (tag1 != null && !tag1.isEmpty()) {
-                this.castTime = tag1.getInt("castTime");
-            }
-        }
-
-        public void writeToNBT(CompoundTag tag) {
-            tag.putInt("castTime", this.castTime);
-        }
-
-        public String getTagString() {
-            return "adamsarsplus_stopwatch";
-        }
-
-        @Nullable
-        public int getTime() {
-            return this.castTime;
-        }
-
-        public void setTime(@Nullable int time) {
-            this.castTime = time;
-            this.writeItem();
-        }
-
-        public void copyFrom(StopWatchData stopWatchDataData) {
-            this.castTime = stopWatchDataData.castTime;
-            this.writeItem();
-        }
     }
 
 }

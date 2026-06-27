@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.registry;
 
-import adamsmods.adamsarsplus.common.components.ElementProtectionFlag;
+import adamsmods.adamsarsplus.common.components.ModDataComponents;
 import adamsmods.adamsarsplus.recipe.AArmorRecipe;
 import com.hollingsworth.arsnouveau.setup.registry.CreativeTabRegistry;
 import net.minecraft.core.Registry;
@@ -9,13 +9,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -45,14 +41,6 @@ public class ModRegistry {
     public static final DeferredRegister<RecipeType<?>> RECIPES = DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, MODID);
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
 
-    public static final TagKey<Item> BLACKLIST_BAGGABLE = ItemTags.create(prefix("blacklist_bag_item"));
-
-    public static final TagKey<Item> SOULBOUND_ABLE = ItemTags.create(prefix("soulbound_extra"));
-
-    public static final TagKey<EntityType<?>> ATTRACT_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, prefix("attraction_ritual_blacklist"));
-    public static final TagKey<EntityType<?>> CHARM_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, prefix("charm_blacklist"));
-
-
     public static void registerRegistries(IEventBus bus) {
         A_MATERIALS.register(bus);
         BLOCKS.register(bus);
@@ -67,12 +55,12 @@ public class ModRegistry {
         RECIPES.register(bus);
         SERIALIZERS.register(bus);
         TABS.register(bus);
+        ModDataComponents.register(bus);
+        AdamCapabilityRegistry.ATTACHMENT_TYPES.register(bus);
         //bus.addListener(ModTiles::addBlocksToTiles);
     }
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PLUS_TAB;
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ElementProtectionFlag>> P4E = D_COMPONENTS.register("p4e", () -> DataComponentType.<ElementProtectionFlag>builder().persistent(ElementProtectionFlag.CODEC).networkSynchronized(ElementProtectionFlag.STREAM_CODEC).build());
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<AArmorRecipe>> A_ARMOR_UP;
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AArmorRecipe>> A_ARMOR_UP_SERIALIZER;

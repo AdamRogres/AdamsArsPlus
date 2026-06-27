@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.common.mob_effects;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.setup.registry.CapabilityRegistry;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -8,46 +8,46 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModPotions.EARTHEN_HEART_EFFECT;
 import static net.minecraft.world.effect.MobEffects.HEALTH_BOOST;
 
-@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
+@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class EarthSetbonusEffect extends MobEffect {
 
     public EarthSetbonusEffect() {
         super(MobEffectCategory.NEUTRAL, 2039587);
     }
 
-    public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
+    public boolean applyEffectTick(@NotNull LivingEntity pLivingEntity, int pAmplifier) {
         AtomicInteger health = new AtomicInteger();
 
         if(pLivingEntity instanceof Player player){
-            CapabilityRegistry.getMana(player).ifPresent((mana) -> {
-                health.set(mana.getMaxMana() / 48);
-            });
+            health.set(CapabilityRegistry.getMana(player).getMaxMana());
+            CapabilityRegistry.getMana(player).setMana((double) health.get() / 48);
         }
 
-        if(pLivingEntity.hasEffect(EARTHEN_HEART_EFFECT.get())){
-            if(pLivingEntity.getEffect(EARTHEN_HEART_EFFECT.get()).getDuration() > 40){
+        if(pLivingEntity.hasEffect(EARTHEN_HEART_EFFECT)){
+            if(pLivingEntity.getEffect(EARTHEN_HEART_EFFECT).getDuration() > 40){
                 pLivingEntity.addEffect(new MobEffectInstance(HEALTH_BOOST, -1, health.get(), false, false));
             } else {
                 pLivingEntity.removeEffect(HEALTH_BOOST);
             }
         }
+
+        return true;
     }
 
     public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
         return true;
     }
 
-
-    @Override
     public List<ItemStack> getCurativeItems() {
         return new ArrayList<>();
     }

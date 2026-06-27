@@ -1,0 +1,74 @@
+package adamsmods.adamsarsplus.datagen;
+
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import com.hollingsworth.arsnouveau.ArsNouveau;
+import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
+
+import static adamsmods.adamsarsplus.AdamsArsPlus.MODID;
+import static adamsmods.adamsarsplus.registry.ModItems.*;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.MANIPULATION_ESSENCE;
+
+public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
+
+    public static final TagKey<Item> MAGIC_HOOD = ItemTags.create(ArsNouveau.prefix("hood"));
+    public static final TagKey<Item> MAGIC_ROBE = ItemTags.create(ArsNouveau.prefix("robe"));
+    public static final TagKey<Item> MAGIC_LEG  = ItemTags.create(ArsNouveau.prefix("legs"));
+    public static final TagKey<Item> MAGIC_BOOT = ItemTags.create(ArsNouveau.prefix("boot"));
+
+    public static final TagKey<Item> MAGE_HOOD_A = ItemTags.create(AdamsArsPlus.prefix("hood_a"));
+    public static final TagKey<Item> MAGE_HOOD_B = ItemTags.create(AdamsArsPlus.prefix("hood_b"));
+    public static final TagKey<Item> MAGE_ROBE_A = ItemTags.create(AdamsArsPlus.prefix("robe_a"));
+    public static final TagKey<Item> MAGE_ROBE_B = ItemTags.create(AdamsArsPlus.prefix("robe_b"));
+    public static final TagKey<Item> MAGE_LEG_A  = ItemTags.create(AdamsArsPlus.prefix("legs_a"));
+    public static final TagKey<Item> MAGE_LEG_B  = ItemTags.create(AdamsArsPlus.prefix("legs_b"));
+    public static final TagKey<Item> MAGE_BOOT_A = ItemTags.create(AdamsArsPlus.prefix("boot_a"));
+    public static final TagKey<Item> MAGE_BOOT_B = ItemTags.create(AdamsArsPlus.prefix("boot_b"));
+
+    public static final TagKey<Item> MAGE_RITUAL = ItemTags.create(AdamsArsPlus.prefix("mage_r"));
+    public static final TagKey<Item> TS_RITUAL = ItemTags.create(AdamsArsPlus.prefix("ts_r"));
+
+    public AdamsItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
+        super(output, Registries.ITEM, future, (item) -> item.builtInRegistryHolder().key(), MODID, helper);
+    }
+
+    @Override
+    protected void addTags(HolderLookup.@NotNull Provider provider) {
+        tag(MAGIC_HOOD).add(ItemsRegistry.BATTLEMAGE_HOOD.get(), ItemsRegistry.ARCANIST_HOOD.get(), ItemsRegistry.SORCERER_HOOD.get());
+        tag(MAGIC_ROBE).add(ItemsRegistry.BATTLEMAGE_ROBES.get(), ItemsRegistry.ARCANIST_ROBES.get(), ItemsRegistry.SORCERER_ROBES.get());
+        tag(MAGIC_LEG).add(ItemsRegistry.BATTLEMAGE_LEGGINGS.get(), ItemsRegistry.ARCANIST_LEGGINGS.get(), ItemsRegistry.SORCERER_LEGGINGS.get());
+        tag(MAGIC_BOOT).add(ItemsRegistry.BATTLEMAGE_BOOTS.get(), ItemsRegistry.ARCANIST_BOOTS.get(), ItemsRegistry.SORCERER_BOOTS.get());
+
+        tag(MAGE_HOOD_A).add(RYAN_HOOD_A.get(),CADE_HOOD_A.get(),NICK_HOOD_A.get());
+        tag(MAGE_HOOD_B).add(CAMR_HOOD_A.get(),MATT_HOOD_A.get());
+
+        tag(MAGE_ROBE_A).add(RYAN_ROBES_A.get(),CADE_ROBES_A.get(),NICK_ROBES_A.get());
+        tag(MAGE_ROBE_B).add(CAMR_ROBES_A.get(),MATT_ROBES_A.get());
+
+        tag(MAGE_LEG_A).add(RYAN_LEGGINGS_A.get(),CADE_LEGGINGS_A.get(),NICK_LEGGINGS_A.get());
+        tag(MAGE_LEG_B).add(CAMR_LEGGINGS_A.get(),MATT_LEGGINGS_A.get());
+
+        tag(MAGE_BOOT_A).add(RYAN_BOOTS_A.get(),CADE_BOOTS_A.get(),NICK_BOOTS_A.get());
+        tag(MAGE_BOOT_B).add(CAMR_BOOTS_A.get(),MATT_BOOTS_A.get());
+
+        tag(MAGE_RITUAL).add(EYE_OF_FLAME.get(), EYE_OF_FROST.get(), EYE_OF_EARTH.get(), EYE_OF_LIGHTNING.get(), EYE_OF_HOLY.get(), EYE_OF_VOID.get(), MANIPULATION_ESSENCE.get());
+        tag(TS_RITUAL).add(MANA_DIAMOND.get());
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return "ArsPlus Item Tags";
+    }
+
+}

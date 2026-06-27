@@ -1,30 +1,14 @@
 package adamsmods.adamsarsplus.registry;
 
-import adamsmods.adamsarsplus.client.example.PrismRenderer;
 import adamsmods.adamsarsplus.common.items.*;
 import adamsmods.adamsarsplus.common.items.armor.MageMagicArmor;
-import adamsmods.adamsarsplus.common.items.example.CurioHolder;
-import adamsmods.adamsarsplus.common.items.example.Debugger;
-import adamsmods.adamsarsplus.common.items.example.armor.ArmorSet;
-import adamsmods.adamsarsplus.common.items.example.foci.GreaterElementalFocus;
 import adamsmods.adamsarsplus.common.items.eyes.*;
-import com.alexthw.sauce.common.item.SchoolCasterTome;
-import com.hollingsworth.arsnouveau.api.spell.SpellSchools;
 import com.hollingsworth.arsnouveau.common.items.ModItem;
-import com.hollingsworth.arsnouveau.common.items.RendererBlockItem;
-import com.hollingsworth.arsnouveau.common.items.data.ArmorPerkHolder;
-import com.hollingsworth.arsnouveau.setup.registry.DataComponentRegistry;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.AdamsArsPlus.MODID;
 
@@ -33,7 +17,7 @@ public class ModItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.createItems(MODID);
 
-    public static final DeferredHolder<Item, Debugger> DEBUG_ICON;
+    public static final DeferredHolder<Item, ModItem> DEBUG_ICON;
 
     public static final DeferredHolder<Item, ModItem> MANA_DIAMOND;
     public static final DeferredHolder<Item, ModItem> MAGE_CLOTH;
@@ -206,7 +190,7 @@ public class ModItems {
         ADAM_ROBES_A        = ITEMS.register("adam_robes_a",      () -> MageMagicArmor.adam(ArmorItem.Type.CHESTPLATE));
         ADAM_HOOD_A         = ITEMS.register("adam_hood_a",       () -> MageMagicArmor.adam(ArmorItem.Type.HELMET));
 
-        DEBUG_ICON = ITEMS.register("debug", () -> new Debugger(new Item.Properties()));
+        DEBUG_ICON = ITEMS.register("debug", () -> new ModItem(new Item.Properties()));
     }
 
 }

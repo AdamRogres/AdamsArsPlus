@@ -1,8 +1,6 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
 import com.hollingsworth.arsnouveau.api.spell.*;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -11,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class FilterNotSelf extends AbstractEffect {
-    public FilterNotSelf(ResourceLocation tag, String description) {
-        super(tag, description);
+    public FilterNotSelf() {
+        super("glyph_filternotself", "Filter: Not Self");
     }
-    public static final FilterNotSelf INSTANCE = new FilterNotSelf(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_filternotself"), "Filter: Not Self");
+    public static final FilterNotSelf INSTANCE = new FilterNotSelf();
 
     @Override
     public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {

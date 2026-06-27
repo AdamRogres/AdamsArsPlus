@@ -1,13 +1,11 @@
 package adamsmods.adamsarsplus.common.glyphs.method_glyph;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
-import com.adamsmods.adamsarsplus.entities.DetonateProjectile;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +15,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,19 +23,13 @@ import java.util.Set;
 
 public class MethodDetonate extends AbstractCastMethod {
 
-    public MethodDetonate(ResourceLocation tag, String description) {
-        super(tag, description);
+    public MethodDetonate() {
+        super("glyph_methoddetonate", "Detonate");
     }
-    public static final MethodDetonate INSTANCE = new MethodDetonate(new ResourceLocation(AdamsArsPlus.MOD_ID, "glyph_methoddetonate"), "Detonate");
-
-    public ForgeConfigSpec.IntValue DETONATE_TTL;
-    public void buildConfig(ForgeConfigSpec.Builder builder) {
-        super.buildConfig(builder);
-        this.DETONATE_TTL = builder.comment("Max lifespan of the projectile, in seconds.").defineInRange("max_lifespan", 60, 0, Integer.MAX_VALUE);
-    }
+    public static final MethodDetonate INSTANCE = new MethodDetonate();
 
     public int getProjectileLifespan() {
-        return this.DETONATE_TTL != null ? (Integer)this.DETONATE_TTL.get() : 60;
+        return 60;
     }
 
     public int getDefaultManaCost() {

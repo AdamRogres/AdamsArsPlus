@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.common.mob_effects;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -10,23 +10,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adamsmods.adamsarsplus.ArsNouveauRegistry.ERUPTION_EFFECT;
+import static adamsmods.adamsarsplus.registry.ModPotions.ERUPTION_EFFECT;
 
-@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
+@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class eruptionEffect extends MobEffect {
 
     public eruptionEffect() {
         super(MobEffectCategory.HARMFUL, 15931670);
     }
 
-    public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
+    public boolean applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
         Level world;
 
         world = pLivingEntity.level();
@@ -34,6 +34,8 @@ public class eruptionEffect extends MobEffect {
         if (world instanceof ServerLevel level && pLivingEntity.tickCount % 20 == 0) {
             playRingParticles(pLivingEntity, level);
         }
+
+        return true;
     }
 
     public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
@@ -56,13 +58,15 @@ public class eruptionEffect extends MobEffect {
     }
 
     @SubscribeEvent
-    public static void entityHurt(LivingHurtEvent e) {
-        if (e.getSource().is(DamageTypes.ON_FIRE) && e.getEntity().hasEffect((MobEffect)ERUPTION_EFFECT.get())) {
-            e.setAmount(e.getAmount() * 3.0F);
+    public static void entityHurt(LivingDamageEvent.Pre e) {
+        var container = e.getContainer();
+        var source = container.getSource();
+        var amount = container.getNewDamage();
+        if (source.is(DamageTypes.ON_FIRE) && e.getEntity().hasEffect(ERUPTION_EFFECT)) {
+            container.setNewDamage(amount * 2.0f);
         }
     }
 
-    @Override
     public List<ItemStack> getCurativeItems() {
         return new ArrayList<>();
     }

@@ -1,34 +1,38 @@
 package adamsmods.adamsarsplus.common.capability;
 
+import adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
-import javax.annotation.Nullable;
+public class TSrankCap implements INBTSerializable<CompoundTag> {
+    public int tsTier;
 
-public class TSrankCap implements ITSrankCap {
-    private final LivingEntity livingEntity;
-    private int tsTier;
-
-    public TSrankCap(@Nullable LivingEntity entity) {
-        this.livingEntity = entity;
+    @Override
+    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        var cTag = new CompoundTag();
+        cTag.putInt("ts_tier", this.tsTier);
+        return cTag;
     }
 
-    public int getTsTier() {
-        return this.tsTier;
+    @Override
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag cTag) {
+        this.tsTier = cTag.getInt("ts_tier");
+    }
+
+    public TSrankCap() {
+        this.tsTier = 0;
+    }
+
+    public static TSrankCap getTsTier(Player p) {
+        return p.getData(AdamCapabilityRegistry.TSRANK_CAP_ID);
     }
 
     public void setTsTier(int tsTier) {
         this.tsTier = tsTier;
     }
 
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
-
-        tag.putInt("ts_tier", this.getTsTier());
-        return tag;
-    }
-
-    public void deserializeNBT(CompoundTag tag) {
-        this.setTsTier(tag.getInt("ts_tier"));
-    }
 }

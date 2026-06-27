@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.common.mob_effects;
 
-import com.adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.AdamsArsPlus;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
@@ -9,21 +9,21 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.*;
 
-@Mod.EventBusSubscriber(modid = AdamsArsPlus.MOD_ID)
+@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class simpleDomainEffect extends MobEffect {
 
     public simpleDomainEffect() {
         super(MobEffectCategory.BENEFICIAL, 13565951);
     }
 
-    public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
+    public boolean applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
         Level world;
 
         world = pLivingEntity.level();
@@ -31,6 +31,7 @@ public class simpleDomainEffect extends MobEffect {
         if (world instanceof ServerLevel level) {
             playRingParticles(pLivingEntity, level, 2 + pAmplifier);
         }
+        return true;
     }
 
     public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
@@ -59,7 +60,6 @@ public class simpleDomainEffect extends MobEffect {
         }
     }
 
-    @Override
     public List<ItemStack> getCurativeItems() {
         return new ArrayList<>();
     }

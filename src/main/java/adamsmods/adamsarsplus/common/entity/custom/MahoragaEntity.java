@@ -8,6 +8,7 @@ import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentLesserAOE;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectAnnihilate;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectFracture;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectLimitless;
+import adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import adamsmods.adamsarsplus.registry.ModEntities;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
