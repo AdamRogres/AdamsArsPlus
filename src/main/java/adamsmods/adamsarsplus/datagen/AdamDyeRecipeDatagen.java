@@ -3,17 +3,22 @@ package adamsmods.adamsarsplus.datagen;
 import com.google.gson.JsonElement;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.DyeRecipe;
 import com.hollingsworth.arsnouveau.common.datagen.SimpleDataProvider;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.core.NonNullList;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.common.Tags;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.adamsmods.adamsarsplus.registry.ModRegistry.*;
+import static adamsmods.adamsarsplus.registry.ModItems.*;
 import static com.hollingsworth.arsnouveau.setup.registry.RegistryHelper.getRegistryName;
-
 
 public class AdamDyeRecipeDatagen extends SimpleDataProvider {
     List<FileObj> files = new ArrayList<>();
@@ -95,14 +100,19 @@ public class AdamDyeRecipeDatagen extends SimpleDataProvider {
     }
 
     public void addDyeRecipe(ItemLike inputItem){
-        JsonElement dyeRecipe = DyeRecipe.asRecipe(inputItem.asItem());
-        add(new FileObj(output.resolve("data/adamsarsplus/recipes/dye_" + getRegistryName(inputItem.asItem()).getPath() + ".json"), dyeRecipe));
+        var dyeRecipe = new DyeRecipe("", CraftingBookCategory.MISC, inputItem.asItem().getDefaultInstance(), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Tags.Items.DYES), Ingredient.of(inputItem)));
+        files.add(new FileObj(resolvePath("data/adamsarsplus/recipes/dye_" + getRegistryName(inputItem.asItem()).getPath() + ".json"), DyeRecipe.CODEC.encodeStart(JsonOps.INSTANCE, dyeRecipe).getOrThrow()));
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "AdamsArsPlus: Json Datagen";
     }
+
+    Path resolvePath(String path) {
+        return this.generator.getPackOutput().getOutputFolder().resolve(path);
+    }
+
     public record FileObj(Path path, JsonElement element){
 
     }

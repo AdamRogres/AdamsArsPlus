@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus;
 
-import adamsmods.adamsarsplus.client.example.ClientEvents;
+import adamsmods.adamsarsplus.registry.AdamClientHandler;
 import adamsmods.adamsarsplus.registry.ModPotions;
 import adamsmods.adamsarsplus.registry.ModRegistry;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +9,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -39,7 +40,7 @@ public class AdamsArsPlus {
 
         NeoForge.EVENT_BUS.register(ModPotions.class);
         if (FMLEnvironment.dist.isClient()) {
-            NeoForge.EVENT_BUS.addListener(new ClientEvents()::openBackpackGui);
+            //NeoForge.EVENT_BUS.addListener(new ClientEvents()::openBackpackGui);
             modEventBus.addListener(this::doClientStuff);
         }
         //ModAdvTriggers.init();
@@ -58,7 +59,7 @@ public class AdamsArsPlus {
 
     @OnlyIn(Dist.CLIENT)
     private void doClientStuff(final FMLClientSetupEvent event) {
-
+        ModLoadingContext.get().getActiveContainer().getEventBus().addListener(AdamClientHandler::init);
     }
 
     public void loadComplete(FMLLoadCompleteEvent event) {

@@ -48,6 +48,10 @@ public class AArmorRecipe extends EnchantingApparatusRecipe implements ITextOutp
         this.outTier = outTier;
     }
 
+    public AArmorRecipe(int reqTier, int outpTier, EnchantingApparatusRecipe recipe) {
+        this(recipe.reagent(), recipe.result(), recipe.pedestalItems(), recipe.sourceCost(), reqTier, outpTier);
+    }
+
     @Override
     public boolean matches(ApparatusRecipeInput input, Level level) {
         ArmorPerkHolder perkHolder = PerkUtil.getPerkHolder(input.catalyst());

@@ -26,6 +26,8 @@ import static adamsmods.adamsarsplus.registry.ModItems.*;
 
 public class ArsNouveauRegistry {
     public static final List<AbstractSpellPart> registeredSpells = new ArrayList<>();
+    public static final List<AbstractRitual> registeredRituals = new ArrayList<>();
+
 
     public static void init() {
         registerGlyphs();
@@ -85,6 +87,7 @@ public class ArsNouveauRegistry {
 
     public static void registerRitual(AbstractRitual ritual) {
         RitualRegistry.registerRitual(ritual);
+        registeredRituals.add(ritual);
     }
 
     public static void register(AbstractSpellPart spellPart) {

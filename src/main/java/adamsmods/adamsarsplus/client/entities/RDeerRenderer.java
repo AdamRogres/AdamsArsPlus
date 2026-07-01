@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.client.entities;
 
 import adamsmods.adamsarsplus.AdamsArsPlus;
-import adamsmods.adamsarsplus.common.entity.custom.AdamEntity;
 import adamsmods.adamsarsplus.common.entity.custom.RDeerEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

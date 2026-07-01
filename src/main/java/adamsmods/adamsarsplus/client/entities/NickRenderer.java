@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 public class NickRenderer extends MobRenderer<NickEntity, NickModel<NickEntity>> {
     public NickRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new NickModel<>(pContext.bakeLayer(ModModelLayers.NICK_LAYER)), 0.9f);
-
     }
 
     @Override

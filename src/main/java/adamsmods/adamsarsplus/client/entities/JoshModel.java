@@ -1,7 +1,6 @@
 package adamsmods.adamsarsplus.client.entities;
 
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition2;
-import com.adamsmods.adamsarsplus.entities.custom.JoshEntity;
+import adamsmods.adamsarsplus.common.entity.custom.JoshEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HierarchicalModel;
@@ -10,8 +9,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class JoshModel<T extends Entity> extends HierarchicalModel<T> {
@@ -162,10 +161,12 @@ public class JoshModel<T extends Entity> extends HierarchicalModel<T> {
 		this.head.xRot = pHeadPitch	 * ((float)Math.PI / 180F);
 	}
 
+	/*
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		waist.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
+	 */
 
 	@Override
 	public ModelPart root() {

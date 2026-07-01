@@ -1,10 +1,6 @@
-// Made with Blockbench 4.12.5
-// Exported for Minecraft version 1.17 or later with Mojang mappings
-// Paste this class into your mod and generate all required imports
 package adamsmods.adamsarsplus.client.entities;
 
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
-import com.adamsmods.adamsarsplus.entities.custom.NueEntity;
+import adamsmods.adamsarsplus.common.entity.custom.NueEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HierarchicalModel;
@@ -13,8 +9,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 
@@ -107,10 +103,12 @@ public class NueModel<T extends Entity> extends HierarchicalModel<T> {
 		this.head.xRot = pHeadPitch	 * ((float)Math.PI / 180F);
 	}
 
+	/*
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		waist.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
+	 */
 
 	@Override
 	public ModelPart root() {

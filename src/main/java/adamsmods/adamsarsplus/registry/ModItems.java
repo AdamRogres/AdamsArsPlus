@@ -21,6 +21,7 @@ public class ModItems {
 
     public static final DeferredHolder<Item, ModItem> MANA_DIAMOND;
     public static final DeferredHolder<Item, ModItem> MAGE_CLOTH;
+    public static final DeferredHolder<Item, ModItem> ADVANCED_CLOCKWORK;
 
     public static final DeferredHolder<Item, ModItem> FLAME_SOUL;
     public static final DeferredHolder<Item, ModItem> FROST_SOUL;
@@ -106,6 +107,7 @@ public class ModItems {
         // Regular Items
         MANA_DIAMOND        = ITEMS.register("mana_diamond",    () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), true));
         MAGE_CLOTH          = ITEMS.register("mage_cloth",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
+        ADVANCED_CLOCKWORK  = ITEMS.register("advanced_clockwork", () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
 
         FLAME_SOUL          = ITEMS.register("flame_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));
         FROST_SOUL          = ITEMS.register("frost_soul",      () -> new RegularItems(new Item.Properties().stacksTo(64).fireResistant(), false));

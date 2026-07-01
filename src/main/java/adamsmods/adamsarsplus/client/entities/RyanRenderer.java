@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 public class RyanRenderer extends MobRenderer<RyanEntity, RyanModel<RyanEntity>> {
     public RyanRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new RyanModel<>(pContext.bakeLayer(ModModelLayers.RYAN_LAYER)), 0.7f);
-
     }
 
     @Override

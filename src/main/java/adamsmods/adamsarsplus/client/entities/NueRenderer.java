@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 public class NueRenderer extends MobRenderer<NueEntity, NueModel<NueEntity>> {
     public NueRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new NueModel<>(pContext.bakeLayer(ModModelLayers.NUE_LAYER)), 0.7f);
-
     }
 
     @Override

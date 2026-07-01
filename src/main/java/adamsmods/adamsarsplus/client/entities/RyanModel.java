@@ -1,10 +1,6 @@
-package adamsmods.adamsarsplus.client.entities;// Made with Blockbench 4.11.2
-// Exported for Minecraft version 1.17 or later with Mojang mappings
-// Paste this class into your mod and generate all required imports
+package adamsmods.adamsarsplus.client.entities;
 
-
-import com.adamsmods.adamsarsplus.entities.animations.ModAnimationsDefinition;
-import com.adamsmods.adamsarsplus.entities.custom.RyanEntity;
+import adamsmods.adamsarsplus.common.entity.custom.RyanEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.HierarchicalModel;
@@ -13,8 +9,8 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RyanModel<T extends Entity> extends HierarchicalModel<T> {
@@ -101,7 +97,6 @@ public class RyanModel<T extends Entity> extends HierarchicalModel<T> {
 		this.animate(((RyanEntity) entity).attackAnimationState, ModAnimationsDefinition.RYAN_ATTACK, ageInTicks, 1f);
 		this.animate(((RyanEntity) entity).castAnimationState, ModAnimationsDefinition.RYAN_CAST, ageInTicks, 1f);
 		this.animate(((RyanEntity) entity).domainAnimationState, ModAnimationsDefinition.RYAN_DOMAIN, ageInTicks, 1f);
-
 	}
 
 	private void applyHeadRotation(float pNetHeadYaw, float pHeadPitch, float pAgeInTicks) {
@@ -112,10 +107,12 @@ public class RyanModel<T extends Entity> extends HierarchicalModel<T> {
 		this.head.xRot = pHeadPitch	 * ((float)Math.PI / 180F);
 	}
 
+	/*
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		waist.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
+	 */
 
 	@Override
 	public ModelPart root() {

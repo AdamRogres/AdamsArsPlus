@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 public class MattRenderer extends MobRenderer<MattEntity, MattModel<MattEntity>> {
     public MattRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new MattModel<>(pContext.bakeLayer(ModModelLayers.MATT_LAYER)), 0.9f);
-
     }
 
     @Override

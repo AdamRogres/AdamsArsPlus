@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.client.entities;
 
-import com.adamsmods.adamsarsplus.entities.BladeProjectile;
+import adamsmods.adamsarsplus.common.entity.BladeProjectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -11,10 +11,8 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class BladeModel extends HierarchicalModel<BladeProjectile> implements ArmedModel {
