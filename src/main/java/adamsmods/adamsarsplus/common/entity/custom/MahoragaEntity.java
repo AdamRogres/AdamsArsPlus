@@ -23,6 +23,7 @@ import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectBurst;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectExplosion;
 import com.hollingsworth.arsnouveau.common.spell.effect.EffectKnockback;
+import com.hollingsworth.arsnouveau.common.util.HolderHelper;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -74,10 +75,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static adamsmods.adamsarsplus.common.capability.TSrankCap.getTsTier;
 import static adamsmods.adamsarsplus.registry.ModPotions.*;
 import static java.lang.Math.PI;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.item.Items.NETHERITE_SWORD;
+import static net.minecraft.world.item.enchantment.Enchantments.SMITE;
 
 public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon {
     // Ten Shadows Reward
@@ -103,7 +106,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     public int regenCount = 0;
     public DamageType[] adaptedDamageTypes = {null, null, null, null, null, null, null, null};
     public int[] adaptedDamageStage = {0,0,0,0,0,0,0,0};
-    public MobEffect[] adaptedEffects = {null, null, null, null, null, null, null, null};
+    public MobEffectInstance[] adaptedEffects = {null, null, null, null, null, null, null, null};
     public boolean canRangedAttack = false;
     public boolean canSlashAttack = false;
     public boolean canDisrupt = false;
@@ -133,7 +136,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         super((EntityType) ModEntities.MAHORAGA.get(), level);
 
         ItemStack weapon = NETHERITE_SWORD.asItem().getDefaultInstance();
-        weapon.enchant(Enchantments.SMITE, 10);
+        weapon.enchant(HolderHelper.unwrap(level, Enchantments.SMITE), 10);
 
         this.owner = owner;
         this.setOwnerID(owner.getUUID());
@@ -156,7 +159,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         super((EntityType) ModEntities.MAHORAGA.get(), level);
 
         ItemStack weapon = NETHERITE_SWORD.asItem().getDefaultInstance();
-        weapon.enchant(Enchantments.SMITE, 10);
+        weapon.enchant(HolderHelper.unwrap(level, Enchantments.SMITE), 10);
 
         this.isSummon = summon;
         this.ritualStatus = false;
@@ -493,14 +496,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         if (!this.ritualStatus && !this.isSummon) {
             if (this.attackersList[0] instanceof Player player) {
-                AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
-                    if (pRank.getTsTier() >= 3) {
-                        pRank.setTsTier(Math.max(4, pRank.getTsTier()));
-                        PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
-                    } else {
-                        PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
-                    }
-                });
+                if (getTsTier(player).tsTier >= 3) {
+                    getTsTier(player).setTsTier(Math.max(4, getTsTier(player).tsTier));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                } else {
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
+                }
             }
         }
         // Ritual Failed
@@ -786,12 +787,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         for(int n = 0; n < 8; n++){
             for(int i = 0; i < entity.getActiveEffects().size(); i++){
-                if(entity.getActiveEffects().stream().toList().get(i).getEffect() == entity.adaptedEffects[n]){
-                    entity.removeEffect(entity.adaptedEffects[n]);
+                if(entity.getActiveEffects().stream().toList().get(i).getEffect().value() == entity.adaptedEffects[n].getEffect()){
+                    entity.removeEffect(entity.adaptedEffects[n].getEffect());
                     return true;
                 } else if(entity.adaptedEffects[n] == null && !entity.getActiveEffects().stream().toList().get(i).getEffect().value().isBeneficial()){
                     if(canAdaptCheck(entity)){
-                        entity.adaptedEffects[n] = entity.getActiveEffects().stream().toList().get(i).getEffect();
+                        entity.adaptedEffects[n] = entity.getActiveEffects().stream().toList().get(i);
                     }
                     return true;
                 }
@@ -954,8 +955,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -982,10 +983,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 entity.setAttackingA(false);
                 entity.attackAAnimationTimeout = 0;
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected void resetAttackCooldown() {
@@ -1108,8 +1105,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -1146,10 +1143,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 entity.attackBAAAnimationTimeout = 0;
                 entity.attackBABAnimationTimeout = 0;
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected void resetAttackCooldown() {
@@ -1268,8 +1261,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -1289,10 +1282,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 entity.setAttackingBBA(false);
                 entity.attackBBAAnimationTimeout = 0;
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected void resetAttackCooldown() {
@@ -1628,8 +1617,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -1641,7 +1630,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                     performAttack(pEnemy);
                     performSpellAttack(this.entity, slashSpell, pEnemy);
                 }
-            } else if(isEnemyWithinRangeDistance(pEnemy, pDistToEnemySqr) && rangeAttackTime > 100){
+            } else if(isEnemyWithinRangeDistance(pEnemy, entity) && rangeAttackTime > 100){
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -1662,12 +1651,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         }
 
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
-        }
-
-        private boolean isEnemyWithinRangeDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= 100;
+        private boolean isEnemyWithinRangeDistance(LivingEntity pEnemy, LivingEntity entity) {
+            return pEnemy.position().distanceToSqr(entity.position()) <= 100;
         }
 
         protected void resetAttackCooldown() {

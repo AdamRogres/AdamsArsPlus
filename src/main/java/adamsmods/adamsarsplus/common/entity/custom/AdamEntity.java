@@ -3,7 +3,6 @@ package adamsmods.adamsarsplus.common.entity.custom;
 
 import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
-import adamsmods.adamsarsplus.common.entity.ai.AdamDomainGoal;
 import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
@@ -12,8 +11,6 @@ import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import net.minecraft.core.BlockPos;
@@ -42,6 +39,7 @@ import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
@@ -145,6 +143,8 @@ public class AdamEntity extends Monster implements RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
+        this.setNoGravity(true);
+
         age++;
 
         if(attackABCooldown > 0) {
@@ -705,8 +705,8 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -715,7 +715,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if(this.mob.isWithinMeleeAttackRange(pEnemy)) {
                         performAttack(pEnemy);
                         if(!pEnemy.isBlocking()){
                             performSpellAttack(this.mob, AdamAttackSpell, AdamColor, pEnemy);
@@ -795,8 +795,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){
@@ -861,8 +860,8 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -871,7 +870,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         if(!pEnemy.isBlocking()){
                             performSpellAttack(this.mob, AdamAttackSpell, AdamColor, pEnemy);
@@ -953,7 +952,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){
@@ -1017,8 +1016,8 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -1027,7 +1026,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         if(!pEnemy.isBlocking()){
                             performSpellAttack(this.mob, AdamAttackSpell, AdamColor, pEnemy);
@@ -1109,7 +1108,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     AdamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){

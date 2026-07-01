@@ -53,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static adamsmods.adamsarsplus.common.capability.TSrankCap.getTsTier;
 import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 import static java.lang.Math.PI;
 
@@ -161,12 +162,6 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
             if(!this.isAttacking()){
                 this.attackTimer = 25;
             }
-            /*
-            if(this.getOwner() instanceof Player player){
-                PortUtil.sendMessage(player, Component.literal(String.valueOf(attackTimer)));
-                PortUtil.sendMessage(player, Component.literal(String.valueOf(this.isAttacking())));
-            }
-             */
         }
 
     }
@@ -231,9 +226,12 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         // Ritual Success
         if(!this.ritualStatus && !this.isSummon){
             if(this.attackersList[0] instanceof Player player){
-                AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
-                    pRank.setTsTier(Math.max(1, pRank.getTsTier()));
-                });
+                if (getTsTier(player).tsTier >= 0) {
+                    getTsTier(player).setTsTier(Math.max(1, getTsTier(player).tsTier));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                } else {
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
+                }
 
                 PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.nue_tamed"));
             }

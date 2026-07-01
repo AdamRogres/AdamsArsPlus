@@ -79,6 +79,7 @@ public class ArsNouveauRegistry {
         register(EffectBlueFlame.INSTANCE);
         register(EffectConjureBlade.INSTANCE);
         register(FilterNotSelf.INSTANCE);
+        register(EffectConjureArrow.INSTANCE);
 
         //Methods
         register(MethodDetonate.INSTANCE);

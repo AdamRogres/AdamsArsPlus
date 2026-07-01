@@ -427,8 +427,8 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -446,10 +446,6 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
                 entity.setBiting(false);
                 entity.biteAnimationTimeout = 0;
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected void resetAttackCooldown() {
@@ -528,8 +524,8 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                 performAttack(pEnemy);
                 entity.setLunging(false);
@@ -537,10 +533,6 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             } else {
                 resetAttackCooldown();
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
@@ -599,8 +591,8 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
@@ -608,10 +600,6 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
                     performAttack(pEnemy);
                 }
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {

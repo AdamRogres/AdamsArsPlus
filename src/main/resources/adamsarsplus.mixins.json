@@ -4,23 +4,16 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "adamsarsplus.refmap.json",
   "mixins": [
-    "ChillingPerkMixin",
-    "CutMixin",
-    "DynamicLightMixin",
-    "EvaporateMixin",
-    "FlareMixin",
-    "FoxInvoker",
-    "GrowMixin",
-    "ItemEntityMixin",
-    "KindlingPerkMixin",
-    "LightningMixin",
-    "RitualAwakeningMixin",
-    "ServerLevelMixin",
-    "ZombieInvoker"
+    "MixinBlockUtil",
+    "MixinEffectBlink",
+    "MixinEffectLeap",
+    "MixinEnderpearlItem",
+    "MixinEntity",
+    "MixinLivingEntity",
+    "MixinWarpScroll"
   ],
   "minVersion": "0.8",
   "client": [
-    "EntityRenderDispatcherMixin",
-    "SpellBookTextureMixin"
+
   ]
 }

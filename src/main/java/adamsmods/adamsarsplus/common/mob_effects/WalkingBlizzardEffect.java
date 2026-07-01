@@ -3,7 +3,6 @@ package adamsmods.adamsarsplus.common.mob_effects;
 import adamsmods.adamsarsplus.AdamsArsPlus;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,7 +17,6 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static adamsmods.adamsarsplus.registry.ModPotions.ERUPTION_EFFECT;
 import static adamsmods.adamsarsplus.registry.ModPotions.WALKING_BLIZZARD_EFFECT;
 
 @EventBusSubscriber(modid = AdamsArsPlus.MODID)

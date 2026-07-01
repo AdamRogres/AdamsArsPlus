@@ -10,7 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = AdamsArsPlus.MODID)
+//@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class DisruptionEffect extends MobEffect {
 
     public DisruptionEffect() {
@@ -26,8 +26,9 @@ public class DisruptionEffect extends MobEffect {
         return true;
     }
 
-    public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
-        return true;
+    public boolean shouldApplyEffectTickThisTick(int p_295629_, int p_295734_) {
+        int i = 5 >> p_295734_;
+        return i > 0 ? p_295629_ % i == 0 : true;
     }
 
     public List<ItemStack> getCurativeItems() {

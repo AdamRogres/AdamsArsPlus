@@ -1,14 +1,15 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
+import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
+import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAOE;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSensitive;
-import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSplit;
+import com.hollingsworth.arsnouveau.common.spell.augment.*;
 import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -247,13 +248,13 @@ public class JoshEntity extends Monster implements RangedAttackMob {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(BLOCKING, false);
-        this.entityData.define(CASTING, false);
-        this.entityData.define(NOT_CASTING, false);
-        this.entityData.define(CASTING_DOMAIN, false);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(BLOCKING, false);
+        pBuilder.define(CASTING, false);
+        pBuilder.define(NOT_CASTING, false);
+        pBuilder.define(CASTING_DOMAIN, false);
     }
 
     @Override
@@ -369,7 +370,7 @@ public class JoshEntity extends Monster implements RangedAttackMob {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @javax.annotation.Nullable SpawnGroupData pSpawnData, @javax.annotation.Nullable CompoundTag pDataTag) {
         this.populateDefaultEquipmentSlots(pLevel.getRandom(), pDifficulty);
-        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
@@ -488,9 +489,8 @@ public class JoshEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        @Override
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -499,8 +499,8 @@ public class JoshEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
-                        perforJoshack(pEnemy);
+                    if (this.canPerformAttack(pEnemy)) {
+                        performJoshAttack(pEnemy);
                         performSpellAttack(this.mob, JoshAttackSpell, JoshColor, pEnemy);
                     } else {
                         this.resetAttackLoopCooldown();
@@ -543,7 +543,7 @@ public class JoshEntity extends Monster implements RangedAttackMob {
             return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 8.0F);
         }
 
-        protected void perforJoshack(LivingEntity pEnemy) {
+        protected void performJoshAttack(LivingEntity pEnemy) {
             this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
@@ -575,8 +575,8 @@ public class JoshEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     JoshEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                double d0 = this.mob.getPerceivedTargetDistanceSquareForMeleeAttack($$0);
-                this.checkAndPerformAttack($$0, d0);
+
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){
@@ -758,7 +758,6 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -888,7 +887,6 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
-            projectileSpell.setColor(color);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 2.0f, 0.8f);
 
@@ -975,6 +973,192 @@ public class JoshEntity extends Monster implements RangedAttackMob {
                 this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
             }
 
+        }
+    }
+
+    public class JoshDomainGoal<T extends Mob & RangedAttackMob> extends Goal {
+        JoshEntity JoshEntity;
+
+        private final double speedModifier;
+        private final float attackRadiusSqr;
+        private int seeTime;
+        private boolean strafingClockwise;
+        private boolean strafingBackwards;
+        private int strafingTime = -1;
+        boolean hasAnimated;
+        int animatedTicks;
+        int delayTicks;
+        int animId;
+        boolean done;
+
+        Supplier<Boolean> canUse;
+
+        private int attackDelay = 10;
+        private int ticksUntilNextAttack = 10;
+        private int totalAnimation = 20;
+        private boolean shouldCountTillNextAttack = false;
+
+        public JoshDomainGoal(JoshEntity entity, double speed, float attackRange, Supplier<Boolean> canUse, int animId, int delayTicks) {
+            this.JoshEntity = entity;
+            this.speedModifier = speed;
+            this.canUse = canUse;
+            this.animId = animId;
+            this.delayTicks = delayTicks;
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.attackRadiusSqr = attackRange * attackRange;
+
+        }
+        private ParticleColor JoshColor = new ParticleColor(255, 150, 0);
+
+        public Spell JoshDomainSpell = new Spell()
+                .add(AugmentAccelerateThree.INSTANCE)
+                .add(EffectDomain.INSTANCE)
+                .add(AugmentExtendTimeThree.INSTANCE)
+                .add(AugmentAOEThree.INSTANCE, 3)
+                .add(AugmentExtract.INSTANCE)
+                .add(AugmentAccelerateThree.INSTANCE, 2)
+
+                .add(EffectSwapTarget.INSTANCE)
+                .add(EffectHeal.INSTANCE)
+
+                .withColor(JoshColor);
+
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
+
+            this.JoshEntity.domainCooldown = random.nextInt(2000) + 1000;
+        }
+
+        public boolean canUse() {
+            return (Boolean)this.canUse.get() && this.JoshEntity.getTarget() != null;
+        }
+
+        public boolean canContinueToUse() {
+            return (this.canUse() || !this.JoshEntity.getNavigation().isDone()) && !this.done;
+        }
+
+        public void start() {
+            super.start();
+            this.JoshEntity.setAggressive(true);
+            attackDelay = 10;
+            ticksUntilNextAttack = 10;
+
+            LivingEntity $$0 = this.JoshEntity.getTarget();
+            if ($$0 != null) {
+                Vec3 $$1 = $$0.getEyePosition();
+                this.JoshEntity.moveControl.setWantedPosition($$1.x + JoshEntity.this.random.nextInt(15) - 7, $$1.y + 3, $$1.z + JoshEntity.this.random.nextInt(15) - 7, (double)this.speedModifier);
+            }
+        }
+
+        public void stop() {
+            super.stop();
+            this.JoshEntity.setUsingDomain(false);
+            this.JoshEntity.setAggressive(false);
+            this.animatedTicks = 0;
+            this.done = false;
+            this.hasAnimated = false;
+        }
+
+        protected void resetAttackCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
+        }
+
+        protected void resetAttackLoopCooldown() {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
+        }
+
+        protected boolean isTimeToAttack() {
+            return this.ticksUntilNextAttack <= 0;
+        }
+
+        protected boolean isTimeToStartAttackAnimation() {
+            return this.ticksUntilNextAttack <= attackDelay;
+        }
+
+        public int getTicksUntilNextAttack() {
+            return this.ticksUntilNextAttack;
+        }
+
+        public void tick() {
+            LivingEntity livingentity = this.JoshEntity.getTarget();
+            if (livingentity != null) {
+                double d0 = this.JoshEntity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+                boolean canSeeEnemy = this.JoshEntity.getSensing().hasLineOfSight(livingentity);
+                if (canSeeEnemy != this.seeTime > 0) {
+                    this.seeTime = 0;
+                }
+
+                if (canSeeEnemy) {
+                    ++this.seeTime;
+                } else {
+                    --this.seeTime;
+                }
+
+                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                    this.JoshEntity.getNavigation().stop();
+                    ++this.strafingTime;
+                } else {
+                    this.JoshEntity.getNavigation().moveTo(livingentity, this.speedModifier);
+                    this.strafingTime = -1;
+                }
+
+                if (this.strafingTime >= 10) {
+                    if ((double)this.JoshEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingClockwise = !this.strafingClockwise;
+                    }
+
+                    if ((double)this.JoshEntity.getRandom().nextFloat() < 0.3) {
+                        this.strafingBackwards = !this.strafingBackwards;
+                    }
+
+                    this.strafingTime = 0;
+                }
+
+                if (this.strafingTime > -1) {
+                    if (d0 > (double)(this.attackRadiusSqr * 0.75F)) {
+                        this.strafingBackwards = false;
+                    } else if (d0 < (double)(this.attackRadiusSqr * 0.25F)) {
+                        this.strafingBackwards = true;
+                    }
+
+                    this.JoshEntity.getMoveControl().strafe(this.strafingBackwards ? -0.5F : 0.5F, this.strafingClockwise ? 0.5F : -0.5F);
+                    this.JoshEntity.lookAt(livingentity, 30.0F, 30.0F);
+                } else {
+                    this.JoshEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+                }
+
+                if (this.seeTime >= 20 && !this.hasAnimated) {
+                    this.hasAnimated = true;
+                }
+
+                if (this.hasAnimated) {
+                    shouldCountTillNextAttack = true;
+                    this.JoshEntity.getLookControl().setLookAt(livingentity);
+
+                    if(isTimeToStartAttackAnimation()) {
+                        JoshEntity.setUsingDomain(true);
+                    }
+
+                    if(isTimeToAttack()) {
+                        performDomainAttack(this.JoshEntity, JoshDomainSpell, JoshColor);
+                        this.done = true;
+                        resetAttackLoopCooldown();
+                    }
+
+                } else {
+                    resetAttackCooldown();
+                    shouldCountTillNextAttack = false;
+                    JoshEntity.setUsingDomain(false);
+                    JoshEntity.castDomainAnimationTimeout = 0;
+                }
+
+            }
+
+            if(shouldCountTillNextAttack){
+                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+            }
         }
     }
 }

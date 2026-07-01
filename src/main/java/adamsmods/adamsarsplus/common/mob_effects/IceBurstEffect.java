@@ -9,7 +9,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class IceBurstEffect extends MobEffect {
 
     public IceBurstEffect() {

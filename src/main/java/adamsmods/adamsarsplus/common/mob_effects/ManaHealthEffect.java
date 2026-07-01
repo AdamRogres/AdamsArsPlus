@@ -10,7 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = AdamsArsPlus.MODID)
+//@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class ManaHealthEffect extends MobEffect {
 
     public ManaHealthEffect() {
@@ -21,17 +21,14 @@ public class ManaHealthEffect extends MobEffect {
         return entity.getAbsorptionAmount() > 0.0F || entity.level().isClientSide;
     }
 
-    public boolean shouldApplyEffectTickThisTick(int p_295357_, int p_294523_) {
-        return true;
-    }
-
     public void onEffectStarted(LivingEntity entity, int amplifier) {
         super.onEffectStarted(entity, amplifier);
         entity.setAbsorptionAmount(Math.max(entity.getAbsorptionAmount(), (float)(2 * (amplifier))));
     }
 
-    public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
-        return true;
+    public boolean shouldApplyEffectTickThisTick(int p_295629_, int p_295734_) {
+        int i = 5 >> p_295734_;
+        return i > 0 ? p_295629_ % i == 0 : true;
     }
     
     public List<ItemStack> getCurativeItems() {

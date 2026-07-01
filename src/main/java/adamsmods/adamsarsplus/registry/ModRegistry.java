@@ -70,6 +70,7 @@ public class ModRegistry {
         A_ARMOR_UP              = RECIPES.register("a_armor_upgrade", () -> RecipeType.simple(prefix("a_armor_upgrade")));
         A_ARMOR_UP_SERIALIZER   = SERIALIZERS.register("a_armor_upgrade", AArmorRecipe.Serializer::new);
 
+
         PLUS_TAB = TABS.register("general", () -> CreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.adamsarsplus"))
                 .icon(() -> ModItems.DEBUG_ICON.get().getDefaultInstance())

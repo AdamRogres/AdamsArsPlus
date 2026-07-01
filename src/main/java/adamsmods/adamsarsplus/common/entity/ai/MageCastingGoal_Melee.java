@@ -1,6 +1,6 @@
 package adamsmods.adamsarsplus.common.entity.ai;
 
-import com.adamsmods.adamsarsplus.entities.custom.MysteriousMageEntity;
+import adamsmods.adamsarsplus.common.entity.custom.MysteriousMageEntity;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -56,17 +56,16 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
         return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
     }
 
-    void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
-        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+    void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
 
         resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
 
         this.mageEntity.castCooldown = 10 + random.nextInt(this.spellCooldown.get());
     }
 
-    @Override
-    protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-        if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+    protected void checkAndPerformAttack(LivingEntity pEnemy) {
+        if (this.canPerformAttack(pEnemy)) {
             shouldCountTillNextAttack = true;
 
             if(isTimeToStartAttackAnimation()) {
@@ -77,7 +76,7 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
                 this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                 performAttack(pEnemy);
                 if(!pEnemy.isBlocking()){
-                    performSpellAttack(this.mageEntity, mageSpell.get(), mageSpell.get().color, pEnemy);
+                    performSpellAttack(this.mageEntity, mageSpell.get(), pEnemy);
                 }
             }
         } else {
@@ -86,10 +85,6 @@ public class MageCastingGoal_Melee extends MeleeAttackGoal {
             mageEntity.setAttacking(false);
             mageEntity.attackAnimationTimeout = 0;
         }
-    }
-
-    private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-        return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
     }
 
     protected void resetAttackCooldown() {

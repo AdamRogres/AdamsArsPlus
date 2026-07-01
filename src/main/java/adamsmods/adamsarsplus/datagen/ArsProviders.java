@@ -7,7 +7,6 @@ import adamsmods.adamsarsplus.common.glyphs.method_glyph.*;
 import adamsmods.adamsarsplus.common.perk.*;
 import adamsmods.adamsarsplus.common.rituals.*;
 import adamsmods.adamsarsplus.recipe.AArmorRecipe;
-import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.registry.RitualRegistry;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.EnchantingApparatusRecipe;
 import com.hollingsworth.arsnouveau.common.crafting.recipes.GlyphRecipe;
@@ -40,9 +39,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
-import static adamsmods.adamsarsplus.AdamsArsPlus.prefix;
 import static adamsmods.adamsarsplus.registry.ModBlocks.*;
 import static adamsmods.adamsarsplus.registry.ModItems.*;
 import static com.hollingsworth.arsnouveau.setup.registry.BlockRegistry.BASIC_SPELL_TURRET;
@@ -106,24 +103,24 @@ public class ArsProviders {
 
             Path output = this.generator.getPackOutput().getOutputFolder();
 
-            recipes.add(get(AugmentAmplifyThree.INSTANCE).withItem(AugmentAmplifyTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentAmplifyTwo.INSTANCE).withItem(AugmentAmplify.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentDampenThree.INSTANCE).withItem(AugmentDampenTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentDampenTwo.INSTANCE).withItem(AugmentDampen.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentAmplifyThree.INSTANCE).withItem(AugmentAmplifyTwo.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentAmplifyTwo.INSTANCE).withItem(AugmentAmplify.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentDampenThree.INSTANCE).withItem(AugmentDampenTwo.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentDampenTwo.INSTANCE).withItem(AugmentDampen.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentAccelerateThree.INSTANCE).withItem(AugmentAccelerateTwo.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentAccelerateTwo.INSTANCE).withItem(AugmentAccelerate.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentAOEThree.INSTANCE).withItem(AugmentAOETwo.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentAOETwo.INSTANCE).withItem(AugmentAOE.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
             recipes.add(get(AugmentLesserAOE.INSTANCE).withItem(GUNPOWDER,2).withItem(QUARTZ));
-            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentDurationDownThree.INSTANCE).withItem(AugmentDurationDownTwo.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
-            recipes.add(get(AugmentDurationDownTwo.INSTANCE).withItem(AugmentDurationDown.INSTANCE.getGlyph().asItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentExtendTimeThree.INSTANCE).withItem(AugmentExtendTimeTwo.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentExtendTimeTwo.INSTANCE).withItem(AugmentExtendTime.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentDurationDownThree.INSTANCE).withItem(AugmentDurationDownTwo.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(TRUE_ELEMENTAL_SOUL.get()));
+            recipes.add(get(AugmentDurationDownTwo.INSTANCE).withItem(AugmentDurationDown.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
             recipes.add(get(AugmentOpenDomain.INSTANCE).withItem(VOID_SOUL.get(), 8).withItem(NETHER_STAR));
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND.get(), 8).withItem(NETHER_STAR));
             recipes.add(get(EffectDomain.INSTANCE).withItem(TRUE_ELEMENTAL_SOUL.get(),4).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
-            recipes.add(get(EffectSwapTarget.INSTANCE).withItem(EMERALD_BLOCK).withItem(EffectExchange.INSTANCE.getGlyph().asItem()).withItem(ENDER_EYE, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
-            recipes.add(get(FilterNotSelf.INSTANCE).withItem(MethodSelf.INSTANCE.getGlyph().asItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
+            recipes.add(get(EffectSwapTarget.INSTANCE).withItem(EMERALD_BLOCK).withItem(EffectExchange.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(ENDER_EYE, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
+            recipes.add(get(FilterNotSelf.INSTANCE).withItem(MethodSelf.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
             recipes.add(get(EffectSimpleDomain.INSTANCE).withItem(ELEMENTAL_SOUL.get(),4).withItem(MANA_DIAMOND.get(),4).withItem(ItemsRegistry.CONJURATION_ESSENCE));
 
             recipes.add(get(EffectEruption.INSTANCE).withItem(FLAME_SOUL.get(),3).withItem(ItemsRegistry.FIRE_ESSENCE,2).withItem(FLINT_AND_STEEL));
@@ -143,7 +140,7 @@ public class ArsProviders {
             recipes.add(get(EffectAnnihilate.INSTANCE).withItem(VOID_SOUL.get(),3).withItem(ItemsRegistry.ABJURATION_ESSENCE,1).withItem(END_CRYSTAL).withItem(DRAGON_HEAD));
 
             recipes.add(get(MethodDetonate.INSTANCE).withItem(FLAME_SOUL.get()).withItem(GUNPOWDER,2).withItem(ARROW, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
-            recipes.add(get(PropagateDetonate.INSTANCE).withItem(MethodDetonate.INSTANCE.getGlyph().asItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
+            recipes.add(get(PropagateDetonate.INSTANCE).withItem(MethodDetonate.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
 
             for (GlyphRecipe recipe : recipes) {
                 Path path = getScribeGlyphPath(output, recipe.output.getItem());
@@ -158,7 +155,7 @@ public class ArsProviders {
 
         @Override
         public String getName() {
-            return "Example Glyph Recipes";
+            return "Ars Plus Glyph Recipes";
         }
     }
 
@@ -314,29 +311,29 @@ public class ArsProviders {
         public void collectJsons(CachedOutput cache) {
             System.out.println("started Imbument>collect jsons");
 
-            recipes.add(new ImbuementRecipe("fire_SOUL.get()_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(FIRE_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(FLAME_SOUL.get()));
-            recipes.add(new ImbuementRecipe("fire_SOUL.get()_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(FIRE_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(FLAME_SOUL.get()));
-            recipes.add(new ImbuementRecipe("fire_SOUL.get()_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(FIRE_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(FLAME_SOUL.get()));
+            recipes.add(new ImbuementRecipe("fire_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(FIRE_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(FLAME_SOUL.get()));
+            recipes.add(new ImbuementRecipe("fire_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(FIRE_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(FLAME_SOUL.get()));
+            recipes.add(new ImbuementRecipe("fire_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(FIRE_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(FLAME_SOUL.get()));
 
-            recipes.add(new ImbuementRecipe("frost_SOUL.get()_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(FROST_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(FROST_SOUL.get()));
-            recipes.add(new ImbuementRecipe("frost_SOUL.get()_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(FROST_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(FROST_SOUL.get()));
-            recipes.add(new ImbuementRecipe("frost_SOUL.get()_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(FROST_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(FROST_SOUL.get()));
+            recipes.add(new ImbuementRecipe("frost_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(FROST_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(FROST_SOUL.get()));
+            recipes.add(new ImbuementRecipe("frost_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(FROST_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(FROST_SOUL.get()));
+            recipes.add(new ImbuementRecipe("frost_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(FROST_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(FROST_SOUL.get()));
 
-            recipes.add(new ImbuementRecipe("earth_SOUL.get()_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(EARTH_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(EARTH_SOUL.get()));
-            recipes.add(new ImbuementRecipe("earth_SOUL.get()_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(EARTH_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(EARTH_SOUL.get()));
-            recipes.add(new ImbuementRecipe("earth_SOUL.get()_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(EARTH_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(EARTH_SOUL.get()));
+            recipes.add(new ImbuementRecipe("earth_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(EARTH_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(EARTH_SOUL.get()));
+            recipes.add(new ImbuementRecipe("earth_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(EARTH_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(EARTH_SOUL.get()));
+            recipes.add(new ImbuementRecipe("earth_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(EARTH_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(EARTH_SOUL.get()));
 
-            recipes.add(new ImbuementRecipe("lightning_SOUL.get()_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(LIGHTNING_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(LIGHTNING_SOUL.get()));
-            recipes.add(new ImbuementRecipe("lightning_SOUL.get()_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(LIGHTNING_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(LIGHTNING_SOUL.get()));
-            recipes.add(new ImbuementRecipe("lightning_SOUL.get()_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(LIGHTNING_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(LIGHTNING_SOUL.get()));
+            recipes.add(new ImbuementRecipe("lightning_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(LIGHTNING_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(LIGHTNING_SOUL.get()));
+            recipes.add(new ImbuementRecipe("lightning_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(LIGHTNING_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(LIGHTNING_SOUL.get()));
+            recipes.add(new ImbuementRecipe("lightning_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(LIGHTNING_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(LIGHTNING_SOUL.get()));
 
-            recipes.add(new ImbuementRecipe("holy_SOUL.get()_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(HOLY_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(HERO_SOUL.get()));
-            recipes.add(new ImbuementRecipe("holy_SOUL.get()_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(HOLY_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(HERO_SOUL.get()));
-            recipes.add(new ImbuementRecipe("holy_SOUL.get()_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(HOLY_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(HERO_SOUL.get()));
+            recipes.add(new ImbuementRecipe("holy_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(HOLY_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(HERO_SOUL.get()));
+            recipes.add(new ImbuementRecipe("holy_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(HOLY_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(HERO_SOUL.get()));
+            recipes.add(new ImbuementRecipe("holy_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(HOLY_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(HERO_SOUL.get()));
 
-            recipes.add(new ImbuementRecipe("void_SOUL.get()_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(VOID_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(VOID_SOUL.get()));
-            recipes.add(new ImbuementRecipe("void_SOUL.get()_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(VOID_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(VOID_SOUL.get()));
-            recipes.add(new ImbuementRecipe("void_SOUL.get()_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(VOID_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(VOID_SOUL.get()));
+            recipes.add(new ImbuementRecipe("void_soul_brick_block", Ingredient.of(STONE_BRICKS), new ItemStack(VOID_SOUL_BRICK_BLOCK.get()), 50).withPedestalItem(VOID_SOUL.get()));
+            recipes.add(new ImbuementRecipe("void_soul_brick_slab", Ingredient.of(STONE_BRICK_SLAB), new ItemStack(VOID_SOUL_BRICK_SLAB.get()), 50).withPedestalItem(VOID_SOUL.get()));
+            recipes.add(new ImbuementRecipe("void_soul_brick_stair", Ingredient.of(STONE_BRICK_STAIRS), new ItemStack(VOID_SOUL_BRICK_STAIR.get()), 50).withPedestalItem(VOID_SOUL.get()));
         }
 
         protected Path getRecipePath(Path pathIn, String str) {

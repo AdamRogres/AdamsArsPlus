@@ -1,5 +1,6 @@
 package adamsmods.adamsarsplus;
 
+import adamsmods.adamsarsplus.network.AdamNetworking;
 import adamsmods.adamsarsplus.registry.AdamClientHandler;
 import adamsmods.adamsarsplus.registry.ModPotions;
 import adamsmods.adamsarsplus.registry.ModRegistry;
@@ -37,6 +38,7 @@ public class AdamsArsPlus {
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::loadComplete);
+        modEventBus.addListener(AdamNetworking::register);
 
         NeoForge.EVENT_BUS.register(ModPotions.class);
         if (FMLEnvironment.dist.isClient()) {

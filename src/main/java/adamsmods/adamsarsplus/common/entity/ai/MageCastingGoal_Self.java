@@ -1,13 +1,11 @@
 package adamsmods.adamsarsplus.common.entity.ai;
 
-import com.adamsmods.adamsarsplus.entities.custom.MysteriousMageEntity;
+import adamsmods.adamsarsplus.common.entity.custom.MysteriousMageEntity;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -56,15 +54,15 @@ public class MageCastingGoal_Self<T extends Mob & RangedAttackMob> extends Goal 
         this.mageSpell = mageSpell;
     }
 
-    public void performSpellSelf(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
-        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+    public void performSpellSelf(LivingEntity entity, Spell spell){
+        EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
 
         resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
     }
 
-    void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell){
+    void performCastAttack(LivingEntity entity, Spell spell){
         if(spell != null) {
-            performSpellSelf(entity,1.0F , spell, spell.color);
+            performSpellSelf(entity, spell);
         }
 
         System.out.println(this.spellCooldown.get());
@@ -161,11 +159,6 @@ public class MageCastingGoal_Self<T extends Mob & RangedAttackMob> extends Goal 
                 this.mageEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
             }
 
-            if (this.seeTime >= 10 && !this.hasAnimated) {
-                this.hasAnimated = true;
-                Networking.sendToNearby(this.mageEntity.level(), this.mageEntity, new PacketAnimEntity(this.mageEntity.getId(), this.animId));
-            }
-
             if (this.hasAnimated) {
                 shouldCountTillNextAttack = true;
 
@@ -174,7 +167,7 @@ public class MageCastingGoal_Self<T extends Mob & RangedAttackMob> extends Goal 
                 }
 
                 if(isTimeToAttack()) {
-                    performCastAttack(this.mageEntity, 1.0F, this.mageSpell.get());
+                    performCastAttack(this.mageEntity, this.mageSpell.get());
                     mageEntity.setSelfCasting(false);
                     this.done = true;
                 }

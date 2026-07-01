@@ -10,22 +10,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = AdamsArsPlus.MODID)
 public class HolyLegionEffect extends MobEffect {
 
     public HolyLegionEffect() {
         super(MobEffectCategory.BENEFICIAL, 16776960);
     }
-
-    public boolean applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
-
-        return true;
-    }
-
-    public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
-        return true;
-    }
-
 
     public List<ItemStack> getCurativeItems() {
         return new ArrayList<>();

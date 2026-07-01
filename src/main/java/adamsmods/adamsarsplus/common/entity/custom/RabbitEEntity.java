@@ -50,6 +50,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static adamsmods.adamsarsplus.common.capability.TSrankCap.getTsTier;
 import static adamsmods.adamsarsplus.registry.ModPotions.MANA_EXHAUST_EFFECT;
 import static adamsmods.adamsarsplus.registry.ModPotions.TENSHADOWS_EFFECT;
 
@@ -229,14 +230,12 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
 
         if (!this.ritualStatus && !this.isSummon && !this.isCopy) {
             if (this.attackersList[0] instanceof Player player) {
-                AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
-                    if (pRank.getTsTier() >= 1) {
-                        pRank.setTsTier(Math.max(2, pRank.getTsTier()));
-                        PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.rabbit_tamed"));
-                    } else {
-                        PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
-                    }
-                });
+                if (getTsTier(player).tsTier >= 1) {
+                    getTsTier(player).setTsTier(Math.max(2, getTsTier(player).tsTier));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                } else {
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
+                }
             }
         }
         // Ritual Failed
@@ -615,9 +614,8 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
             return (double) (4.0F + pAttackTarget.getBbWidth());
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            double d0 = this.getAttackReachSqr(pEnemy);
-            if (pDistToEnemySqr <= d0) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 this.mob.swing(InteractionHand.MAIN_HAND);
                 this.mob.doHurtTarget(pEnemy);
             }

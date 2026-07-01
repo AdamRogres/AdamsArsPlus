@@ -57,6 +57,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static adamsmods.adamsarsplus.common.capability.TSrankCap.getTsTier;
 import static adamsmods.adamsarsplus.registry.ModPotions.*;
 import static java.lang.Math.*;
 
@@ -208,14 +209,12 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
         if (!this.ritualStatus && !this.isSummon) {
             if (this.attackersList[0] instanceof Player player) {
-                AdamCapabilityRegistry.getTsTier(player).ifPresent((pRank) -> {
-                    if (pRank.getTsTier() >= 2) {
-                        pRank.setTsTier(Math.max(3, pRank.getTsTier()));
-                        PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.deer_tamed"));
-                    } else {
-                        PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
-                    }
-                });
+                if (getTsTier(player).tsTier >= 2) {
+                    getTsTier(player).setTsTier(Math.max(3, getTsTier(player).tsTier));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                } else {
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
+                }
             }
         }
         // Ritual Failed
@@ -505,8 +504,8 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {

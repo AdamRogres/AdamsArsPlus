@@ -23,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 
 import static adamsmods.adamsarsplus.datagen.AdamsItemTagsProvider.MAGE_RITUAL;
 import static adamsmods.adamsarsplus.registry.ModItems.*;
+import static com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry.MANIPULATION_ESSENCE;
 
 public class RitualMageSummon extends AbstractRitual {
     public static final String ID = "ritual_mage_summon";
@@ -236,6 +237,23 @@ public class RitualMageSummon extends AbstractRitual {
 
                 this.setFinished();
 
+                // Summon Josh
+            } else if (this.getProgress() >= 8 && isJoshSpawn()) {
+
+                if (this.getWorld() instanceof ServerLevel) {
+
+                    JoshEntity boss = new JoshEntity(this.getWorld());
+                    this.summon(boss, this.getPos().above());
+
+                    for (BlockPos b : BlockPos.betweenClosed(this.getPos().east(5).north(5).above(), this.getPos().west(5).south(5).above(5))) {
+                        if (net.neoforged.neoforge.event.EventHooks.canEntityGrief(this.getWorld(), boss) && SpellUtil.isCorrectHarvestLevel(4, this.getWorld().getBlockState(b))) {
+                            BlockUtil.destroyBlockSafelyWithoutSound(this.getWorld(), b, true);
+                        }
+                    }
+                }
+
+                this.setFinished();
+
             // Summon Adam
             } else if (this.getProgress() >= 8 && isAdamSpawn()) {
 
@@ -297,6 +315,10 @@ public class RitualMageSummon extends AbstractRitual {
 
     public boolean isMattSpawn() {
         return this.didConsumeItem(EYE_OF_HOLY.get());
+    }
+
+    public boolean isJoshSpawn() {
+        return this.didConsumeItem(MANIPULATION_ESSENCE.get());
     }
 
     public boolean isAdamSpawn() {

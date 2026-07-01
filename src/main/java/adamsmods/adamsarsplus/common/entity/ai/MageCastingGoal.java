@@ -1,16 +1,14 @@
 package adamsmods.adamsarsplus.common.entity.ai;
 
-import com.adamsmods.adamsarsplus.entities.custom.MysteriousMageEntity;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateThree;
-import com.adamsmods.adamsarsplus.glyphs.augment_glyph.AugmentAccelerateTwo;
+import adamsmods.adamsarsplus.common.entity.custom.MysteriousMageEntity;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentAccelerateThree;
+import adamsmods.adamsarsplus.common.glyphs.augment_glyph.AugmentAccelerateTwo;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSplit;
 import net.minecraft.world.entity.LivingEntity;
@@ -89,7 +87,7 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
 
     void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell){
         if(spell != null) {
-            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(spell.color));
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
 
             summonProjectiles(entity.level(), entity, spell, resolver);
         }
@@ -195,11 +193,6 @@ public class MageCastingGoal<T extends Mob & RangedAttackMob> extends Goal {
                 this.mageEntity.lookAt(livingentity, 30.0F, 30.0F);
             } else {
                 this.mageEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
-            }
-
-            if (this.seeTime >= 10 && !this.hasAnimated) {
-                this.hasAnimated = true;
-                Networking.sendToNearby(this.mageEntity.level(), this.mageEntity, new PacketAnimEntity(this.mageEntity.getId(), this.animId));
             }
 
             if (this.hasAnimated) {

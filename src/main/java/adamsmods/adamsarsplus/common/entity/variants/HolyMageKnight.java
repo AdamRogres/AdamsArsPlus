@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static adamsmods.adamsarsplus.ConfigHandler.Common.*;
 import static adamsmods.adamsarsplus.registry.ModEntities.*;
+import static adamsmods.adamsarsplus.registry.ModItems.MAGE_TOME;
 
 public class HolyMageKnight extends MageKnightEntity {
 
@@ -220,7 +221,7 @@ public class HolyMageKnight extends MageKnightEntity {
                     tomeSpell.add(MethodDetonate.INSTANCE, 1);
                 }
             }
-            ItemStack Tome = makeTome(tomeType, this.name, tomeSpell);
+            ItemStack Tome = makeTome(tomeType, tomeSpell, this.name);
 
             this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), Tome));
         }
@@ -246,14 +247,6 @@ public class HolyMageKnight extends MageKnightEntity {
         }
 
         entity.hurtMarked = true;
-    }
-
-    public static ItemStack makeTome(Item tome, String name, Spell spell) {
-        ItemStack stack = tome.getDefaultInstance();
-        ISpellCaster spellCaster = CasterUtil.getCaster(stack);
-        spellCaster.setSpell(spell);
-        stack.setHoverName(Component.literal(name).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true)));
-        return stack;
     }
 
     public boolean animCheckToBlock() {
@@ -309,7 +302,7 @@ public class HolyMageKnight extends MageKnightEntity {
            returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
-        returnSpell.color = SpellString.stringColor(color);
+        //returnSpell.color = SpellString.stringColor(color);
 
         this.mageSpell = returnSpell;
     }
@@ -325,14 +318,14 @@ public class HolyMageKnight extends MageKnightEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(BLOCKING, false);
-        this.entityData.define(IDLE_TO_BLOCK, false);
-        this.entityData.define(REFLECT, false);
-        this.entityData.define(COUNTER, false);
-        this.entityData.define(INDEX, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(BLOCKING, false);
+        pBuilder.define(IDLE_TO_BLOCK, false);
+        pBuilder.define(REFLECT, false);
+        pBuilder.define(COUNTER, false);
+        pBuilder.define(INDEX, 0);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {

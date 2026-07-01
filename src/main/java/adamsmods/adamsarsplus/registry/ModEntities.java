@@ -305,6 +305,7 @@ public class ModEntities {
             event.put(ModEntities.NICK_ENTITY.get(), NickEntity.createAttributes().build());
             event.put(ModEntities.CAM_ENTITY.get(), CamEntity.createAttributes().build());
             event.put(ModEntities.MATT_ENTITY.get(), MattEntity.createAttributes().build());
+            event.put(ModEntities.JOSH_ENTITY.get(), JoshEntity.createAttributes().build());
             event.put(ModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().build());
 
             event.put(ModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());

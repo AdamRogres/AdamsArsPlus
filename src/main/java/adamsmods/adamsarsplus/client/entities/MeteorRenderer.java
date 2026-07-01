@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
 public class MeteorRenderer extends EntityRenderer<MeteorProjectile> {
-    private static final ResourceLocation TEXTURE_LOCATION = AdamsArsPlus.prefix("adamsarsplus:textures/entity/meteor.png");
+    private static final ResourceLocation TEXTURE_LOCATION = AdamsArsPlus.prefix("textures/entity/meteor.png");
     private static final RenderType RENDER_TYPE;
 
     public MeteorRenderer(EntityRendererProvider.Context pContext) { super(pContext); }

@@ -438,8 +438,8 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
                 if(this.attackType == 0){
                     this.attackType = this.entity.getRandom().nextInt(1, 3);
@@ -471,10 +471,6 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
                 entity.setAttackingC(false);
                 entity.attackCAnimationTimeout = 0;
             }
-        }
-
-        private boolean isEnemyWithinAttackDistance(LivingEntity pEnemy, double pDistToEnemySqr) {
-            return pDistToEnemySqr <= this.getAttackReachSqr(pEnemy);
         }
 
         protected void resetAttackCooldown() {

@@ -402,8 +402,8 @@ public class RyanEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -412,7 +412,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinTrueAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         performSpellAttack(this.mob, 1.0F, ryanAttackSpell, ryanColor, pEnemy);
                     } else {
@@ -497,7 +497,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     RyanEntity.this.moveControl.setWantedPosition($$2.x, $$2.y, $$2.z, (double)1.0F);
                 }
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){

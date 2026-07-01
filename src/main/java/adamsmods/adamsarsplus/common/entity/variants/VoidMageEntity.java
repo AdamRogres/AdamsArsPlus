@@ -1,9 +1,5 @@
 package adamsmods.adamsarsplus.common.entity.variants;
 
-import adamsmods.adamsarsplus.common.entity.ai.MageCastingGoal;
-import adamsmods.adamsarsplus.common.entity.ai.MageCastingGoal_Det;
-import adamsmods.adamsarsplus.common.entity.ai.MageCastingGoal_Melee;
-import adamsmods.adamsarsplus.common.entity.ai.MageCastingGoal_Self;
 import adamsmods.adamsarsplus.common.entity.custom.MysteriousMageEntity;
 import adamsmods.adamsarsplus.datagen.CommunityMages;
 import adamsmods.adamsarsplus.util.SpellString;
@@ -193,7 +189,7 @@ public class VoidMageEntity extends MysteriousMageEntity implements RangedAttack
             returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
-        returnSpell.color = SpellString.stringColor(color);
+        //returnSpell.color = SpellString.stringColor(color);
 
         this.mageSpell = returnSpell;
     }
@@ -209,12 +205,12 @@ public class VoidMageEntity extends MysteriousMageEntity implements RangedAttack
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CASTING, false);
-        this.entityData.define(SELF_CASTING, false);
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(INDEX, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(CASTING, false);
+        pBuilder.define(SELF_CASTING, false);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(INDEX, 0);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {

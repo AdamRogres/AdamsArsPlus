@@ -496,8 +496,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -506,7 +506,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinTrueAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         performSpellAttack(this.mob, CamAttackSpell, CamColor, pEnemy);
 
@@ -594,7 +594,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     CamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){
@@ -651,8 +651,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -661,7 +661,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinTrueAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         performSpellAttack(this.mob, camAttackABSpell, CamColor, pEnemy);
                     } else {
@@ -747,7 +747,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     CamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
 
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){
@@ -817,8 +817,8 @@ public class CamEntity extends Monster implements RangedAttackMob {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -827,7 +827,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
                 if(isTimeToAttack()) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-                    if(isEnemyWithinTrueAttackDistance(pEnemy, pDistToEnemySqr)) {
+                    if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
 
                     } else {
@@ -922,7 +922,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
                     Vec3 $$2 = $$0.getEyePosition();
                     CamEntity.this.moveControl.setWantedPosition($$2.x, $$2.y - 1, $$2.z, speedModifier);
                 }
-                this.checkAndPerformAttack($$0, $$1);
+                this.checkAndPerformAttack($$0);
             }
 
             if(shouldCountTillNextAttack){

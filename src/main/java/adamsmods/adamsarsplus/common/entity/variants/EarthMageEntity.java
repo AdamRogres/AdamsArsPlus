@@ -171,7 +171,7 @@ public class EarthMageEntity extends MysteriousMageEntity implements RangedAttac
             returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
-        returnSpell.color = SpellString.stringColor(color);
+        //returnSpell.color = SpellString.stringColor(color);
 
         this.mageSpell = returnSpell;
     }
@@ -187,12 +187,12 @@ public class EarthMageEntity extends MysteriousMageEntity implements RangedAttac
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(CASTING, false);
-        this.entityData.define(SELF_CASTING, false);
-        this.entityData.define(ATTACKING, false);
-        this.entityData.define(INDEX, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(CASTING, false);
+        pBuilder.define(SELF_CASTING, false);
+        pBuilder.define(ATTACKING, false);
+        pBuilder.define(INDEX, 0);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {

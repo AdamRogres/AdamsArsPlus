@@ -4,6 +4,8 @@ import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.glyphs.method_glyph.MethodDetonate;
 import adamsmods.adamsarsplus.datagen.CommunityMages;
 import adamsmods.adamsarsplus.util.SpellString;
+import com.hollingsworth.arsnouveau.api.registry.SpellCasterRegistry;
+import com.hollingsworth.arsnouveau.api.spell.AbstractCaster;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -15,6 +17,7 @@ import com.hollingsworth.arsnouveau.common.spell.method.MethodSelf;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -267,7 +270,7 @@ public class MageKnightEntity extends Monster {
                     tomeSpell.add(MethodDetonate.INSTANCE, 1);
                 }
             }
-            ItemStack Tome = makeTome(tomeType, this.name, tomeSpell);
+            ItemStack Tome = makeTome(tomeType, tomeSpell, this.name);
 
             this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), Tome));
         }
@@ -295,11 +298,11 @@ public class MageKnightEntity extends Monster {
         entity.hurtMarked = true;
     }
 
-    public static ItemStack makeTome(Item tome, String name, Spell spell) {
+    public static ItemStack makeTome(Item tome, Spell spell, String flavorText) {
         ItemStack stack = tome.getDefaultInstance();
-        ISpellCaster spellCaster = CasterUtil.getCaster(stack);
-        spellCaster.setSpell(spell);
-        stack.setHoverName(Component.literal(name).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true)));
+        AbstractCaster<?> spellCaster = SpellCasterRegistry.from(stack);
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(spell.name()).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true)));
+        spellCaster.setSpell(spell).setFlavorText(flavorText).saveToStack(stack);
         return stack;
     }
 
@@ -356,7 +359,7 @@ public class MageKnightEntity extends Monster {
            returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
-        returnSpell.color = SpellString.stringColor(color);
+        //returnSpell.color = SpellString.stringColor(color);
 
         this.mageSpell = returnSpell;
     }
@@ -574,17 +577,16 @@ public class MageKnightEntity extends Monster {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
-            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+        void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
 
             this.mageEntity.castCooldown = 10 + random.nextInt(this.spellCooldown.get());
         }
 
-        @Override
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.canPerformAttack(pEnemy)) {
                 shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
@@ -596,7 +598,7 @@ public class MageKnightEntity extends Monster {
                     this.performAttack(pEnemy);
                     if(!pEnemy.isBlocking() && this.mageEntity.castCooldown <= 0){
                         pEnemy.invulnerableTime = 0;
-                        performSpellAttack(this.mageEntity, mageSpell.get(), mageSpell.get().color, pEnemy);
+                        performSpellAttack(this.mageEntity, mageSpell.get(), pEnemy);
                     }
                 }
             } else {
@@ -717,7 +719,7 @@ public class MageKnightEntity extends Monster {
                         projectile.setOwner(this.mageEntity);
                     }
                     if(entity instanceof EntityProjectileSpell spell){
-                        spell.spellResolver.spellContext.setCaster(this.mageEntity);
+                        spell.setOwner(this.mageEntity);
                     }
 
                     this.mageEntity.reflectTimer = 10;
@@ -736,8 +738,8 @@ public class MageKnightEntity extends Monster {
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
-        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
-            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+        void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
 
             if(Objects.equals(this.mageEntity.type, "self")){
                 resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
@@ -777,8 +779,8 @@ public class MageKnightEntity extends Monster {
 
                     if(!pEnemy.isBlocking() && this.mageEntity.castCooldown <= 0){
                         pEnemy.invulnerableTime = 0;
-                        if(mageSpell.get() != null && mageSpell.get().color != null){
-                            performSpellAttack(this.mageEntity, mageSpell.get(), mageSpell.get().color, pEnemy);
+                        if(mageSpell.get() != null){
+                            performSpellAttack(this.mageEntity, mageSpell.get(), pEnemy);
                         }
                     }
                 }

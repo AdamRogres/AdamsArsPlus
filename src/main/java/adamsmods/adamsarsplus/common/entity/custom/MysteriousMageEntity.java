@@ -10,10 +10,7 @@ import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
-import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
-import com.hollingsworth.arsnouveau.common.network.Networking;
-import com.hollingsworth.arsnouveau.common.network.PacketAnimEntity;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAccelerate;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentSplit;
 import net.minecraft.nbt.CompoundTag;
@@ -50,7 +47,6 @@ import java.util.function.Supplier;
 import static adamsmods.adamsarsplus.ConfigHandler.Common.COM_MAGES;
 import static adamsmods.adamsarsplus.ConfigHandler.Common.MAGES_GRIEF;
 import static adamsmods.adamsarsplus.registry.ModEntities.MAGE_ENTITY;
-import static com.hollingsworth.arsnouveau.client.particle.ParticleColor.random;
 
 public class MysteriousMageEntity extends Monster implements RangedAttackMob {
 
