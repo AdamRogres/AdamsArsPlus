@@ -1,0 +1,28 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 160,
+  "inputs": [
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "ars_nouveau:conjuration_essence"
+    },
+    {
+      "item": "minecraft:diamond_sword"
+    },
+    {
+      "item": "minecraft:diamond_axe"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effectconjureblade"
+  }
+}

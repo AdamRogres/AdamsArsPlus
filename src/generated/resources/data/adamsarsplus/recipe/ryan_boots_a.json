@@ -1,0 +1,38 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 4,
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "minecraft:netherite_ingot"
+    },
+    {
+      "item": "minecraft:netherite_ingot"
+    },
+    {
+      "item": "minecraft:netherite_ingot"
+    },
+    {
+      "item": "minecraft:netherite_ingot"
+    }
+  ],
+  "reagent": {
+    "item": "adamsarsplus:ryan_boots"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:ryan_boots_a"
+  },
+  "sourceCost": 8500
+}

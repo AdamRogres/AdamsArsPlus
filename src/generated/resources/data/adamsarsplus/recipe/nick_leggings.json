@@ -1,0 +1,37 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    }
+  ],
+  "reagent": {
+    "tag": "ars_nouveau:legs"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:nick_leggings"
+  },
+  "sourceCost": 7000
+}

@@ -1,0 +1,16 @@
+{
+  "type": "ars_nouveau:imbuement",
+  "input": {
+    "item": "minecraft:stone_brick_stairs"
+  },
+  "output": {
+    "count": 1,
+    "id": "adamsarsplus:earth_soul_brick_stair"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:earth_soul"
+    }
+  ],
+  "source": 50
+}

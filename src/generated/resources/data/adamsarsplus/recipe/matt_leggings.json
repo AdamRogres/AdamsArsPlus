@@ -1,0 +1,39 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 4,
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:hero_soul"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    }
+  ],
+  "reagent": {
+    "tag": "adamsarsplus:legs_a"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:matt_leggings"
+  },
+  "sourceCost": 8000,
+  "tier": 4
+}

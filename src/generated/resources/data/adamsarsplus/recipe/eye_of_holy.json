@@ -1,0 +1,20 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:conjuration_essence"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    }
+  ],
+  "reagent": {
+    "item": "minecraft:ender_eye"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:eye_of_holy"
+  },
+  "sourceCost": 500
+}

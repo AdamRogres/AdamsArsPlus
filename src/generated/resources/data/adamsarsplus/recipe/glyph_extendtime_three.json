@@ -1,0 +1,28 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 160,
+  "inputs": [
+    {
+      "item": "ars_nouveau:glyph_extendtime_two"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:true_elemental_soul"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_extendtime_three"
+  }
+}

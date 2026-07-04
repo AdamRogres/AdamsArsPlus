@@ -1,0 +1,6 @@
+// 1.21.1	2026-06-30T23:05:49.2161658	ArsPlus Block Tags
+19696ef1a503e862e096e23af2acc41909ee98e9 data/adamsarsplus/tags/block/break_a.json
+a088366145f3f30f54c41121c64505f68c50fbcf data/adamsarsplus/tags/block/break_b.json
+971161c836ac8a6cf969f1f7fadc487dc5309b55 data/ars_nouveau/tags/block/break_blacklist.json
+950f8927b15b73b04cd606d199e9b09a6e363342 data/minecraft/tags/block/mineable/pickaxe.json
+2e81ccf3e728d1f545b886bea7406c7162fe73ad data/minecraft/tags/block/needs_diamond_tool.json

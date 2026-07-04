@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:earth_essence"
+    }
+  ],
+  "reagent": {
+    "item": "minecraft:ender_eye"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:eye_of_earth"
+  },
+  "sourceCost": 500
+}

@@ -1,0 +1,37 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "adamsarsplus:frost_soul"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    }
+  ],
+  "reagent": {
+    "tag": "ars_nouveau:robe"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:cade_robes"
+  },
+  "sourceCost": 7000
+}

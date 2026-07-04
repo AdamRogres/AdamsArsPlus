@@ -1,0 +1,8 @@
+// 1.21.1	2026-06-30T23:05:49.2105881	Tags for minecraft:entity_type mod id adamsarsplus
+45f880a89476bd350005095673dabbbee13ff9ad data/adamsarsplus/tags/entity_type/domain_blacklist.json
+08446631ea9bea5acd1a62afe07fb04e18453a03 data/ars_nouveau/tags/entity_type/an_hostile.json
+9c7f4f2312dcab88f4e5fe26b2293d8d3c744a3e data/ars_nouveau/tags/entity_type/disintegration_blacklist.json
+9c7f4f2312dcab88f4e5fe26b2293d8d3c744a3e data/ars_nouveau/tags/entity_type/jar_blacklist.json
+8b8ca9dacc4d87df99e8229826e5673e5ba349dc data/ars_nouveau/tags/entity_type/lingering_blacklist.json
+63be145a9860369fb1592176aaa41e446e29ec67 data/ars_nouveau/tags/entity_type/magic_find.json
+9c7f4f2312dcab88f4e5fe26b2293d8d3c744a3e data/c/tags/entity_type/bosses.json

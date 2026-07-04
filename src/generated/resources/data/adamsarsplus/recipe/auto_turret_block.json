@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:basic_spell_turret"
+    }
+  ],
+  "reagent": {
+    "item": "adamsarsplus:advanced_clockwork"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:auto_turret_block"
+  },
+  "sourceCost": 500
+}

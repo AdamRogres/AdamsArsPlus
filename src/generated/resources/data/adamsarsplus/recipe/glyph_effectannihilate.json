@@ -1,0 +1,28 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 160,
+  "inputs": [
+    {
+      "item": "adamsarsplus:void_soul"
+    },
+    {
+      "item": "adamsarsplus:void_soul"
+    },
+    {
+      "item": "adamsarsplus:void_soul"
+    },
+    {
+      "item": "ars_nouveau:abjuration_essence"
+    },
+    {
+      "item": "minecraft:end_crystal"
+    },
+    {
+      "item": "minecraft:dragon_head"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effectannihilate"
+  }
+}

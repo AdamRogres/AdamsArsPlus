@@ -1,0 +1,28 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 55,
+  "inputs": [
+    {
+      "item": "adamsarsplus:flame_soul"
+    },
+    {
+      "item": "adamsarsplus:flame_soul"
+    },
+    {
+      "item": "adamsarsplus:flame_soul"
+    },
+    {
+      "item": "ars_nouveau:fire_essence"
+    },
+    {
+      "item": "ars_nouveau:fire_essence"
+    },
+    {
+      "item": "minecraft:flint_and_steel"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effecteruption"
+  }
+}

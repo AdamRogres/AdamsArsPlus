@@ -1,0 +1,37 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 55,
+  "inputs": [
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "ars_nouveau:conjuration_essence"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effectsimpledomain"
+  }
+}

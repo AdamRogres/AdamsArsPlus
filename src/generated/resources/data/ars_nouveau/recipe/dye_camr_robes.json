@@ -1,0 +1,16 @@
+{
+  "type": "ars_nouveau:dye",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:dyes"
+    },
+    {
+      "item": "adamsarsplus:camr_robes"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:camr_robes"
+  }
+}

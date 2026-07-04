@@ -1,0 +1,16 @@
+{
+  "type": "ars_nouveau:imbuement",
+  "input": {
+    "item": "minecraft:stone_bricks"
+  },
+  "output": {
+    "count": 1,
+    "id": "adamsarsplus:frost_soul_brick_block"
+  },
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:frost_soul"
+    }
+  ],
+  "source": 50
+}

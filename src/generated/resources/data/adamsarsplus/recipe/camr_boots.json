@@ -1,0 +1,39 @@
+{
+  "type": "adamsarsplus:a_armor_upgrade",
+  "outTier": 4,
+  "pedestalItems": [
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    }
+  ],
+  "reagent": {
+    "tag": "adamsarsplus:boot_a"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:camr_boots"
+  },
+  "sourceCost": 8000,
+  "tier": 4
+}

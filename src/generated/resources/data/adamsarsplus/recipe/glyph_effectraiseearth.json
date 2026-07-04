@@ -1,0 +1,28 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 55,
+  "inputs": [
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "adamsarsplus:earth_soul"
+    },
+    {
+      "item": "ars_nouveau:earth_essence"
+    },
+    {
+      "item": "ars_nouveau:earth_essence"
+    },
+    {
+      "item": "minecraft:anvil"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effectraiseearth"
+  }
+}

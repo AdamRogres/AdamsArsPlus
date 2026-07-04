@@ -1,0 +1,28 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 160,
+  "inputs": [
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "adamsarsplus:lightning_soul"
+    },
+    {
+      "item": "minecraft:shears"
+    },
+    {
+      "item": "ars_nouveau:split_arrow"
+    },
+    {
+      "item": "minecraft:netherite_sword"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effectdismantle"
+  }
+}

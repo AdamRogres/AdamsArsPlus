@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ars_nouveau:blue_archwood_log"
+    },
+    {
+      "item": "adamsarsplus:mage_cloth"
+    },
+    {
+      "item": "adamsarsplus:mage_cloth"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:ritual_mage_summon"
+  }
+}

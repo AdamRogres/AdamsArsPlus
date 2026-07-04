@@ -1,0 +1,38 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "minecraft:repeater"
+    },
+    {
+      "item": "adamsarsplus:mana_diamond"
+    },
+    {
+      "item": "adamsarsplus:advanced_clockwork"
+    },
+    {
+      "item": "adamsarsplus:advanced_clockwork"
+    }
+  ],
+  "reagent": {
+    "item": "minecraft:clock"
+  },
+  "result": {
+    "count": 1,
+    "id": "adamsarsplus:enchanters_stopwatch"
+  },
+  "sourceCost": 7000
+}

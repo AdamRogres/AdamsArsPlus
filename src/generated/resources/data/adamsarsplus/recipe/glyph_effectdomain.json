@@ -1,0 +1,37 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 160,
+  "inputs": [
+    {
+      "item": "adamsarsplus:true_elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:true_elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:true_elemental_soul"
+    },
+    {
+      "item": "adamsarsplus:true_elemental_soul"
+    },
+    {
+      "item": "minecraft:nether_star"
+    },
+    {
+      "item": "minecraft:dragon_breath"
+    },
+    {
+      "item": "minecraft:dragon_breath"
+    },
+    {
+      "item": "minecraft:dragon_breath"
+    },
+    {
+      "item": "minecraft:dragon_breath"
+    }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_nouveau:glyph_effectdomain"
+  }
+}
