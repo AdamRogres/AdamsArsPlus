@@ -132,65 +132,65 @@ public class ModItems {
         EYE_OF_VOID         = ITEMS.register("eye_of_void", () -> new EyeOfVoid(new Item.Properties().stacksTo(64)));
 
         // Armor Sets
-        CADE_BOOTS          = ITEMS.register("cade_boots",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS));
-        CADE_LEGGINGS       = ITEMS.register("cade_leggings",   () -> MageMagicArmor.cade(ArmorItem.Type.LEGGINGS));
-        CADE_ROBES          = ITEMS.register("cade_robes",      () -> MageMagicArmor.cade(ArmorItem.Type.CHESTPLATE));
-        CADE_HOOD           = ITEMS.register("cade_hood",       () -> MageMagicArmor.cade(ArmorItem.Type.HELMET));
+        CADE_BOOTS          = ITEMS.register("cade_boots",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS, false));
+        CADE_LEGGINGS       = ITEMS.register("cade_leggings",   () -> MageMagicArmor.cade(ArmorItem.Type.LEGGINGS, false));
+        CADE_ROBES          = ITEMS.register("cade_robes",      () -> MageMagicArmor.cade(ArmorItem.Type.CHESTPLATE, false));
+        CADE_HOOD           = ITEMS.register("cade_hood",       () -> MageMagicArmor.cade(ArmorItem.Type.HELMET, false));
 
-        CADE_BOOTS_A        = ITEMS.register("cade_boots_a",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS));
-        CADE_LEGGINGS_A     = ITEMS.register("cade_leggings_a",   () -> MageMagicArmor.cade(ArmorItem.Type.LEGGINGS));
-        CADE_ROBES_A        = ITEMS.register("cade_robes_a",      () -> MageMagicArmor.cade(ArmorItem.Type.CHESTPLATE));
-        CADE_HOOD_A         = ITEMS.register("cade_hood_a",       () -> MageMagicArmor.cade(ArmorItem.Type.HELMET));
+        CADE_BOOTS_A        = ITEMS.register("cade_boots_a",      () -> MageMagicArmor.cade(ArmorItem.Type.BOOTS, true));
+        CADE_LEGGINGS_A     = ITEMS.register("cade_leggings_a",   () -> MageMagicArmor.cade(ArmorItem.Type.LEGGINGS, true));
+        CADE_ROBES_A        = ITEMS.register("cade_robes_a",      () -> MageMagicArmor.cade(ArmorItem.Type.CHESTPLATE, true));
+        CADE_HOOD_A         = ITEMS.register("cade_hood_a",       () -> MageMagicArmor.cade(ArmorItem.Type.HELMET, true));
 
-        RYAN_BOOTS          = ITEMS.register("ryan_boots",      () -> MageMagicArmor.ryan(ArmorItem.Type.BOOTS));
-        RYAN_LEGGINGS       = ITEMS.register("ryan_leggings",   () -> MageMagicArmor.ryan(ArmorItem.Type.LEGGINGS));
-        RYAN_ROBES          = ITEMS.register("ryan_robes",      () -> MageMagicArmor.ryan(ArmorItem.Type.CHESTPLATE));
-        RYAN_HOOD           = ITEMS.register("ryan_hood",       () -> MageMagicArmor.ryan(ArmorItem.Type.HELMET));
+        RYAN_BOOTS          = ITEMS.register("ryan_boots",      () -> MageMagicArmor.ryan(ArmorItem.Type.BOOTS, false));
+        RYAN_LEGGINGS       = ITEMS.register("ryan_leggings",   () -> MageMagicArmor.ryan(ArmorItem.Type.LEGGINGS, false));
+        RYAN_ROBES          = ITEMS.register("ryan_robes",      () -> MageMagicArmor.ryan(ArmorItem.Type.CHESTPLATE, false));
+        RYAN_HOOD           = ITEMS.register("ryan_hood",       () -> MageMagicArmor.ryan(ArmorItem.Type.HELMET, false));
 
-        RYAN_BOOTS_A        = ITEMS.register("ryan_boots_a",      () -> MageMagicArmor.ryan(ArmorItem.Type.BOOTS));
-        RYAN_LEGGINGS_A     = ITEMS.register("ryan_leggings_a",   () -> MageMagicArmor.ryan(ArmorItem.Type.LEGGINGS));
-        RYAN_ROBES_A        = ITEMS.register("ryan_robes_a",      () -> MageMagicArmor.ryan(ArmorItem.Type.CHESTPLATE));
-        RYAN_HOOD_A         = ITEMS.register("ryan_hood_a",       () -> MageMagicArmor.ryan(ArmorItem.Type.HELMET));
+        RYAN_BOOTS_A        = ITEMS.register("ryan_boots_a",      () -> MageMagicArmor.ryan(ArmorItem.Type.BOOTS, true));
+        RYAN_LEGGINGS_A     = ITEMS.register("ryan_leggings_a",   () -> MageMagicArmor.ryan(ArmorItem.Type.LEGGINGS, true));
+        RYAN_ROBES_A        = ITEMS.register("ryan_robes_a",      () -> MageMagicArmor.ryan(ArmorItem.Type.CHESTPLATE, true));
+        RYAN_HOOD_A         = ITEMS.register("ryan_hood_a",       () -> MageMagicArmor.ryan(ArmorItem.Type.HELMET, true));
 
-        NICK_BOOTS          = ITEMS.register("nick_boots",      () -> MageMagicArmor.nick(ArmorItem.Type.BOOTS));
-        NICK_LEGGINGS       = ITEMS.register("nick_leggings",   () -> MageMagicArmor.nick(ArmorItem.Type.LEGGINGS));
-        NICK_ROBES          = ITEMS.register("nick_robes",      () -> MageMagicArmor.nick(ArmorItem.Type.CHESTPLATE));
-        NICK_HOOD           = ITEMS.register("nick_hood",       () -> MageMagicArmor.nick(ArmorItem.Type.HELMET));
+        NICK_BOOTS          = ITEMS.register("nick_boots",      () -> MageMagicArmor.nick(ArmorItem.Type.BOOTS, false));
+        NICK_LEGGINGS       = ITEMS.register("nick_leggings",   () -> MageMagicArmor.nick(ArmorItem.Type.LEGGINGS, false));
+        NICK_ROBES          = ITEMS.register("nick_robes",      () -> MageMagicArmor.nick(ArmorItem.Type.CHESTPLATE, false));
+        NICK_HOOD           = ITEMS.register("nick_hood",       () -> MageMagicArmor.nick(ArmorItem.Type.HELMET, false));
 
-        NICK_BOOTS_A        = ITEMS.register("nick_boots_a",      () -> MageMagicArmor.nick(ArmorItem.Type.BOOTS));
-        NICK_LEGGINGS_A     = ITEMS.register("nick_leggings_a",   () -> MageMagicArmor.nick(ArmorItem.Type.LEGGINGS));
-        NICK_ROBES_A        = ITEMS.register("nick_robes_a",      () -> MageMagicArmor.nick(ArmorItem.Type.CHESTPLATE));
-        NICK_HOOD_A         = ITEMS.register("nick_hood_a",       () -> MageMagicArmor.nick(ArmorItem.Type.HELMET));
+        NICK_BOOTS_A        = ITEMS.register("nick_boots_a",      () -> MageMagicArmor.nick(ArmorItem.Type.BOOTS, true));
+        NICK_LEGGINGS_A     = ITEMS.register("nick_leggings_a",   () -> MageMagicArmor.nick(ArmorItem.Type.LEGGINGS, true));
+        NICK_ROBES_A        = ITEMS.register("nick_robes_a",      () -> MageMagicArmor.nick(ArmorItem.Type.CHESTPLATE, true));
+        NICK_HOOD_A         = ITEMS.register("nick_hood_a",       () -> MageMagicArmor.nick(ArmorItem.Type.HELMET, true));
 
-        CAMR_BOOTS          = ITEMS.register("camr_boots",      () -> MageMagicArmor.camr(ArmorItem.Type.BOOTS));
-        CAMR_LEGGINGS       = ITEMS.register("camr_leggings",   () -> MageMagicArmor.camr(ArmorItem.Type.LEGGINGS));
-        CAMR_ROBES          = ITEMS.register("camr_robes",      () -> MageMagicArmor.camr(ArmorItem.Type.CHESTPLATE));
-        CAMR_HOOD           = ITEMS.register("camr_hood",       () -> MageMagicArmor.camr(ArmorItem.Type.HELMET));
+        CAMR_BOOTS          = ITEMS.register("camr_boots",      () -> MageMagicArmor.camr(ArmorItem.Type.BOOTS, false));
+        CAMR_LEGGINGS       = ITEMS.register("camr_leggings",   () -> MageMagicArmor.camr(ArmorItem.Type.LEGGINGS, false));
+        CAMR_ROBES          = ITEMS.register("camr_robes",      () -> MageMagicArmor.camr(ArmorItem.Type.CHESTPLATE, false));
+        CAMR_HOOD           = ITEMS.register("camr_hood",       () -> MageMagicArmor.camr(ArmorItem.Type.HELMET, false));
 
-        CAMR_BOOTS_A        = ITEMS.register("camr_boots_a",      () -> MageMagicArmor.camr(ArmorItem.Type.BOOTS));
-        CAMR_LEGGINGS_A     = ITEMS.register("camr_leggings_a",   () -> MageMagicArmor.camr(ArmorItem.Type.LEGGINGS));
-        CAMR_ROBES_A        = ITEMS.register("camr_robes_a",      () -> MageMagicArmor.camr(ArmorItem.Type.CHESTPLATE));
-        CAMR_HOOD_A         = ITEMS.register("camr_hood_a",       () -> MageMagicArmor.camr(ArmorItem.Type.HELMET));
+        CAMR_BOOTS_A        = ITEMS.register("camr_boots_a",      () -> MageMagicArmor.camr(ArmorItem.Type.BOOTS, true));
+        CAMR_LEGGINGS_A     = ITEMS.register("camr_leggings_a",   () -> MageMagicArmor.camr(ArmorItem.Type.LEGGINGS, true));
+        CAMR_ROBES_A        = ITEMS.register("camr_robes_a",      () -> MageMagicArmor.camr(ArmorItem.Type.CHESTPLATE, true));
+        CAMR_HOOD_A         = ITEMS.register("camr_hood_a",       () -> MageMagicArmor.camr(ArmorItem.Type.HELMET, true));
 
-        MATT_BOOTS          = ITEMS.register("matt_boots",      () -> MageMagicArmor.matt(ArmorItem.Type.BOOTS));
-        MATT_LEGGINGS       = ITEMS.register("matt_leggings",   () -> MageMagicArmor.matt(ArmorItem.Type.LEGGINGS));
-        MATT_ROBES          = ITEMS.register("matt_robes",      () -> MageMagicArmor.matt(ArmorItem.Type.CHESTPLATE));
-        MATT_HOOD           = ITEMS.register("matt_hood",       () -> MageMagicArmor.matt(ArmorItem.Type.HELMET));
+        MATT_BOOTS          = ITEMS.register("matt_boots",      () -> MageMagicArmor.matt(ArmorItem.Type.BOOTS, false));
+        MATT_LEGGINGS       = ITEMS.register("matt_leggings",   () -> MageMagicArmor.matt(ArmorItem.Type.LEGGINGS, false));
+        MATT_ROBES          = ITEMS.register("matt_robes",      () -> MageMagicArmor.matt(ArmorItem.Type.CHESTPLATE, false));
+        MATT_HOOD           = ITEMS.register("matt_hood",       () -> MageMagicArmor.matt(ArmorItem.Type.HELMET, false));
 
-        MATT_BOOTS_A        = ITEMS.register("matt_boots_a",      () -> MageMagicArmor.matt(ArmorItem.Type.BOOTS));
-        MATT_LEGGINGS_A     = ITEMS.register("matt_leggings_a",   () -> MageMagicArmor.matt(ArmorItem.Type.LEGGINGS));
-        MATT_ROBES_A        = ITEMS.register("matt_robes_a",      () -> MageMagicArmor.matt(ArmorItem.Type.CHESTPLATE));
-        MATT_HOOD_A         = ITEMS.register("matt_hood_a",       () -> MageMagicArmor.matt(ArmorItem.Type.HELMET));
+        MATT_BOOTS_A        = ITEMS.register("matt_boots_a",      () -> MageMagicArmor.matt(ArmorItem.Type.BOOTS, true));
+        MATT_LEGGINGS_A     = ITEMS.register("matt_leggings_a",   () -> MageMagicArmor.matt(ArmorItem.Type.LEGGINGS, true));
+        MATT_ROBES_A        = ITEMS.register("matt_robes_a",      () -> MageMagicArmor.matt(ArmorItem.Type.CHESTPLATE, true));
+        MATT_HOOD_A         = ITEMS.register("matt_hood_a",       () -> MageMagicArmor.matt(ArmorItem.Type.HELMET, true));
 
-        ADAM_BOOTS          = ITEMS.register("adam_boots",      () -> MageMagicArmor.adam(ArmorItem.Type.BOOTS));
-        ADAM_LEGGINGS       = ITEMS.register("adam_leggings",   () -> MageMagicArmor.adam(ArmorItem.Type.LEGGINGS));
-        ADAM_ROBES          = ITEMS.register("adam_robes",      () -> MageMagicArmor.adam(ArmorItem.Type.CHESTPLATE));
-        ADAM_HOOD           = ITEMS.register("adam_hood",       () -> MageMagicArmor.adam(ArmorItem.Type.HELMET));
+        ADAM_BOOTS          = ITEMS.register("adam_boots",      () -> MageMagicArmor.adam(ArmorItem.Type.BOOTS, false));
+        ADAM_LEGGINGS       = ITEMS.register("adam_leggings",   () -> MageMagicArmor.adam(ArmorItem.Type.LEGGINGS, false));
+        ADAM_ROBES          = ITEMS.register("adam_robes",      () -> MageMagicArmor.adam(ArmorItem.Type.CHESTPLATE, false));
+        ADAM_HOOD           = ITEMS.register("adam_hood",       () -> MageMagicArmor.adam(ArmorItem.Type.HELMET, false));
 
-        ADAM_BOOTS_A        = ITEMS.register("adam_boots_a",      () -> MageMagicArmor.adam(ArmorItem.Type.BOOTS));
-        ADAM_LEGGINGS_A     = ITEMS.register("adam_leggings_a",   () -> MageMagicArmor.adam(ArmorItem.Type.LEGGINGS));
-        ADAM_ROBES_A        = ITEMS.register("adam_robes_a",      () -> MageMagicArmor.adam(ArmorItem.Type.CHESTPLATE));
-        ADAM_HOOD_A         = ITEMS.register("adam_hood_a",       () -> MageMagicArmor.adam(ArmorItem.Type.HELMET));
+        ADAM_BOOTS_A        = ITEMS.register("adam_boots_a",      () -> MageMagicArmor.adam(ArmorItem.Type.BOOTS, true));
+        ADAM_LEGGINGS_A     = ITEMS.register("adam_leggings_a",   () -> MageMagicArmor.adam(ArmorItem.Type.LEGGINGS, true));
+        ADAM_ROBES_A        = ITEMS.register("adam_robes_a",      () -> MageMagicArmor.adam(ArmorItem.Type.CHESTPLATE, true));
+        ADAM_HOOD_A         = ITEMS.register("adam_hood_a",       () -> MageMagicArmor.adam(ArmorItem.Type.HELMET, true));
 
         DEBUG_ICON = ITEMS.register("debug", () -> new ModItem(new Item.Properties()));
     }

@@ -8,6 +8,7 @@ import adamsmods.adamsarsplus.util.TooltipUtils;
 import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.perk.*;
 import com.hollingsworth.arsnouveau.api.util.PerkUtil;
+import com.hollingsworth.arsnouveau.common.armor.AnimatedMagicArmor;
 import com.hollingsworth.arsnouveau.common.items.data.ArmorPerkHolder;
 import com.hollingsworth.arsnouveau.common.perk.RepairingPerk;
 import com.hollingsworth.arsnouveau.setup.registry.DataComponentRegistry;
@@ -49,6 +50,8 @@ import java.util.function.Consumer;
 import static adamsmods.adamsarsplus.ConfigHandler.Common.*;
 import static adamsmods.adamsarsplus.common.items.armor.Materials.*;
 import static adamsmods.adamsarsplus.common.items.armor.ArmorSet.*;
+import static adamsmods.adamsarsplus.registry.ModItems.*;
+import static adamsmods.adamsarsplus.registry.ModItems.ADAM_HOOD_A;
 import static adamsmods.adamsarsplus.registry.ModPotions.*;
 import static net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED;
 
@@ -64,56 +67,56 @@ public class MageMagicArmor extends ArmorItem implements GeoItem {
         this(materialIn, slot, ItemsRegistry.defaultItemProperties().stacksTo(1).component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder()).component(DataComponents.BASE_COLOR, DyeColor.PURPLE), model);
     }
 
-    public static MageMagicArmor cade(Type slot) {
+    public static MageMagicArmor cade(Type slot, Boolean awakened) {
         return new MageMagicArmor(CADE, slot,
-                ItemsRegistry.defaultItemProperties()
+                MageArmorProp()
                 .stacksTo(1)
-                .component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder())
+                .component(DataComponentRegistry.ARMOR_PERKS, new MageArmorPerkHolder(CADE, awakened))
                 .component(DataComponents.BASE_COLOR, DyeColor.PURPLE)
                 .durability(slot.getDurability(50))
                 , (new AdamGenericModel<MageMagicArmor>("cade_armor", "item/armor")).withEmptyAnim());
     }
-    public static MageMagicArmor ryan(Type slot) {
+    public static MageMagicArmor ryan(Type slot, Boolean awakened) {
         return new MageMagicArmor(RYAN, slot,
-                ItemsRegistry.defaultItemProperties()
+                MageArmorProp()
                         .stacksTo(1)
-                        .component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder())
+                        .component(DataComponentRegistry.ARMOR_PERKS, new MageArmorPerkHolder(RYAN, awakened))
                         .component(DataComponents.BASE_COLOR, DyeColor.RED)
                         .durability(slot.getDurability(50))
                 , (new AdamGenericModel<MageMagicArmor>("ryan_armor", "item/armor")).withEmptyAnim());
     }
-    public static MageMagicArmor nick(Type slot) {
+    public static MageMagicArmor nick(Type slot, Boolean awakened) {
         return new MageMagicArmor(NICK, slot,
-                ItemsRegistry.defaultItemProperties()
+                MageArmorProp()
                         .stacksTo(1)
-                        .component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder())
+                        .component(DataComponentRegistry.ARMOR_PERKS, new MageArmorPerkHolder(NICK, awakened))
                         .component(DataComponents.BASE_COLOR, DyeColor.GREEN)
                         .durability(slot.getDurability(50))
                 , (new AdamGenericModel<MageMagicArmor>("nick_armor", "item/armor")).withEmptyAnim());
     }
-    public static MageMagicArmor camr(Type slot) {
+    public static MageMagicArmor camr(Type slot, Boolean awakened) {
         return new MageMagicArmor(CAMR, slot,
-                ItemsRegistry.defaultItemProperties()
+                MageArmorProp()
                         .stacksTo(1)
-                        .component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder())
+                        .component(DataComponentRegistry.ARMOR_PERKS, new MageArmorPerkHolder(CAMR, awakened))
                         .component(DataComponents.BASE_COLOR, DyeColor.WHITE)
                         .durability(slot.getDurability(100))
                 , (new AdamGenericModel<MageMagicArmor>("camr_armor", "item/armor")).withEmptyAnim());
     }
-    public static MageMagicArmor matt(Type slot) {
+    public static MageMagicArmor matt(Type slot, Boolean awakened) {
         return new MageMagicArmor(MATT, slot,
-                ItemsRegistry.defaultItemProperties()
+                MageArmorProp()
                         .stacksTo(1)
-                        .component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder())
+                        .component(DataComponentRegistry.ARMOR_PERKS, new MageArmorPerkHolder(MATT, awakened))
                         .component(DataComponents.BASE_COLOR, DyeColor.YELLOW)
                         .durability(slot.getDurability(100))
                 , (new AdamGenericModel<MageMagicArmor>("matt_armor", "item/armor")).withEmptyAnim());
     }
-    public static MageMagicArmor adam(Type slot) {
+    public static MageMagicArmor adam(Type slot, Boolean awakened) {
         return new MageMagicArmor(ADAM, slot,
-                ItemsRegistry.defaultItemProperties()
+                MageArmorProp()
                         .stacksTo(1)
-                        .component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder())
+                        .component(DataComponentRegistry.ARMOR_PERKS, new MageArmorPerkHolder(ADAM, awakened))
                         .component(DataComponents.BASE_COLOR, DyeColor.GRAY)
                         .durability(slot.getDurability(150))
                 , (new AdamGenericModel<MageMagicArmor>("adam_armor", "item/armor")).withEmptyAnim());
@@ -125,6 +128,15 @@ public class MageMagicArmor extends ArmorItem implements GeoItem {
     }
 
     public void registerControllers(AnimatableManager.ControllerRegistrar data) {
+    }
+
+    static Item.Properties itemProps() {
+        return new Item.Properties();
+    }
+
+    public static Item.Properties MageArmorProp() {
+        //return itemProps().stacksTo(1).rarity(Rarity.EPIC).component(DataComponentRegistry.ARMOR_PERKS, new ArmorPerkHolder());
+        return itemProps().stacksTo(1).rarity(Rarity.EPIC);
     }
 
     @Override
@@ -294,15 +306,21 @@ public class MageMagicArmor extends ArmorItem implements GeoItem {
     }
 
     ArmorSet getArmorSetFromMaterial(ArmorMaterial material) {
-        return switch (material.toString()) {
-            case "an_cade" -> CADE_ARMORSET;
-            case "an_ryan" -> RYAN_ARMORSET;
-            case "an_nick" -> NICK_ARMORSET;
-            case "an_camr" -> CAM_ARMORSET;
-            case "an_matt" -> MATT_ARMORSET;
-            case "an_adam" -> ADAM_ARMORSET;
-            default -> null;
-        };
+        if(material == CADE.value()){
+            return CADE_ARMORSET;
+        } else if (material == RYAN.value()) {
+            return RYAN_ARMORSET;
+        } else if (material == NICK.value()) {
+            return NICK_ARMORSET;
+        } else if (material == CAMR.value()) {
+            return CAM_ARMORSET;
+        } else if (material == MATT.value()) {
+            return MATT_ARMORSET;
+        } else if (material == ADAM.value()) {
+            return ADAM_ARMORSET;
+        } else {
+            return null;
+        }
     }
 
     private boolean hasArmorSetItem(ItemStack armor, Item[] armorFromSlot) {
@@ -372,10 +390,6 @@ public class MageMagicArmor extends ArmorItem implements GeoItem {
 
     public String getColor(ItemStack object) {
         return object.getOrDefault(DataComponents.BASE_COLOR, DyeColor.PURPLE).getName();
-    }
-
-    public int getMinTier() {
-        return 1;
     }
 
     private boolean hasFullSuitOfArmorOn(Player player){

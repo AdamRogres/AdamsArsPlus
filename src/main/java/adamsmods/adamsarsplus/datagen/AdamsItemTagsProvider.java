@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +46,48 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
+        this.tag(Tags.Items.ARMORS).add(
+                CADE_BOOTS.get(), CADE_BOOTS_A.get(), CADE_LEGGINGS.get(), CADE_LEGGINGS_A.get(), CADE_ROBES.get(), CADE_ROBES_A.get(), CADE_HOOD.get(), CADE_HOOD_A.get(),
+                RYAN_BOOTS.get(), RYAN_BOOTS_A.get(), RYAN_LEGGINGS.get(), RYAN_LEGGINGS_A.get(), RYAN_ROBES.get(), RYAN_ROBES_A.get(), RYAN_HOOD.get(), RYAN_HOOD_A.get(),
+                NICK_BOOTS.get(), NICK_BOOTS_A.get(), NICK_LEGGINGS.get(), NICK_LEGGINGS_A.get(), NICK_ROBES.get(), NICK_ROBES_A.get(), NICK_HOOD.get(), NICK_HOOD_A.get(),
+                CAMR_BOOTS.get(), CAMR_BOOTS_A.get(), CAMR_LEGGINGS.get(), CAMR_LEGGINGS_A.get(), CAMR_ROBES.get(), CAMR_ROBES_A.get(), CAMR_HOOD.get(), CAMR_HOOD_A.get(),
+                MATT_BOOTS.get(), MATT_BOOTS_A.get(), MATT_LEGGINGS.get(), MATT_LEGGINGS_A.get(), MATT_ROBES.get(), MATT_ROBES_A.get(), MATT_HOOD.get(), MATT_HOOD_A.get(),
+                ADAM_BOOTS.get(), ADAM_BOOTS_A.get(), ADAM_LEGGINGS.get(), ADAM_LEGGINGS_A.get(), ADAM_ROBES.get(), ADAM_ROBES_A.get(), ADAM_HOOD.get(), ADAM_HOOD_A.get()
+        );
+        this.tag(ItemTags.FOOT_ARMOR).add(
+                CADE_BOOTS.get(), CADE_BOOTS_A.get(),
+                RYAN_BOOTS.get(), RYAN_BOOTS_A.get(),
+                NICK_BOOTS.get(), NICK_BOOTS_A.get(),
+                CAMR_BOOTS.get(), CAMR_BOOTS_A.get(),
+                MATT_BOOTS.get(), MATT_BOOTS_A.get(),
+                ADAM_BOOTS.get(), ADAM_BOOTS_A.get()
+        );
+        this.tag(ItemTags.LEG_ARMOR).add(
+                CADE_LEGGINGS.get(), CADE_LEGGINGS_A.get(),
+                RYAN_LEGGINGS.get(), RYAN_LEGGINGS_A.get(),
+                NICK_LEGGINGS.get(), NICK_LEGGINGS_A.get(),
+                CAMR_LEGGINGS.get(), CAMR_LEGGINGS_A.get(),
+                MATT_LEGGINGS.get(), MATT_LEGGINGS_A.get(),
+                ADAM_LEGGINGS.get(), ADAM_LEGGINGS_A.get()
+        );
+        this.tag(ItemTags.CHEST_ARMOR).add(
+                CADE_ROBES.get(), CADE_ROBES_A.get(),
+                RYAN_ROBES.get(), RYAN_ROBES_A.get(),
+                NICK_ROBES.get(), NICK_ROBES_A.get(),
+                CAMR_ROBES.get(), CAMR_ROBES_A.get(),
+                MATT_ROBES.get(), MATT_ROBES_A.get(),
+                ADAM_ROBES.get(), ADAM_ROBES_A.get()
+        );
+        this.tag(ItemTags.HEAD_ARMOR).add(
+                CADE_HOOD.get(), CADE_HOOD_A.get(),
+                RYAN_HOOD.get(), RYAN_HOOD_A.get(),
+                NICK_HOOD.get(), NICK_HOOD_A.get(),
+                CAMR_HOOD.get(), CAMR_HOOD_A.get(),
+                MATT_HOOD.get(), MATT_HOOD_A.get(),
+                ADAM_HOOD.get(), ADAM_HOOD_A.get()
+        );
+
+                // Adam's tags
         tag(MAGIC_HOOD).add(ItemsRegistry.BATTLEMAGE_HOOD.get(), ItemsRegistry.ARCANIST_HOOD.get(), ItemsRegistry.SORCERER_HOOD.get());
         tag(MAGIC_ROBE).add(ItemsRegistry.BATTLEMAGE_ROBES.get(), ItemsRegistry.ARCANIST_ROBES.get(), ItemsRegistry.SORCERER_ROBES.get());
         tag(MAGIC_LEG).add(ItemsRegistry.BATTLEMAGE_LEGGINGS.get(), ItemsRegistry.ARCANIST_LEGGINGS.get(), ItemsRegistry.SORCERER_LEGGINGS.get());

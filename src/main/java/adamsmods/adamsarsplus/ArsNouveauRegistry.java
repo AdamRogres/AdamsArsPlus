@@ -111,7 +111,6 @@ public class ArsNouveauRegistry {
     }
     
     private static void addPerkSlots() {
-
         // Cade Armor
         PerkRegistry.registerPerkProvider(CADE_BOOTS.get(), makePerkList(Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.ONE)));
         PerkRegistry.registerPerkProvider(CADE_LEGGINGS.get(), makePerkList(Arrays.asList(PerkSlot.THREE, PerkSlot.TWO, PerkSlot.TWO)));
@@ -171,11 +170,10 @@ public class ArsNouveauRegistry {
         PerkRegistry.registerPerkProvider(ADAM_LEGGINGS_A.get(), makePerkList(Arrays.asList(APerkSlot.FOUR, PerkSlot.THREE, PerkSlot.THREE)));
         PerkRegistry.registerPerkProvider(ADAM_ROBES_A.get(), makePerkList(Arrays.asList(APerkSlot.SIX, PerkSlot.THREE, PerkSlot.THREE)));
         PerkRegistry.registerPerkProvider(ADAM_HOOD_A.get(), makePerkList(Arrays.asList(APerkSlot.SIX, PerkSlot.THREE, PerkSlot.THREE)));
-
     }
 
     private static @NotNull List<List<PerkSlot>> makePerkList(List<PerkSlot> perkSlots) {
-        return List.of(perkSlots, perkSlots, perkSlots, perkSlots);
+        return List.of(perkSlots, perkSlots, perkSlots, perkSlots, perkSlots, perkSlots);
     }
 
     public static void addAugments(){

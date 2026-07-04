@@ -44,7 +44,7 @@ public class AdamArmorRenderer extends GeoArmorRenderer<MageMagicArmor> {
     public ResourceLocation getTextureLocation(MageMagicArmor instance) {
         if (instance != null && model instanceof AdamGenericModel<MageMagicArmor> genericModel) {
             DyeColor dyeColor = getCurrentStack().getOrDefault(DataComponents.BASE_COLOR, DyeColor.PURPLE);
-            return AdamsArsPlus.prefix("textures/" + genericModel.textPathRoot + "/" + genericModel.name + "_" + dyeColor.getName() + ".png");
+            return AdamsArsPlus.prefix("textures/" + genericModel.textPathRoot + "/" + genericModel.name + "/" + dyeColor.getName() + ".png");
         }
 
         return super.getTextureLocation(instance);

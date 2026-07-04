@@ -150,7 +150,7 @@ public class ArsProviders {
 
 
         protected static Path getScribeGlyphPath(Path pathIn, Item glyph) {
-            return pathIn.resolve("data/" + root + "/recipes/" + getRegistryName(glyph).getPath() + ".json");
+            return pathIn.resolve("data/" + root + "/recipe/" + getRegistryName(glyph).getPath() + ".json");
         }
 
         @Override
@@ -277,7 +277,7 @@ public class ArsProviders {
         }
 
         protected static Path getRecipePath(Path pathIn, String str) {
-            return pathIn.resolve("data/" + root + "/recipes/" + str + ".json");
+            return pathIn.resolve("data/" + root + "/recipe/" + str + ".json");
         }
 
         @Override
@@ -337,7 +337,7 @@ public class ArsProviders {
         }
 
         protected Path getRecipePath(Path pathIn, String str) {
-            return pathIn.resolve("data/" + root + "/recipes/" + str + ".json");
+            return pathIn.resolve("data/" + root + "/recipe/" + str + ".json");
         }
 
         @Override

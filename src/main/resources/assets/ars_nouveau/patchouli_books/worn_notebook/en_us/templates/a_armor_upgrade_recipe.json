@@ -1,5 +1,5 @@
 {
-  "processor": "com.adamsmods.adamsarsplus.client.patchouli.AArmourUpgradeProcessor",
+  "processor": "adamsmods.adamsarsplus.client.patchouli.AArmourUpgradeProcessor",
   "components": [
     {
       "type": "patchouli:header",
@@ -9,7 +9,7 @@
     },
     {
       "type": "patchouli:custom",
-      "class": "com.adamsmods.adamsarsplus.client.patchouli.component.AdamRotatingItemListComponent",
+      "class": "adamsmods.adamsarsplus.client.patchouli.component.AdamRotatingItemListComponent",
       "x": -1,
       "y": 21,
       "recipe_type": "a_armor_upgrade",
