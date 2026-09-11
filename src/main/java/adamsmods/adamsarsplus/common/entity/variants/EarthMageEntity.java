@@ -80,7 +80,7 @@ public class EarthMageEntity extends MysteriousMageEntity implements RangedAttac
                 init = false;
             }
         } else {
-            setColor(CommunityMages.mages.get(this.getIndex()).color);
+            setColor(CommunityMages.colorOrDefault(this.getIndex(), this.color));
         }
 
         if(castCooldown > 0){ castCooldown--; }

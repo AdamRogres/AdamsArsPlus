@@ -15,6 +15,17 @@ import java.util.List;
 public class CommunityMages {
     public static List<ComMages> mages = new ArrayList();
 
+    /** Built-in entries must precede community entries: variant defaults use their indices. */
+    public static void initialize() {
+        mages.clear();
+        initAlt();
+        initLocal();
+    }
+
+    public static String colorOrDefault(int index, String fallback) {
+        return index >= 0 && index < mages.size() ? mages.get(index).color : fallback;
+    }
+
     public CommunityMages() {
     }
 

@@ -54,6 +54,7 @@ public class AdamsArsPlus {
 
     public void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            adamsmods.adamsarsplus.datagen.CommunityMages.initialize();
             ArsNouveauRegistry.postInit();
             //CompatUtils.checkCompats();
         });

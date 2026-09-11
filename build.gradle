@@ -228,3 +228,34 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// Exercise legacy turret migration against the NBT templates without launching Minecraft.
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+
+
+tasks.register('verifyLegacyTurrets', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.util.LegacyTurretDataTest'
+    workingDir = projectDir
+}
+
+tasks.named('test') {
+    exclude '**/LegacyTurretDataTest.class'
+}
+tasks.named('check') {
+    dependsOn 'verifyLegacyTurrets'
+}
+// Verify mage startup data and safe client color lookup without launching Minecraft.
+tasks.register('verifyCommunityMages', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.datagen.CommunityMagesTest'
+    workingDir = projectDir
+}
+tasks.named('test') {
+    exclude '**/CommunityMagesTest.class'
+}
+tasks.named('check') {
+    dependsOn 'verifyCommunityMages'
+}
