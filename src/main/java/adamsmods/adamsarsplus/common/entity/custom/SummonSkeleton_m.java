@@ -59,10 +59,21 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     private SpellContext spell;
 
     class NamelessClass_1 extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = 2.0;
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return this.isTimeToAttack() && target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         NamelessClass_1(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen) {
             super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity target) {
             if (this.canPerformAttack(target)) {
                 this.resetAttackCooldown();
@@ -82,6 +93,9 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         public void start() {
             super.start();
             SummonSkeleton_m.this.setAggressive(true);
+        }
+        protected double getAttackReachSqr(LivingEntity target) {
+            return meleeReach * meleeReach;
         }
     }
 

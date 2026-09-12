@@ -172,6 +172,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttackingA()) {
             attackAAnimationState.stop();
+            attackAAnimationTimeout = 0;
         }
 
         //Attack B Animation control
@@ -183,6 +184,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttackingB()) {
             attackBAnimationState.stop();
+            attackBAnimationTimeout = 0;
         }
 
         //Block Animation control
@@ -487,12 +489,24 @@ public class MattEntity extends Monster implements RangedAttackMob {
     }
 
     class MattAttackGoalA extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 7.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final MattEntity entity;
 
         private int totalAnimation = 25;
         private int attackDelay = 18;
         private int ticksUntilNextAttack = 18;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -507,6 +521,10 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 18;
             ticksUntilNextAttack = 18;
@@ -532,32 +550,45 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
-        
+
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingA(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         //performSpellAttack(this.mob, MattAttackSpell, MattColor, pEnemy);
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingA(false);
-                entity.attackAAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -569,16 +600,13 @@ public class MattEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -586,14 +614,12 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 7.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -604,6 +630,9 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingA(false);
             this.done = false;
             super.stop();
@@ -623,20 +652,32 @@ public class MattEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 
     class MattAttackGoalB extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 9.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final MattEntity entity;
 
         private int totalAnimation = 20;
         private int attackDelay = 16;
         private int ticksUntilNextAttack = 16;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -651,6 +692,10 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 16;
             ticksUntilNextAttack = 16;
@@ -681,18 +726,34 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
-        
+
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingB(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
@@ -700,15 +761,12 @@ public class MattEntity extends Monster implements RangedAttackMob {
                             performSpellAttack(this.mob, MattAttackSpell, MattColor, pEnemy);
                         }
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingB(false);
-                entity.attackBAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -716,16 +774,13 @@ public class MattEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -733,14 +788,12 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 9.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
             this.entity.attackBCooldown = random.nextInt(200) + 100;
         }
@@ -752,6 +805,9 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingB(false);
             this.done = false;
             super.stop();
@@ -771,10 +827,10 @@ public class MattEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 

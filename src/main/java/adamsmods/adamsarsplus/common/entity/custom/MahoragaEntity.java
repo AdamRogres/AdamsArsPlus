@@ -289,7 +289,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         // Adaptive Effect Removal
-        if(effectAdaptCheck(this)){}
+        effectAdaptCheck(this);
 
         if (this.getSummoner() != null) {
             if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
@@ -392,6 +392,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
         if(!this.isAttackingA()) {
             attackAAnimationState.stop();
+            attackAAnimationTimeout = 0;
         }
         //AttackBAA Animation control
         if(this.isAttackingBAA() && attackBAAAnimationTimeout <= 0) {
@@ -402,6 +403,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
         if(!this.isAttackingBAA()) {
             attackBAAAnimationState.stop();
+            attackBAAAnimationTimeout = 0;
         }
         //AttackBAB Animation control
         if(this.isAttackingBAB() && attackBABAnimationTimeout <= 0) {
@@ -412,6 +414,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
         if(!this.isAttackingBAB()) {
             attackBABAnimationState.stop();
+            attackBABAnimationTimeout = 0;
         }
         //AttackBBA Animation control
         if(this.isAttackingBBA() && attackBBAAnimationTimeout <= 0) {
@@ -422,6 +425,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
         if(!this.isAttackingBBA()) {
             attackBBAAnimationState.stop();
+            attackBBAAnimationTimeout = 0;
         }
         //AttackC Animation control
         if(this.isAttackingC() && attackCAnimationTimeout <= 0) {
@@ -432,6 +436,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
         if(!this.isAttackingC()) {
             attackCAnimationState.stop();
+            attackCAnimationTimeout = 0;
         }
         //AttackRoar Animation control
         if(this.isRoar() && attackRoarAnimationTimeout <= 0) {
@@ -442,6 +447,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
         if(!this.isRoar()) {
             attackRoarAnimationState.stop();
+            attackRoarAnimationTimeout = 0;
         }
         //Wheel Animation control
         if(this.isWheel() && wheelAnimationTimeout <= 0) {
@@ -783,22 +789,42 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         return ret;
     }
 
-    public boolean effectAdaptCheck(MahoragaEntity entity){
+    public boolean effectAdaptCheck(MahoragaEntity entity) {
+        if (entity.level().isClientSide) {
+            return false;
+        }
 
-        for(int n = 0; n < 8; n++){
-            for(int i = 0; i < entity.getActiveEffects().size(); i++){
-                if(entity.getActiveEffects().stream().toList().get(i).getEffect().value() == entity.adaptedEffects[n].getEffect()){
-                    entity.removeEffect(entity.adaptedEffects[n].getEffect());
-                    return true;
-                } else if(entity.adaptedEffects[n] == null && !entity.getActiveEffects().stream().toList().get(i).getEffect().value().isBeneficial()){
-                    if(canAdaptCheck(entity)){
-                        entity.adaptedEffects[n] = entity.getActiveEffects().stream().toList().get(i);
+        boolean changed = false;
+        boolean attemptedAdaptation = false;
+        // Removing an effect changes the live collection, so iterate a snapshot.
+        for (MobEffectInstance active : java.util.List.copyOf(entity.getActiveEffects())) {
+            boolean alreadyAdapted = false;
+            int emptySlot = -1;
+            for (int n = 0; n < entity.adaptedEffects.length; n++) {
+                MobEffectInstance adapted = entity.adaptedEffects[n];
+                if (adapted == null) {
+                    if (emptySlot < 0) {
+                        emptySlot = n;
                     }
-                    return true;
+                } else if (adapted.getEffect().equals(active.getEffect())) {
+                    alreadyAdapted = true;
+                    break;
+                }
+            }
+
+            if (alreadyAdapted) {
+                changed |= entity.removeEffect(active.getEffect());
+            } else if (emptySlot >= 0 && !active.getEffect().value().isBeneficial()
+                    && !attemptedAdaptation) {
+                attemptedAdaptation = true;
+                if (canAdaptCheck(entity)) {
+                    entity.adaptedEffects[emptySlot] = new MobEffectInstance(active);
+                    entity.removeEffect(active.getEffect());
+                    changed = true;
                 }
             }
         }
-        return false;
+        return changed;
     }
 
     public float damageAdaptResults(MahoragaEntity entity, DamageSource damageSource, float Amount){
@@ -920,12 +946,23 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     }
 
     public class MahoragaAttackGoalA extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 4.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final MahoragaEntity entity;
 
-        private int attackDelay = 16;
-        private int ticksUntilNextAttack = 16;
-        private int totalAnimation = 20;
-        private boolean shouldCountTillNextAttack = false;
+        private final int attackDelay = 16;
+        private final int totalAnimation = 20;
+        private int attackTicks;
+        private boolean swinging;
+        private LivingEntity attackTarget;
         private boolean leap = false;
 
         Supplier<Boolean> canUse;
@@ -940,81 +977,66 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         @Override
         public void start() {
             super.start();
-            attackDelay = 16;
-            ticksUntilNextAttack = 16;
+            attackTicks = 0;
+            swinging = false;
+            attackTarget = null;
+            done = false;
 
             this.entity.rangedAttackCooldown = 0;
             this.leap = false;
         }
 
         public boolean canUse() {
-            return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
+            return this.canUse.get() && !this.entity.sealed
+                    && this.mob.getTarget() != null && this.mob.getTarget().isAlive();
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return this.canUse() && !this.done;
         }
 
+        @Override
+        public boolean isInterruptable() {
+            // Finish a committed swing before switching to another combat goal.
+            return !this.swinging || this.entity.sealed;
+        }
+
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
-
-                if(isTimeToStartAttackAnimation()) {
-                    entity.setAttackingA(true);
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
                 }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+                this.entity.setAttackingA(true);
+            }
 
-                if(isTimeToAttack()) {
-                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
-
-                    performAttack(pEnemy);
-                    if(pEnemy.isBlocking()){
-                        if(pEnemy instanceof Player playerEnemy){
-                            playerEnemy.getCooldowns().addCooldown(Items.SHIELD, 60);
-                            playerEnemy.disableShield();
-                        }
-                    }
-                    else {
-
-                    }
+            // Losing reach during the wind-up must not reset the animation.
+            // Resolve once at the hit frame, then allow the recovery to finish.
+            this.attackTicks++;
+            if (this.attackTicks == this.attackDelay && this.canPerformAttack(this.attackTarget)) {
+                this.mob.getLookControl().setLookAt(this.attackTarget.getX(), this.attackTarget.getY(), this.attackTarget.getZ());
+                boolean blocking = this.attackTarget.isBlocking();
+                this.performAttack(this.attackTarget);
+                if (blocking && this.attackTarget instanceof Player playerEnemy) {
+                    playerEnemy.getCooldowns().addCooldown(Items.SHIELD, 60);
+                    playerEnemy.disableShield();
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingA(false);
-                entity.attackAAnimationTimeout = 0;
+            }
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
-        protected void resetAttackCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
-        }
-
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
-
-        protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
-        }
-
-        protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
-        }
-
-        public int getTicksUntilNextAttack() {
-            return this.ticksUntilNextAttack;
-        }
-
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 4.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
-
             this.entity.applyDisruption(this.entity, pEnemy);
 
             if(this.entity.level().random.nextInt(0,100) < 40){
@@ -1039,13 +1061,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
 
             this.entity.rangedAttackCooldown++;
 
-            if(this.entity.rangedAttackCooldown > 50 && this.entity.getTarget() != null && !this.leap){
+            if(this.entity.rangedAttackCooldown > 50 && this.entity.getTarget() != null && !this.leap && !this.swinging){
                 Vec3 $$0 = this.entity.getDeltaMovement();
                 Vec3 $$1 = new Vec3(this.entity.getTarget().getX() - this.entity.getX(), this.entity.getTarget().getY() - this.entity.getY(), this.entity.getTarget().getZ() - this.entity.getZ());
                 if ($$1.lengthSqr() > 1.0E-7) {
@@ -1066,18 +1085,33 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         @Override
         public void stop() {
             entity.setAttackingA(false);
+            this.swinging = false;
+            this.attackTarget = null;
+            this.attackTicks = 0;
             this.done = false;
             super.stop();
         }
     }
 
     public class MahoragaAttackGoalBAA extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 2.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final MahoragaEntity entity;
 
         private int attackDelay = 7;
         private int ticksUntilNextAttack = 7;
         private int totalAnimation = 10;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Boolean> canUse;
         Supplier<Boolean> leftRight;
@@ -1092,6 +1126,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 7;
             ticksUntilNextAttack = 7;
@@ -1102,12 +1140,28 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && !this.entity.sealed && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     if(leftRight.get()){
@@ -1117,7 +1171,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                     }
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
                     performAttack(pEnemy);
@@ -1135,13 +1189,9 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                         }
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingBAA(false);
-                entity.setAttackingBAB(false);
-                entity.attackBAAAnimationTimeout = 0;
-                entity.attackBABAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -1149,16 +1199,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -1166,14 +1213,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 2.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.doHurtTargetNW(pEnemy);
-            this.done = true;
 
             this.entity.applyDisruption(this.entity, pEnemy);
 
@@ -1200,13 +1245,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingBAA(false);
             entity.setAttackingBAB(false);
             this.done = false;
@@ -1227,15 +1272,31 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             }
             return flag;
         }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging || this.entity.sealed;
+        }
     }
 
     public class MahoragaAttackGoalBBA extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 4.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final MahoragaEntity entity;
 
         private int attackDelay = 20;
         private int ticksUntilNextAttack = 20;
         private int totalAnimation = 30;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Boolean> canUse;
         boolean done;
@@ -1248,6 +1309,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 20;
             ticksUntilNextAttack = 20;
@@ -1258,29 +1323,43 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && !this.entity.sealed && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingBBA(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
                     performAttack(pEnemy);
                     pEnemy.invulnerableTime = 0;
                     performSpellAttack(this.mob, punchAttackSpell, punchColor, this.mob);
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingBBA(false);
-                entity.attackBBAAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -1288,16 +1367,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -1305,14 +1381,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 4.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.doHurtTargetNW(pEnemy);
-            this.done = true;
 
             this.entity.applyDisruption(this.entity, pEnemy);
 
@@ -1340,13 +1414,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingBBA(false);
             this.done = false;
             super.stop();
@@ -1365,6 +1439,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 this.mob.setLastHurtMob(pEntity);
             }
             return flag;
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging || this.entity.sealed;
         }
     }
 
@@ -1581,12 +1659,24 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     }
 
     public class MahoragaAttackGoalC extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 4.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final MahoragaEntity entity;
 
         private int attackDelay = 10;
         private int ticksUntilNextAttack = 10;
         private int totalAnimation = 15;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         private int rangeAttackTime = 0;
         private float range = 100;
@@ -1603,6 +1693,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 10;
             ticksUntilNextAttack = 10;
@@ -1614,41 +1708,45 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && !this.entity.sealed && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
-
-                if(isTimeToStartAttackAnimation()) {
-                    entity.setAttackingC(true);
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!(this.canPerformAttack(pEnemy) || (isEnemyWithinRangeDistance(pEnemy, entity) && rangeAttackTime > 100 && this.mob.getSensing().hasLineOfSight(pEnemy)))) {
+                    return;
                 }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
 
-                if(isTimeToAttack()) {
-                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+            if (isTimeToStartAttackAnimation()) {
+                entity.setAttackingC(true);
+            }
+            if (isTimeToAttack()) {
+                this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+                if (this.canPerformAttack(pEnemy)) {
                     performAttack(pEnemy);
                     performSpellAttack(this.entity, slashSpell, pEnemy);
-                }
-            } else if(isEnemyWithinRangeDistance(pEnemy, entity) && rangeAttackTime > 100){
-                shouldCountTillNextAttack = true;
-
-                if(isTimeToStartAttackAnimation()) {
-                    entity.setAttackingC(true);
-                }
-
-                if(isTimeToAttack()) {
-                    this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
+                } else if (pEnemy.isAlive() && isEnemyWithinRangeDistance(pEnemy, entity)
+                        && rangeAttackTime > 100 && this.mob.getSensing().hasLineOfSight(pEnemy)) {
                     performSpellAttack(this.entity, slashSpell, pEnemy);
-                    this.resetAttackLoopCooldown();
                 }
-            } else {
-                    resetAttackCooldown();
-                    shouldCountTillNextAttack = false;
-                    entity.setAttackingC(false);
-                    entity.attackCAnimationTimeout = 0;
             }
 
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
+            }
         }
 
         private boolean isEnemyWithinRangeDistance(LivingEntity pEnemy, LivingEntity entity) {
@@ -1659,16 +1757,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -1676,7 +1771,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 4.5F);
+            return meleeReach * meleeReach;
         }
 
         protected double getRangeAttackSqr() {
@@ -1684,10 +1779,9 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
 
-            for (Entity entity : this.entity.level().getEntities(null, new AABB(this.entity.blockPosition()).inflate(this.getAttackReachSqr(this.entity),this.getAttackReachSqr(this.entity),this.getAttackReachSqr(this.entity)))) {
+            for (Entity entity : this.entity.level().getEntities(null, new AABB(this.entity.blockPosition()).inflate(this.meleeReach, this.meleeReach, this.meleeReach))) {
                 if (entity.equals(this.entity) || entity.equals(this.entity.owner))
                     continue;
                 if (entity instanceof LivingEntity){
@@ -1696,8 +1790,6 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             }
 
             this.entity.applyDisruption(this.entity, pEnemy);
-
-            this.done = true;
             this.entity.attackCCooldown = 0;
         }
 
@@ -1761,18 +1853,22 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
 
             this.rangeAttackTime++;
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingC(false);
             this.done = false;
             super.stop();
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging || this.entity.sealed;
         }
     }
 

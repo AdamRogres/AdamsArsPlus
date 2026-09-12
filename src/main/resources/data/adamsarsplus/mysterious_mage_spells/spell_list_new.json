@@ -155,7 +155,7 @@
     {
       "name":  "Xacris",
       "color":  "gray",
-      "spell":  "linger-sensitive-extend_three-aoe_three-firework-amp",
+      "spell":  "burst-sensitive-extend_three-aoe_three-firework-amp",
       "coold":  "medium",
       "type":   "detonate",
       "tier":   "overworld-flame"

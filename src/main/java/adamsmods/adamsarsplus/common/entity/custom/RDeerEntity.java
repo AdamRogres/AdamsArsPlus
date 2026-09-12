@@ -178,6 +178,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
         if(!this.isAttacking()) {
             attackAnimationState.stop();
+            attackAnimationTimeout = 0;
         }
     }
 
@@ -473,12 +474,24 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
     }
 
     public class RDeerAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 4.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final RDeerEntity entity;
 
         private int attackDelay = 15;
         private int ticksUntilNextAttack = 15;
         private int totalAnimation = 25;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Boolean> canUse;
         boolean done;
@@ -491,6 +504,10 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 15;
             ticksUntilNextAttack = 15;
@@ -501,18 +518,34 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttacking(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
                     performAttack(pEnemy);
@@ -526,11 +559,9 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
                         performSpellAttack(this.mob, deerAttackSpell, deerColor, pEnemy);
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttacking(false);
-                entity.attackAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -542,16 +573,13 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(this.totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -559,14 +587,12 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 4.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -594,16 +620,20 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttacking(false);
             this.done = false;
             super.stop();
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 

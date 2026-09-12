@@ -179,6 +179,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         }
         if(!this.isAttackingA()) {
             attackAAnimationState.stop();
+            attackAAnimationTimeout = 0;
         }
         //Attack B Animation control
         if(this.isAttackingB() && attackBAnimationTimeout <= 0) {
@@ -189,6 +190,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         }
         if(!this.isAttackingB()) {
             attackBAnimationState.stop();
+            attackBAnimationTimeout = 0;
         }
         //Attack C Animation control
         if(this.isAttackingC() && attackCAnimationTimeout <= 0) {
@@ -199,6 +201,7 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         }
         if(!this.isAttackingC()) {
             attackCAnimationState.stop();
+            attackCAnimationTimeout = 0;
         }
 
     }
@@ -405,12 +408,24 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
     }
 
     public class TerraprismaAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 4.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final TerraprismaEntity entity;
 
         private int attackDelay = 8;
         private int ticksUntilNextAttack = 8;
         private int totalAnimation = 12;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private int attackType = 0;
 
         Supplier<Boolean> canUse;
@@ -424,6 +439,10 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 8;
             ticksUntilNextAttack = 8;
@@ -435,12 +454,28 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
                 if(this.attackType == 0){
                     this.attackType = this.entity.getRandom().nextInt(1, 3);
                 }
@@ -455,21 +490,15 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
                     entity.setAttackingC(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
                     performAttack(pEnemy);
 
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingA(false);
-                entity.attackAAnimationTimeout = 0;
-                entity.setAttackingB(false);
-                entity.attackBAnimationTimeout = 0;
-                entity.setAttackingC(false);
-                entity.attackCAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -477,16 +506,13 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -494,14 +520,12 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 4.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
             this.attackType = 0;
         }
 
@@ -509,19 +533,23 @@ public class TerraprismaEntity extends Monster implements IFollowingSummon, ISum
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingA(false);
             entity.setAttackingB(false);
             entity.setAttackingC(false);
             this.done = false;
             this.attackType = 0;
             super.stop();
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 

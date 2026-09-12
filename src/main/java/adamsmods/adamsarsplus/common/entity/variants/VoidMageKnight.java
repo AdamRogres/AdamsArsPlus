@@ -202,32 +202,6 @@ public class VoidMageKnight extends MageKnightEntity {
         return super.hurt(pSource, pAmount);
     }
 
-    @Override
-    public void die(DamageSource cause) {
-        if(this.random.nextInt(0, 5) == 4){
-            Item tomeType = MAGE_TOME.get().asItem();
-            Spell tomeSpell = this.mageSpell;
-            switch (this.type){
-                case "projectile" -> {
-                    tomeSpell.add(MethodProjectile.INSTANCE, 1);
-                }
-                case "melee" -> {
-                    tomeSpell.add(MethodTouch.INSTANCE, 1);
-                }
-                case "self" -> {
-                    tomeSpell.add(MethodSelf.INSTANCE, 1);
-                }
-                case "detonate" -> {
-                    tomeSpell.add(MethodDetonate.INSTANCE, 1);
-                }
-            }
-            ItemStack Tome = makeTome(tomeType, tomeSpell, this.name);
-
-            this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), Tome));
-        }
-
-        super.die(cause);
-    }
 
     public void knockback(Entity target, LivingEntity shooter, float strength) {
         this.knockback(target, (double)strength, (double) Mth.sin(target.yRotO * ((float)Math.PI / 180F)), (double)(-Mth.cos(target.yRotO * ((float)Math.PI / 180F))));
@@ -299,10 +273,10 @@ public class VoidMageKnight extends MageKnightEntity {
         String[] tokens = spellString.split("-");
 
         for(String t : tokens){
-           returnSpell.add(SpellString.stringSpellComponent(t));
+           returnSpell = returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
-        //returnSpell.color = SpellString.stringColor(color);
+        returnSpell = returnSpell.withColor(SpellString.stringColor(color.replace("_sword", "")));
 
         this.mageSpell = returnSpell;
     }

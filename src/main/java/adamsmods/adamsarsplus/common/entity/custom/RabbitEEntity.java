@@ -602,6 +602,16 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
     }
 
     static class RabbitEAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double) (4.0F + 0.6F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return this.isTimeToAttack() && target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         Supplier<Boolean> canUse;
 
         public RabbitEAttackGoal(RabbitEEntity pRabbit, Supplier<Boolean> canUse) {
@@ -611,20 +621,20 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double) (4.0F + pAttackTarget.getBbWidth());
+            return meleeReach * meleeReach;
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
             if (this.canPerformAttack(pEnemy)) {
+                this.resetAttackCooldown();
                 this.mob.swing(InteractionHand.MAIN_HAND);
                 this.mob.doHurtTarget(pEnemy);
             }
         }
 
         public boolean canUse() {
-            super.canUse();
-
-            return this.canUse.get();
+            return this.canUse.get() && super.canUse();
         }
     }
 

@@ -161,6 +161,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttackingA()) {
             attackAAnimationState.stop();
+            attackAAnimationTimeout = 0;
         }
 
         //Attack BA Animation control
@@ -172,6 +173,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttackingBA()) {
             attackBAAnimationState.stop();
+            attackBAAnimationTimeout = 0;
         }
 
         //Attack BB Animation control
@@ -183,6 +185,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttackingBB()) {
             attackBBAnimationState.stop();
+            attackBBAnimationTimeout = 0;
         }
 
         //Attack C Animation control
@@ -194,6 +197,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttackingC()) {
             attackCAnimationState.stop();
+            attackCAnimationTimeout = 0;
         }
 
         if(this.isUsingDomain() && castDomainAnimationTimeout <= 0) {
@@ -361,7 +365,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
     public void performRangedAttack(LivingEntity entity, float p_82196_2_) {
 
     }
-    
+
     @Override
     protected SoundEvent getHurtSound(DamageSource pDamageSource) {
         return SoundEvents.IRON_GOLEM_HURT;
@@ -433,12 +437,24 @@ public class NickEntity extends Monster implements RangedAttackMob {
     }
 
     class NickAttackGoalA extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 8.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final NickEntity entity;
 
         private int totalAnimation = 20;
         private int attackDelay = 10;
         private int ticksUntilNextAttack = 10;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -453,6 +469,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 10;
             ticksUntilNextAttack = 10;
@@ -480,18 +500,34 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingA(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
@@ -499,15 +535,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
                             performSpellAttack(this.mob, 1.0F, NickAttackSpell, NickColor, pEnemy);
                         }
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingA(false);
-                entity.attackAAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -519,16 +552,13 @@ public class NickEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -536,14 +566,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 8.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -555,6 +583,9 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingA(false);
             this.done = false;
             super.stop();
@@ -574,20 +605,32 @@ public class NickEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 
     class NickAttackGoalBA extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 8.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final NickEntity entity;
 
         private int totalAnimation = 20;
         private int attackDelay = 12;
         private int ticksUntilNextAttack = 12;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -602,6 +645,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 12;
             ticksUntilNextAttack = 12;
@@ -635,18 +682,34 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingBA(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
@@ -654,15 +717,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
                             performSpellAttack(this.mob, nickAttackBASpell, nickColor, pEnemy);
                         }
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingBA(false);
-                entity.attackBAAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -670,16 +730,13 @@ public class NickEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -687,14 +744,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 8.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -708,6 +763,9 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingBA(false);
             this.done = false;
             super.stop();
@@ -727,20 +785,32 @@ public class NickEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 
     class NickAttackGoalBB extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 8.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final NickEntity entity;
 
         private int totalAnimation = 15;
         private int attackDelay = 8;
         private int ticksUntilNextAttack = 8;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -755,6 +825,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 8;
             ticksUntilNextAttack = 8;
@@ -784,18 +858,34 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingBB(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
@@ -803,15 +893,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
                             performSpellAttack(this.mob, nickAttackBBSpell, nickColor, pEnemy);
                         }
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingBB(false);
-                entity.attackBBAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -823,16 +910,13 @@ public class NickEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -840,14 +924,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 8.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -860,6 +942,9 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingBB(false);
             this.done = false;
             super.stop();
@@ -879,21 +964,33 @@ public class NickEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 
     class NickAttackGoalC extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 8.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final NickEntity entity;
 
         private int totalAnimation = 26;
         private int attackDelay = 21;
         private int attackDelay2 = 13;
         private int ticksUntilNextAttack = 21;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -908,6 +1005,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 21;
             attackDelay2 = 13;
@@ -940,34 +1041,48 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttackingC(true);
                 }
-                if(isTimeToStartAttack2()){
+                if(isTimeToStartAttack2() && this.canPerformAttack(pEnemy)){
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         performSpellAttack(this.mob, nickColor);
                     }
                 }
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttackingC(false);
-                entity.attackCAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -979,20 +1094,17 @@ public class NickEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttack2() {
-            return this.ticksUntilNextAttack <= attackDelay2;
+            return this.attackTicks == this.attackDelay - this.attackDelay2;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -1000,14 +1112,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 8.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -1027,6 +1137,9 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttackingC(false);
             this.done = false;
             super.stop();
@@ -1046,10 +1159,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 

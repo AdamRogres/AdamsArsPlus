@@ -181,6 +181,7 @@ public class MageKnightEntity extends Monster {
         }
         if(!this.isAttacking()) {
             attackAnimationState.stop();
+            attackAnimationTimeout = 0;
         }
 
         //Block Animation control
@@ -225,6 +226,7 @@ public class MageKnightEntity extends Monster {
         }
         if(!this.isCounter()) {
             counterAnimationState.stop();
+            counterAnimationTimeout = 0;
         }
 
     }
@@ -252,30 +254,22 @@ public class MageKnightEntity extends Monster {
     }
 
     @Override
-    public void die(DamageSource cause) {
-        if(this.random.nextInt(0, 5) == 4){
-            Item tomeType = MAGE_TOME.get().asItem();
-            Spell tomeSpell = this.mageSpell;
-            switch (this.type){
-                case "projectile" -> {
-                    tomeSpell.add(MethodProjectile.INSTANCE, 1);
-                }
-                case "melee" -> {
-                    tomeSpell.add(MethodTouch.INSTANCE, 1);
-                }
-                case "self" -> {
-                    tomeSpell.add(MethodSelf.INSTANCE, 1);
-                }
-                case "detonate" -> {
-                    tomeSpell.add(MethodDetonate.INSTANCE, 1);
-                }
-            }
-            ItemStack Tome = makeTome(tomeType, tomeSpell, this.name);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource cause, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, cause, recentlyHit);
+        if (this.mageSpell == null || this.mageSpell.isEmpty() || this.random.nextInt(5) != 4) return;
 
-            this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), Tome));
-        }
-
-        super.die(cause);
+        var method = switch (this.type) {
+            case "projectile" -> MethodProjectile.INSTANCE;
+            case "melee" -> MethodTouch.INSTANCE;
+            case "self" -> MethodSelf.INSTANCE;
+            case "detonate" -> MethodDetonate.INSTANCE;
+            default -> null;
+        };
+        if (method == null) return;
+        var recipe = new java.util.ArrayList<>(this.mageSpell.unsafeList());
+        recipe.add(0, method);
+        Spell tomeSpell = this.mageSpell.setRecipe(recipe);
+        this.spawnAtLocation(makeTome(MAGE_TOME.get(), tomeSpell, this.getName().getString()));
     }
 
     public void knockback(Entity target, LivingEntity shooter, float strength) {
@@ -300,8 +294,10 @@ public class MageKnightEntity extends Monster {
 
     public static ItemStack makeTome(Item tome, Spell spell, String flavorText) {
         ItemStack stack = tome.getDefaultInstance();
-        AbstractCaster<?> spellCaster = SpellCasterRegistry.from(stack);
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(spell.name()).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true)));
+        var spellCaster = new com.hollingsworth.arsnouveau.api.spell.SpellCaster();
+        if (!flavorText.isBlank()) {
+            stack.set(DataComponents.CUSTOM_NAME, Component.literal(flavorText).setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE).withItalic(true)));
+        }
         spellCaster.setSpell(spell).setFlavorText(flavorText).saveToStack(stack);
         return stack;
     }
@@ -356,10 +352,10 @@ public class MageKnightEntity extends Monster {
         String[] tokens = spellString.split("-");
 
         for(String t : tokens){
-           returnSpell.add(SpellString.stringSpellComponent(t));
+           returnSpell = returnSpell.add(SpellString.stringSpellComponent(t));
         }
 
-        //returnSpell.color = SpellString.stringColor(color);
+        returnSpell = returnSpell.withColor(SpellString.stringColor(color.replace("_sword", "")));
 
         this.mageSpell = returnSpell;
     }
@@ -538,12 +534,24 @@ public class MageKnightEntity extends Monster {
     }
 
     public class KnightAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 3.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         MageKnightEntity mageEntity;
 
         private int attackDelay = 12;
         private int ticksUntilNextAttack = 12;
         private int totalAnimation = 15;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Integer> spellCooldown;
         Supplier<Spell> mageSpell;
@@ -564,6 +572,10 @@ public class MageKnightEntity extends Monster {
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 12;
             ticksUntilNextAttack = 12;
@@ -574,7 +586,8 @@ public class MageKnightEntity extends Monster {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
         void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
@@ -585,15 +598,30 @@ public class MageKnightEntity extends Monster {
             this.mageEntity.castCooldown = 10 + random.nextInt(this.spellCooldown.get());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     this.mageEntity.setAttacking(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     this.performAttack(pEnemy);
                     if(!pEnemy.isBlocking() && this.mageEntity.castCooldown <= 0){
@@ -601,11 +629,9 @@ public class MageKnightEntity extends Monster {
                         performSpellAttack(this.mageEntity, mageSpell.get(), pEnemy);
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                mageEntity.setAttacking(false);
-                mageEntity.attackAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -617,16 +643,13 @@ public class MageKnightEntity extends Monster {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -634,23 +657,18 @@ public class MageKnightEntity extends Monster {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 3.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
 
             if(this.mageEntity.blockCooldown > 0){
                 this.mageEntity.blockCooldown--;
@@ -666,20 +684,40 @@ public class MageKnightEntity extends Monster {
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             mageEntity.setAttacking(false);
             mageEntity.blocking = false;
             this.done = false;
             super.stop();
         }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
+        }
     }
 
     public class KnightBlockGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 4.0F));
+        public double blockingReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 7.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         MageKnightEntity mageEntity;
 
         private int attackDelay = 12;
         private int ticksUntilNextAttack = 12;
         private int totalAnimation = 15;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Integer> spellCooldown;
         Supplier<Spell> mageSpell;
@@ -700,6 +738,10 @@ public class MageKnightEntity extends Monster {
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 12;
             ticksUntilNextAttack = 12;
@@ -735,7 +777,8 @@ public class MageKnightEntity extends Monster {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
         void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
@@ -750,16 +793,30 @@ public class MageKnightEntity extends Monster {
             this.mageEntity.castCooldown = 10 + random.nextInt(this.spellCooldown.get());
         }
 
-        protected void checkAndPerformAttack(LivingEntity pEnemy, double pDistToEnemySqr) {
-            if(isEnemyWithinAttackDistance(pEnemy, pDistToEnemySqr)) {
+        @Override
+        protected void checkAndPerformAttack(LivingEntity pEnemy) {
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
 
-                shouldCountTillNextAttack = true;
 
                 if(isTimeToStartAttackAnimation()) {
                     this.mageEntity.setCounter(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
 
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
@@ -784,11 +841,9 @@ public class MageKnightEntity extends Monster {
                         }
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                mageEntity.setCounter(false);
-                mageEntity.counterAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -800,16 +855,13 @@ public class MageKnightEntity extends Monster {
             this.ticksUntilNextAttack = this.adjustedTickDelay(this.attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(this.totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -818,33 +870,35 @@ public class MageKnightEntity extends Monster {
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
             if(this.mageEntity.counterTimer > 0){
-                return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 4.0F);
+                return meleeReach * meleeReach;
             } else {
-                return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 7.0F);
+                return blockingReach * blockingReach;
             }
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
         }
 
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             mageEntity.setCounter(false);
             mageEntity.blocking = false;
             this.done = false;
             super.stop();
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 }

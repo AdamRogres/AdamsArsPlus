@@ -166,6 +166,7 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttacking()) {
             attackAnimationState.stop();
+            attackAnimationTimeout = 0;
         }
 
         //Block Animation control
@@ -441,12 +442,24 @@ public class JoshEntity extends Monster implements RangedAttackMob {
     }
 
     class JoshAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 8.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final JoshEntity entity;
 
         private int totalAnimation = 20;
         private int attackDelay = 14;
         private int ticksUntilNextAttack = 14;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
         private double speedModifier;
 
         Supplier<Boolean> canUse;
@@ -461,6 +474,10 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 14;
             ticksUntilNextAttack = 14;
@@ -486,32 +503,45 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttacking(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performJoshAttack(pEnemy);
                         performSpellAttack(this.mob, JoshAttackSpell, JoshColor, pEnemy);
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttacking(false);
-                entity.attackAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -523,16 +553,13 @@ public class JoshEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -540,14 +567,12 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 8.0F);
+            return meleeReach * meleeReach;
         }
 
         protected void performJoshAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -558,6 +583,9 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttacking(false);
             this.done = false;
             super.stop();
@@ -578,10 +606,10 @@ public class JoshEntity extends Monster implements RangedAttackMob {
 
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 

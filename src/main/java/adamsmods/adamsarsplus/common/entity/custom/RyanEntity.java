@@ -155,6 +155,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
         if(!this.isAttacking()) {
             attackAnimationState.stop();
+            attackAnimationTimeout = 0;
         }
 
         if(this.isCasting() && castAnimationTimeout <= 0) {
@@ -322,7 +323,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
     protected SoundEvent getDeathSound() {
         return SoundEvents.BLAZE_DEATH;
     }
-    
+
     // Goals and Movement
     class BossMoveControl extends MoveControl {
         public BossMoveControl(RyanEntity pRyan) {
@@ -352,18 +353,30 @@ public class RyanEntity extends Monster implements RangedAttackMob {
             }
         }
     }
-    
+
     class RyanChargeAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + 0.6F + 6.0F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final RyanEntity entity;
 
         private int totalAnimation = 20;
         private int attackDelay = 12;
         private int ticksUntilNextAttack = 12;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Boolean> canUse;
         boolean done;
-        
+
         public RyanChargeAttackGoal(PathfinderMob pMob, double pSpeedModifier, boolean pFollowingTargetEvenIfNotSeen, Supplier<Boolean> canUse) {
             super(pMob, pSpeedModifier, pFollowingTargetEvenIfNotSeen);
             entity = ((RyanEntity) pMob);
@@ -372,10 +385,14 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
 
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             this.mob.setAggressive(true);
             attackDelay = 12;
             ticksUntilNextAttack = 12;
-            
+
             LivingEntity $$0 = RyanEntity.this.getTarget();
             if ($$0 != null) {
                 Vec3 $$1 = $$0.getEyePosition();
@@ -399,32 +416,45 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setAttacking(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         performSpellAttack(this.mob, 1.0F, ryanAttackSpell, ryanColor, pEnemy);
                     } else {
-                        this.resetAttackLoopCooldown();
-                        this.done = true;
+
                     }
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setAttacking(false);
-                entity.attackAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -440,16 +470,13 @@ public class RyanEntity extends Monster implements RangedAttackMob {
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -457,7 +484,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F * this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() + 6.0F);
+            return meleeReach * meleeReach;
         }
 
         protected double getAttackTrueReachSqr(LivingEntity pAttackTarget) {
@@ -465,10 +492,8 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
 
         }
 
@@ -480,6 +505,9 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
 
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setAttacking(false);
             this.done = false;
             super.stop();
@@ -499,10 +527,10 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                 }
                 this.checkAndPerformAttack($$0);
             }
-
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
+        }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
         }
     }
 

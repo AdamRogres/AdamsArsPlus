@@ -9,6 +9,12 @@ import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
 import com.hollingsworth.arsnouveau.api.spell.SpellStats;
+import com.hollingsworth.arsnouveau.api.spell.SpellCaster;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.PlayerCaster;
+import com.hollingsworth.arsnouveau.api.spell.wrapped_caster.LivingCaster;
+import com.hollingsworth.arsnouveau.api.util.SpellUtil;
+import com.hollingsworth.arsnouveau.client.gui.SpellTooltip;
+import com.hollingsworth.arsnouveau.setup.registry.DataComponentRegistry;
 import com.hollingsworth.arsnouveau.common.util.PortUtil;
 import com.hollingsworth.arsnouveau.setup.config.Config;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,22 +24,34 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool, ISpellModifierItem, IManaDiscountEquipment {
     public EnchantersStopwatch(Properties properties) {
-        super(properties);
+        super(properties.component(DataComponentRegistry.SPELL_CASTER, new SpellCaster())
+                .component(ModDataComponents.CONFIG_INTERVAL.get(), 0));
     }
 
     public EnchantersStopwatch() {
+        this(new Properties().stacksTo(1));
+    }
+
+    @Override
+    public SpellCaster getSpellCaster(ItemStack stack) {
+        return stack.getOrDefault(DataComponentRegistry.SPELL_CASTER, new SpellCaster());
     }
 
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand handIn) {
@@ -70,7 +88,7 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
     public void setWatchTime(Player playerEntity, ItemStack stack, int increment) {
 
         int curTime = (stack.has(ModDataComponents.CONFIG_INTERVAL)) ? stack.get(ModDataComponents.CONFIG_INTERVAL) : 0;
-        int newTime = Math.max(0, curTime + increment);
+        int newTime = (int) Math.clamp((long) curTime + increment, 0L, Integer.MAX_VALUE);
 
         stack.set(ModDataComponents.CONFIG_INTERVAL, newTime);
 
@@ -84,20 +102,29 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
 
     }
 
+    @Override
     public void curioTick(SlotContext slotContext, ItemStack stack) {
-        int data = (stack.has(ModDataComponents.CONFIG_INTERVAL)) ? stack.get(ModDataComponents.CONFIG_INTERVAL) : 0;
-        int time = data * 20;
-
         LivingEntity wearer = slotContext.entity();
-        var caster = this.getSpellCaster(stack);
-        if (wearer != null && time > 0) {
-            Level var6 = slotContext.entity().level();
-            if (var6 instanceof ServerLevel) {
-                ServerLevel world = (ServerLevel)var6;
-                if (world.getGameTime() % time == 0L) {
-                    caster.castSpell(var6, wearer, InteractionHand.MAIN_HAND, Component.translatable("adamsarsplus.watch.invalid"), caster.getSpell());
-                }
-            }
+        if (slotContext.cosmetic() || !(wearer.level() instanceof ServerLevel world)) return;
+        long interval = (long) stack.getOrDefault(ModDataComponents.CONFIG_INTERVAL.get(), 0) * 20L;
+        if (interval <= 0 || world.getGameTime() % interval != 0) return;
+        var caster = getSpellCaster(stack);
+        Spell spell = caster.getSpell();
+        if (spell.isEmpty() || spell.getCastMethod() == null) return;
+
+        // The caster tool is the equipped curio, not whatever happens to be in the wearer's hand.
+        var wrapped = wearer instanceof Player player ? new PlayerCaster(player) : new LivingCaster(wearer);
+        var context = new SpellContext(world, spell, wearer, wrapped, stack);
+        var resolver = caster.getSpellResolver(context, world, wearer, InteractionHand.MAIN_HAND);
+        double reach = wearer instanceof Player player
+                ? player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE) + 0.5 : 4.5;
+        HitResult hit = SpellUtil.rayTrace(wearer, reach, 0, false);
+        if (hit instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity) {
+            resolver.onCastOnEntity(stack, entityHit.getEntity(), InteractionHand.MAIN_HAND);
+        } else if (hit instanceof BlockHitResult blockHit && hit.getType() == HitResult.Type.BLOCK) {
+            resolver.onCastOnBlock(blockHit);
+        } else {
+            resolver.onCast(stack, world);
         }
     }
 
@@ -107,6 +134,14 @@ public class EnchantersStopwatch extends ArsNouveauCurio implements ICasterTool,
 
     public int getManaDiscount(ItemStack i, Spell spell) {
         return (int)((double)spell.getCost() * (double)-0.2F);
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        var caster = getSpellCaster(stack);
+        return !Screen.hasShiftDown() && Config.GLYPH_TOOLTIPS.get()
+                && !caster.isSpellHidden() && !caster.getSpell().isEmpty()
+                ? Optional.of(new SpellTooltip(caster)) : Optional.empty();
     }
 
     public void sendInvalidMessage(Player player) {

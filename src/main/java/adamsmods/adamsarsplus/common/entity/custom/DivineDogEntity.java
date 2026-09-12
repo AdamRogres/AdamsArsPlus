@@ -143,6 +143,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         }
         if(!this.isBiting()) {
             biteAnimationState.stop();
+            biteAnimationTimeout = 0;
         }
         //Lunge Animation control
         if(this.isLunging()) {
@@ -396,12 +397,24 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     }
 
     public class DDogAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 1.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final DivineDogEntity entity;
 
         private int attackDelay = 10;
         private int ticksUntilNextAttack = 10;
         private int totalAnimation = 15;
-        private boolean shouldCountTillNextAttack = false;
+        private boolean swinging;
+        private int attackTicks;
+        private LivingEntity attackTarget;
 
         Supplier<Boolean> canUse;
         boolean done;
@@ -414,6 +427,10 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
 
         @Override
         public void start() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
+            this.done = false;
             super.start();
             attackDelay = 10;
             ticksUntilNextAttack = 10;
@@ -424,27 +441,41 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         }
 
         public boolean canContinueToUse() {
-            return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
+            return !this.done && this.mob.getTarget() != null
+                    && this.mob.getTarget().isAlive() && (this.swinging || this.canUse());
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
-            if (this.canPerformAttack(pEnemy)) {
-                shouldCountTillNextAttack = true;
+            if (this.done) {
+                return;
+            }
+            if (!this.swinging) {
+                if (!this.canPerformAttack(pEnemy)) {
+                    return;
+                }
+                this.swinging = true;
+                this.attackTarget = pEnemy;
+                this.attackTicks = 0;
+            }
+            pEnemy = this.attackTarget;
+            this.attackTicks++;
+            this.ticksUntilNextAttack = this.attackDelay - this.attackTicks;
+            // Resolve each hit once; losing reach does not cancel the swing.
+
 
                 if(isTimeToStartAttackAnimation()) {
                     entity.setBiting(true);
                 }
 
-                if(isTimeToAttack()) {
+                if(isTimeToAttack() && this.canPerformAttack(pEnemy)) {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
 
                     performAttack(pEnemy);
                 }
-            } else {
-                resetAttackCooldown();
-                shouldCountTillNextAttack = false;
-                entity.setBiting(false);
-                entity.biteAnimationTimeout = 0;
+
+            if (this.attackTicks >= this.totalAnimation) {
+                this.done = true;
             }
         }
 
@@ -452,16 +483,13 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             this.ticksUntilNextAttack = this.adjustedTickDelay(attackDelay);
         }
 
-        protected void resetAttackLoopCooldown() {
-            this.ticksUntilNextAttack = this.adjustedTickDelay(totalAnimation);
-        }
 
         protected boolean isTimeToAttack() {
-            return this.ticksUntilNextAttack <= 0;
+            return this.attackTicks == this.attackDelay;
         }
 
         protected boolean isTimeToStartAttackAnimation() {
-            return this.ticksUntilNextAttack <= attackDelay;
+            return this.attackTicks == 1;
         }
 
         public int getTicksUntilNextAttack() {
@@ -469,14 +497,12 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 1.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
-            this.resetAttackLoopCooldown();
             this.mob.swing(InteractionHand.MAIN_HAND);
             this.mob.doHurtTarget(pEnemy);
-            this.done = true;
             this.entity.sprintCooldown = 0;
         }
 
@@ -484,22 +510,36 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         @Override
         public void tick() {
             super.tick();
-            if(shouldCountTillNextAttack){
-                this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            }
 
             this.entity.sprintCooldown = Math.min(this.entity.sprintCooldown + 1, 80);
         }
 
         @Override
         public void stop() {
+            this.swinging = false;
+            this.attackTicks = 0;
+            this.attackTarget = null;
             entity.setBiting(false);
             this.done = false;
             super.stop();
         }
+            @Override
+        public boolean isInterruptable() {
+            return !this.swinging;
+        }
     }
 
     public class DDogLungeAttackGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 1.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return this.isTimeToAttack() && target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final DivineDogEntity entity;
 
         Supplier<Boolean> canUse;
@@ -524,19 +564,18 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
             if (this.canPerformAttack(pEnemy)) {
                 this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                 performAttack(pEnemy);
                 entity.setLunging(false);
 
-            } else {
-                resetAttackCooldown();
             }
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 1.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
@@ -566,6 +605,16 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
     }
 
     public class DDogSprintGoal extends MeleeAttackGoal {
+        // Reach in blocks (entity-position distance). Edit independently for this goal.
+        public double meleeReach = Math.sqrt((double)(this.mob.getBbWidth() * 2.0F + 0.6F * 2.0F + 3.5F));
+
+        @Override
+        protected boolean canPerformAttack(LivingEntity target) {
+            return this.isTimeToAttack() && target.isAlive()
+                    && this.mob.distanceToSqr(target) <= this.getAttackReachSqr(target)
+                    && this.mob.getSensing().hasLineOfSight(target);
+        }
+
         private final DivineDogEntity entity;
 
         Supplier<Boolean> canUse;
@@ -591,6 +640,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
             return (this.canUse() || !this.mob.getNavigation().isDone()) && !this.done;
         }
 
+        @Override
         protected void checkAndPerformAttack(LivingEntity pEnemy) {
             if (this.canPerformAttack(pEnemy)) {
 
@@ -603,7 +653,7 @@ public class DivineDogEntity extends Monster implements IFollowingSummon, ISummo
         }
 
         protected double getAttackReachSqr(LivingEntity pAttackTarget) {
-            return (double)(this.mob.getBbWidth() * 2.0F + pAttackTarget.getBbWidth() * 2.0F + 3.5F);
+            return meleeReach * meleeReach;
         }
 
         protected void performAttack(LivingEntity pEnemy) {
