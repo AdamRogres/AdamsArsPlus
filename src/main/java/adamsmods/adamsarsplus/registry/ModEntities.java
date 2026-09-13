@@ -300,13 +300,13 @@ public class ModEntities {
 
         @SubscribeEvent
         public static void registerEntityAttributes(final EntityAttributeCreationEvent event) {
-            event.put(ModEntities.RYAN_ENTITY.get(), RyanEntity.createAttributes().build());
-            event.put(ModEntities.CADE_ENTITY.get(), CadeEntity.createAttributes().build());
-            event.put(ModEntities.NICK_ENTITY.get(), NickEntity.createAttributes().build());
-            event.put(ModEntities.CAM_ENTITY.get(), CamEntity.createAttributes().build());
-            event.put(ModEntities.MATT_ENTITY.get(), MattEntity.createAttributes().build());
-            event.put(ModEntities.JOSH_ENTITY.get(), JoshEntity.createAttributes().build());
-            event.put(ModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().build());
+            event.put(ModEntities.RYAN_ENTITY.get(), RyanEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
+            event.put(ModEntities.CADE_ENTITY.get(), CadeEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
+            event.put(ModEntities.NICK_ENTITY.get(), NickEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
+            event.put(ModEntities.CAM_ENTITY.get(), CamEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
+            event.put(ModEntities.MATT_ENTITY.get(), MattEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
+            event.put(ModEntities.JOSH_ENTITY.get(), JoshEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
+            event.put(ModEntities.ADAM_ENTITY.get(), AdamEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
 
             event.put(ModEntities.MAGE_ENTITY.get(), MysteriousMageEntity.createAttributes().build());
             event.put(ModEntities.FLAME_MAGE_ENTITY.get(), FlameMageEntity.createAttributes().build());
@@ -329,7 +329,7 @@ public class ModEntities {
             event.put(ModEntities.NUE.get(), NueEntity.createAttributes().build());
             event.put(ModEntities.RABBIT_ESCAPE.get(), RabbitEEntity.createAttributes().build());
             event.put(ModEntities.ROUND_DEER.get(), RDeerEntity.createAttributes().build());
-            event.put(ModEntities.MAHORAGA.get(), MahoragaEntity.createAttributes().build());
+            event.put(ModEntities.MAHORAGA.get(), MahoragaEntity.createAttributes().add(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS, 0.0).build());
             event.put(ModEntities.FIRE_ENTITY.get(), FireEntity.createAttributes().build());
             event.put(ModEntities.TERRA_ENTITY.get(), TerraprismaEntity.createAttributes().build());
         }

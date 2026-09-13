@@ -4,6 +4,7 @@ import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
 import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -51,6 +52,7 @@ import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.registry.ModEntities.JOSH_ENTITY;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 
 public class JoshEntity extends Monster implements RangedAttackMob {
 
@@ -499,12 +501,7 @@ public class JoshEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor JoshColor = new ParticleColor(0, 100, 0);
 
-        public Spell JoshAttackSpell = new Spell()
-                .add(EffectKnockback.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE, 1)
-                .add(EffectFracture.INSTANCE)
-
-                .withColor(JoshColor);
+        public Spell JoshAttackSpell = getSpell("Josh", "AttackingA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -649,13 +646,7 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  JoshColor = new ParticleColor(0, 100, 0);
 
-        public Spell JoshCastSpell = new Spell()
-                .add(EffectConjureArrow.INSTANCE)
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 10)
-                .add(AugmentSplit.INSTANCE, 2)
-
-                .withColor(JoshColor);
+        public Spell JoshCastSpell = getSpell("Josh", "CastingA");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -772,30 +763,17 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  JoshColor = new ParticleColor(255, 0, 0);
 
-        public Spell JoshCastSpell = new Spell()
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectFlare.INSTANCE)
-                .add(AugmentAmplify.INSTANCE)
-
-                .add(EffectExplosion.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,16)
-                .add(AugmentAOEThree.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyTwo.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectEvaporate.INSTANCE)
-
-                .withColor(JoshColor);
+        public Spell JoshCastSpell = getSpell("Josh", "CastingB");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -911,20 +889,17 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  JoshColor = new ParticleColor(255, 255, 255);
 
-        public Spell JoshCastSpell = new Spell()
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE)
-
-                .add(EffectFirework.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE, 8)
-
-                .withColor(JoshColor);
+        public Spell JoshCastSpell = getSpell("Josh", "CastingC");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 2.0f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1046,18 +1021,7 @@ public class JoshEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor JoshColor = new ParticleColor(255, 150, 0);
 
-        public Spell JoshDomainSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 3)
-                .add(AugmentExtract.INSTANCE)
-                .add(AugmentAccelerateThree.INSTANCE, 2)
-
-                .add(EffectSwapTarget.INSTANCE)
-                .add(EffectHeal.INSTANCE)
-
-                .withColor(JoshColor);
+        public Spell JoshDomainSpell = getSpell("Josh", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));

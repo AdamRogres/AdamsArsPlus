@@ -110,7 +110,8 @@ public class EffectConjureArrow extends AbstractEffect {
             AugmentAccelerate.INSTANCE,
             AugmentRandomize.INSTANCE,
             AugmentDecelerate.INSTANCE,
-            AugmentAmplify.INSTANCE
+            AugmentAmplify.INSTANCE,
+            AugmentSplit.INSTANCE
         );
     }
 

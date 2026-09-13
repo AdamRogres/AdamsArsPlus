@@ -61,12 +61,13 @@ public class ConfigHandler {
             COM_MAGES           = builder.comment("include community spells for the mysterious mage entity?").define("doComMages", true);
             LOCAL_MAGE_POOL     = builder.comment("access pool of possible mage spells from local device (true) or online file (false)?").define("doLocalMagePool", true);
             MAGES_GRIEF         = builder.comment("Allow overworld mages that can mobgrief?").define("doMageGrief", true);
-            DO_LEAP_FATIGUE     = builder.comment("Have a cooldown on the leap glyph?").define("doLeapFatigue", true);
+            DO_LEAP_FATIGUE     = builder.comment("Have a cooldown on the leap glyph?").define("doLeapFatigue", false);
             MAGE_DIMENSION_BLACKLIST = builder.comment("Dimensions where mages will not spawn. Ex: [\"minecraft:overworld\", \"undergarden:undergarden\"]. . Run /forge dimensions for a list.").defineList("dimensionBlacklist", new ArrayList<>(), (o) -> true);
 
             builder.pop();
 
             builder.push("Armor Configs");
+            ArmorAttributeConfig.define(builder);
 
             CADE_MAX_MANA           = builder.comment("Frost Max Mana per tier").defineInRange("cadeMaxMana",40,0,999);
             CADE_MANA_REGEN         = builder.comment("Frost Mana Regen per tier").defineInRange("cadeManaRegen",2.0,0,99);
@@ -100,10 +101,7 @@ public class ConfigHandler {
 
             builder.pop();
 
-            builder.push("Boss Configs");
-
-
-            builder.pop();
+            BossConfig.define(builder);
         }
     }
 

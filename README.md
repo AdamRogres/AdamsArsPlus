@@ -6,28 +6,22 @@ Todo:
 - Fix and test every augment glyph
 - Fix and test every effect glyph
 - Fix and test every method glyph
-- Add lang
 - Fix all entities
 - Fix all potion effects
-- Make sure items are functioning
 - Fix all threads
 - Fix all Rituals
 - Fix JEI / Worn notebook support
 - Fix Config options
-- Add Tag provider
 
-- Leap fatigue not default
 - Ten Shadows better targetting
 - Ten Shadows multiple summons
 - Generals Wheel Visual Render
 - Generals Wheel better function
 
 - Boss improvements:
-  - Adam no gravity fix
   - Smarter use of domains
   - Passive regen and persistancy
   - Movement burst option to combat hit and run strategies
-  - Config options for boss difficulty for dynamic modpack challenge
 - Add visual and pre-adapt function for the General's Wheel
 - Make simple domain and domain available earlier
 - Nerf Dismantle

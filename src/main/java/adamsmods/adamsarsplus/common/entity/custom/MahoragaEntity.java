@@ -10,6 +10,7 @@ import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectFracture;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectLimitless;
 import adamsmods.adamsarsplus.registry.AdamCapabilityRegistry;
 import adamsmods.adamsarsplus.registry.ModEntities;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -77,6 +78,7 @@ import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.common.capability.TSrankCap.getTsTier;
 import static adamsmods.adamsarsplus.registry.ModPotions.*;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 import static java.lang.Math.PI;
 import static net.minecraft.world.effect.MobEffects.REGENERATION;
 import static net.minecraft.world.item.Items.NETHERITE_SWORD;
@@ -1237,10 +1239,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         private ParticleColor punchColor = new ParticleColor(255, 255, 255);
 
-        public Spell punchAttackSpell = new Spell()
-                .add(EffectLimitless.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 4)
-                .withColor(punchColor);
+        public Spell punchAttackSpell = getSpell("Maho", "AttackingBAA");
 
         @Override
         public void tick() {
@@ -1401,15 +1400,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         private ParticleColor punchColor = new ParticleColor(255, 255, 255);
 
-        public Spell punchAttackSpell = new Spell()
-                .add(EffectExplosion.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 3)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 3)
-                .add(EffectFracture.INSTANCE)
-
-                .withColor(punchColor);
+        public Spell punchAttackSpell = getSpell("Maho", "AttackingBBA");
 
         @Override
         public void tick() {
@@ -1477,12 +1468,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         private ParticleColor knockbackColor = new ParticleColor(255, 255, 255);
 
-        public Spell knockbackSpell = new Spell()
-                .add(EffectFracture.INSTANCE)
-                .add(EffectKnockback.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 2)
-
-                .withColor(knockbackColor);
+        public Spell knockbackSpell = getSpell("Maho", "CastingA");
 
         void performCastAttack(LivingEntity entity, LivingEntity target){
             if(target instanceof Player player && player.isBlocking()){
@@ -1801,6 +1787,10 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             for(int i = 0; i < numSplits; ++i) {
                 DetonateProjectile spell = new DetonateProjectile(world, resolver);
 
+                if (!stats.isEmpty()) {
+                    BossSpells.applyStyle(spell, stats);
+                }
+
                 projectiles.add(spell);
             }
 
@@ -1832,23 +1822,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         private ParticleColor slashSpellcolor = new ParticleColor(0, 0, 0);
 
-        public Spell slashSpell = new Spell()
-                .add(AugmentSplit.INSTANCE,6)
-                .add(AugmentPierce.INSTANCE, 3)
-                .add(AugmentAccelerate.INSTANCE, 2)
-                .add(AugmentDurationDown.INSTANCE, 1)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE)
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentLesserAOE.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 2)
-
-                .withColor(slashSpellcolor);
+        public Spell slashSpell = getSpell("Maho", "AttackingC");
 
         @Override
         public void tick() {

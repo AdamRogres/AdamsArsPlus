@@ -1,6 +1,9 @@
 package adamsmods.adamsarsplus.common.items.armor;
 
 import adamsmods.adamsarsplus.AdamsArsPlus;
+import adamsmods.adamsarsplus.ArmorAttributeConfig;
+import adamsmods.adamsarsplus.ConfigHandler;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import adamsmods.adamsarsplus.client.armor.AdamGenericModel;
 import adamsmods.adamsarsplus.client.armor.AdamArmorRenderer;
 import adamsmods.adamsarsplus.common.entity.custom.TerraprismaEntity;
@@ -222,6 +225,19 @@ public class MageMagicArmor extends ArmorItem implements GeoItem {
     @Override
     public @NotNull ItemAttributeModifiers getDefaultAttributeModifiers(@NotNull ItemStack stack) {
         var modifiers = super.getDefaultAttributeModifiers(stack);
+        var settings = minecraftArmorSettings();
+        if (settings != null && settings.armor().containsKey(this.type)) {
+            // Replace vanilla's entries using the same IDs; do not stack a second base bonus.
+            var id = ResourceLocation.withDefaultNamespace("armor." + this.type.getName());
+            var slot = EquipmentSlotGroup.bySlot(this.type.getSlot());
+            modifiers = modifiers.withModifierAdded(Attributes.ARMOR,
+                    new AttributeModifier(id, settings.armor().get(this.type).get(), AttributeModifier.Operation.ADD_VALUE), slot);
+            modifiers = modifiers.withModifierAdded(Attributes.ARMOR_TOUGHNESS,
+                    new AttributeModifier(id, settings.toughness().get(), AttributeModifier.Operation.ADD_VALUE), slot);
+            modifiers = modifiers.withModifierAdded(Attributes.KNOCKBACK_RESISTANCE,
+                    new AttributeModifier(id, settings.knockbackResistance().get(), AttributeModifier.Operation.ADD_VALUE), slot);
+        }
+
         var perkHolder = PerkUtil.getPerkHolder(stack);
         if (perkHolder != null) {
 
@@ -263,6 +279,27 @@ public class MageMagicArmor extends ArmorItem implements GeoItem {
         }
 
         return modifiers;
+    }
+
+    private ArmorAttributeConfig.Settings minecraftArmorSettings() {
+        if (!ConfigHandler.COMMON_SPEC.isLoaded()) return null;
+        return this.material.unwrapKey()
+                .filter(key -> key.location().getNamespace().equals(AdamsArsPlus.MODID))
+                .map(key -> ArmorAttributeConfig.SETS.get(key.location().getPath()))
+                .orElse(null);
+    }
+
+    @Override
+    public int getDefense() {
+        var settings = minecraftArmorSettings();
+        return settings != null && settings.armor().containsKey(this.type)
+                ? settings.armor().get(this.type).get() : super.getDefense();
+    }
+
+    @Override
+    public float getToughness() {
+        var settings = minecraftArmorSettings();
+        return settings != null ? settings.toughness().get().floatValue() : super.getToughness();
     }
 
     @Override
