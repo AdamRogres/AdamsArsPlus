@@ -5,6 +5,7 @@ import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
 import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -62,6 +63,7 @@ import java.util.function.Supplier;
 import static adamsmods.adamsarsplus.registry.ModEntities.ADAM_ENTITY;
 import static adamsmods.adamsarsplus.registry.ModPotions.DISRUPTION_EFFECT;
 import static adamsmods.adamsarsplus.registry.ModPotions.DOMAIN_BURNOUT_EFFECT;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 import static java.lang.Math.*;
 
 public class AdamEntity extends Monster implements RangedAttackMob {
@@ -332,24 +334,9 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
     private ParticleColor adamColor = new ParticleColor(150, 0, 255);
 
-    public Spell adamBlinkSpell = new Spell()
-            .add(EffectBlink.INSTANCE)
-
-            .withColor(adamColor);
-
-    public Spell adamRecoverSpell = new Spell()
-            .add(EffectDispel.INSTANCE)
-            .add(EffectHeal.INSTANCE)
-            .add(AugmentAmplify.INSTANCE,5)
-
-            .withColor(adamColor);
-
-    public Spell adamBarrierSpell = new Spell()
-            .add(EffectLimitless.INSTANCE)
-            .add(AugmentAOEThree.INSTANCE,3)
-            .add(AugmentAmplify.INSTANCE)
-
-            .withColor(adamColor);
+    public Spell adamBlinkSpell = getSpell("Adam", "Blink");
+    public Spell adamRecoverSpell = getSpell("Adam", "Recover");
+    public Spell adamBarrierSpell = getSpell("Adam", "Limitless");
 
     public void performSpellSelf(LivingEntity entity, Spell spell, ParticleColor color){
         EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -718,11 +705,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor AdamColor = new ParticleColor(0, 0, 0);
 
-        public Spell AdamAttackSpell = new Spell()
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-
-                .withColor(AdamColor);
+        public Spell AdamAttackSpell = getSpell("Adam", "AttackingAA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -893,18 +876,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor AdamColor = new ParticleColor(0, 0, 0);
 
-        public Spell AdamAttackSpell = new Spell()
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-
-                .add(EffectDispel.INSTANCE)
-                .add(EffectHex.INSTANCE)
-                .add(EffectSnare.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE,4)
-                .add(EffectGravity.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-
-                .withColor(AdamColor);
+        public Spell AdamAttackSpell = getSpell("Adam", "AttackingAB");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -1076,18 +1048,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor AdamColor = new ParticleColor(0, 0, 0);
 
-        public Spell AdamAttackSpell = new Spell()
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-
-                .add(EffectDispel.INSTANCE)
-                .add(EffectHex.INSTANCE)
-                .add(EffectSnare.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE,4)
-                .add(EffectGravity.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-
-                .withColor(AdamColor);
+        public Spell AdamAttackSpell = getSpell("Adam", "AttackingB");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -1296,29 +1257,17 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  AdamColor = new ParticleColor(150, 0, 255);
 
-        public Spell AdamCastSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(AugmentPierce.INSTANCE,8)
-                .add(AugmentDurationDown.INSTANCE,8)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE,1)
-
-                .add(EffectBurst.INSTANCE)
-                .add(FilterNotSelf.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE,1)
-
-                .withColor(AdamColor);
+        public Spell AdamCastSpell = getSpell("Adam", "CastingA");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.5f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1475,94 +1424,22 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         private ParticleColor camColor = new ParticleColor(255, 255, 255);
         private ParticleColor mattColor = new ParticleColor(255, 255, 0);
 
-        public Spell ryanCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectFlare.INSTANCE)
-                .add(AugmentAmplify.INSTANCE)
+        public Spell ryanCastSpell = getSpell("Adam", "CastingB_RY");
+        public Spell cadeCastSpell = getSpell("Adam", "CastingB_CD");
+        public Spell nickCastSpell = getSpell("Adam", "CastingB_NI");
+        public Spell camCastSpell  = getSpell("Adam", "CastingB_CM");
+        public Spell mattCastSpell = getSpell("Adam", "CastingB_MT");
+        public Spell joshCastSpell = getSpell("Adam", "CastingB_JO");
 
-                .add(EffectExplosion.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,4)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectEvaporate.INSTANCE)
-
-                .withColor(ryanColor);
-
-        public Spell cadeCastSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-
-                .add(EffectFreeze.INSTANCE)
-                .add(AugmentExtendTimeTwo.INSTANCE)
-                .add(EffectColdSnap.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,8)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectConjureWater.INSTANCE)
-                .add(AugmentPierce.INSTANCE,2)
-                .add(EffectFreeze.INSTANCE)
-                .add(AugmentPierce.INSTANCE,2)
-
-                .add(EffectDelay.INSTANCE)
-                .add(EffectIceburst.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-                .add(AugmentAOEThree.INSTANCE,2)
-
-                .withColor(cadeColor);
-
-        public Spell nickCastSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(AugmentAOETwo.INSTANCE)
-                .add(EffectRaiseEarth.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(EffectFracture.INSTANCE)
-
-                .withColor(nickColor);
-
-        public Spell camCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-                .add(AugmentPierce.INSTANCE,3)
-                .add(AugmentDurationDown.INSTANCE,1)
-
-                .add(EffectLightning.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,6)
-
-                .add(EffectDelay.INSTANCE)
-                .add(AugmentDurationDown.INSTANCE)
-
-                .add(EffectDivineSmite.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,6)
-
-                .withColor(camColor);
-
-        public Spell mattCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-                .add(AugmentDurationDown.INSTANCE)
-
-                .add(EffectSummonUndead_boss.INSTANCE)
-                .add(AugmentSplit.INSTANCE, 2)
-                .add(AugmentAmplify.INSTANCE,4)
-
-                .add(EffectConjureBlade.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE, 16)
-
-                .withColor(mattColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.5f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1631,19 +1508,20 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        randomSpell = random.nextInt(100);
-                        if(randomSpell > 80){
-                            performCastAttack(this.AdamEntity, 1.0F, ryanCastSpell, ryanColor);
-                        } else if (randomSpell > 60) {
-                            performCastAttack(this.AdamEntity, 1.0F, cadeCastSpell, cadeColor);
+                        randomSpell = random.nextInt(120);
+                        if(randomSpell > 100){
+                            performCastAttack(this.AdamEntity, ryanCastSpell, ryanColor);
+                        } else if (randomSpell > 80) {
+                            performCastAttack(this.AdamEntity, cadeCastSpell, cadeColor);
+                        } else if (randomSpell > 60){
+                            performCastAttack(this.AdamEntity, nickCastSpell, nickColor);
                         } else if (randomSpell > 40){
-                            performCastAttack(this.AdamEntity, 1.0F, nickCastSpell, nickColor);
+                            performCastAttack(this.AdamEntity, camCastSpell, camColor);
                         } else if (randomSpell > 20){
-                            performCastAttack(this.AdamEntity, 1.0F, camCastSpell, camColor);
+                            performCastAttack(this.AdamEntity, mattCastSpell, mattColor);
                         } else {
-                            performCastAttack(this.AdamEntity, 1.0F, mattCastSpell, mattColor);
+                            performCastAttack(this.AdamEntity, joshCastSpell, mattColor);
                         }
-
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -1697,18 +1575,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  AdamColor = new ParticleColor(150, 0, 255);
 
-        public Spell AdamCastSpell = new Spell()
-                .add(AugmentDurationDown.INSTANCE, 2)
-
-                .add(EffectLimitless.INSTANCE)
-                .add(AugmentPierce.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-
-                .add(AugmentAmplifyThree.INSTANCE, 1)
-                .add(AugmentAOEThree.INSTANCE, 1)
-                .add(AugmentExtendTimeThree.INSTANCE, 1)
-
-                .withColor(AdamColor);
+        public Spell AdamCastSpell = getSpell("Adam", "CastingC");
 
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -1722,6 +1589,11 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(AdamEntity.this.random.nextInt(19) - 9, AdamEntity.this.random.nextInt(19), AdamEntity.this.random.nextInt(19) - 9));
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 10, time, () -> !this.AdamEntity.isAlive());
@@ -1886,25 +1758,17 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  AdamColor = new ParticleColor(0, 0, 0);
 
-        public Spell AdamCastSpell = new Spell()
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(FilterNotSelf.INSTANCE)
+        public Spell AdamCastSpell = getSpell("Adam", "CastingD");
 
-                .add(EffectSnare.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-                .add(EffectGravity.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-                .add(EffectSwapTarget.INSTANCE)
-                .add(EffectCraft.INSTANCE)
-
-                .withColor(AdamColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 3f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1986,7 +1850,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.AdamEntity, 1.0F, AdamCastSpell, AdamColor);
+                        performCastAttack(this.AdamEntity, AdamCastSpell, AdamColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -2040,22 +1904,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  AdamColor = new ParticleColor(0, 0, 0);
 
-        public Spell AdamCastSpell = new Spell()
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 4)
-                .add(AugmentExtract.INSTANCE)
-                .add(AugmentOpenDomain.INSTANCE)
-
-                .add(FilterNotSelf.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,2)
-                .add(EffectBurst.INSTANCE)
-                .add(FilterNotSelf.INSTANCE)
-                .add(EffectAnnihilate.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 3)
-
-                .withColor(adamColor);
+        public Spell AdamCastSpell = getSpell("Adam", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -2230,22 +2079,9 @@ public class AdamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  AdamColor = new ParticleColor(0, 0, 0);
 
-        public Spell AdamCastSpell = new Spell()
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 4)
-                .add(AugmentAccelerateThree.INSTANCE, 2)
-                .add(AugmentExtract.INSTANCE)
+        public Spell AdamCastSpell = getSpell("Adam", "DomainB");
 
-                .add(FilterNotSelf.INSTANCE)
-                .add(EffectSnare.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-                .add(EffectSwapTarget.INSTANCE)
-                .add(EffectCraft.INSTANCE)
-
-                .withColor(AdamColor);
-
-        void performDomainAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
@@ -2364,7 +2200,7 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performDomainAttack(this.AdamEntity, 1.0F, AdamCastSpell, AdamColor);
+                        performDomainAttack(this.AdamEntity, AdamCastSpell, AdamColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -2375,7 +2211,6 @@ public class AdamEntity extends Monster implements RangedAttackMob {
                     AdamEntity.setUsingDomain(false);
                     AdamEntity.castDomainAnimationTimeout = 0;
                 }
-
             }
 
             if(shouldCountTillNextAttack){
@@ -2383,5 +2218,4 @@ public class AdamEntity extends Monster implements RangedAttackMob {
             }
         }
     }
-
 }
