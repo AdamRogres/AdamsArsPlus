@@ -6,6 +6,7 @@ import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectDomain;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectFracture;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectRaiseEarth;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectSwapTarget;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -54,6 +55,7 @@ import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.registry.ModEntities.NICK_ENTITY;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 
 public class NickEntity extends Monster implements RangedAttackMob {
 
@@ -232,12 +234,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
     private ParticleColor nickColor = new ParticleColor(0, 255, 0);
 
-    public Spell nickLeapSpell = new Spell()
-            .add(EffectLeap.INSTANCE)
-            .add(AugmentAmplify.INSTANCE, 2)
-
-            .withColor(nickColor);
-
+    public Spell nickLeapSpell = getSpell("Nick", "Leap");
 
     public void setAttackingA(boolean casting) { this.entityData.set(ATTACKING_A, casting); }
     public boolean isAttackingA(){ return this.entityData.get(ATTACKING_A); }
@@ -486,14 +483,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor NickColor = new ParticleColor(0, 255, 0);
 
-        public Spell NickAttackSpell = new Spell()
-                .add(EffectFracture.INSTANCE)
-                .add(AugmentDurationDown.INSTANCE, 2)
-
-                .add(EffectKnockback.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 2)
-
-                .withColor(NickColor);
+        public Spell NickAttackSpell = getSpell("Nick", "AttackingA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -532,7 +522,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
                         if(!pEnemy.isBlocking()){
-                            performSpellAttack(this.mob, 1.0F, NickAttackSpell, NickColor, pEnemy);
+                            performSpellAttack(this.mob, NickAttackSpell, NickColor, pEnemy);
                         }
                     } else {
 
@@ -575,7 +565,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         }
 
-        void performSpellAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color, LivingEntity enemy){
+        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
@@ -662,20 +652,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor nickColor = new ParticleColor(0, 150, 0);
 
-        public Spell nickAttackBASpell = new Spell()
-                .add(EffectDispel.INSTANCE)
-                .add(EffectLaunch.INSTANCE)
-                .add(EffectLaunch.INSTANCE)
-                .add(EffectSlowfall.INSTANCE)
-                .add(AugmentDurationDown.INSTANCE,3)
-
-                .add(EffectDelay.INSTANCE)
-                .add(AugmentDurationDown.INSTANCE)
-                .add(EffectSwapTarget.INSTANCE)
-
-                .add(EffectLaunch.INSTANCE)
-
-                .withColor(nickColor);
+        public Spell nickAttackBASpell = getSpell("Nick", "AttackingBA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -842,16 +819,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor nickColor = new ParticleColor(0, 150, 0);
 
-        public Spell nickAttackBBSpell = new Spell()
-                .add(EffectDispel.INSTANCE)
-                .add(EffectGravity.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-                .add(EffectSnare.INSTANCE)
-
-                .add(EffectSwapTarget.INSTANCE)
-                .add(EffectDispel.INSTANCE)
-
-                .withColor(nickColor);
+        public Spell nickAttackBBSpell = getSpell("Nick", "AttackingBB");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -1023,18 +991,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor nickColor = new ParticleColor(0, 150, 0);
 
-        public Spell nickAttackCSpell(int AOE) {
-            return new Spell()
-                    .add(EffectBurst.INSTANCE)
-                    .add(AugmentSensitive.INSTANCE)
-                    .add(AugmentDampen.INSTANCE)
-                    .add(AugmentAOE.INSTANCE, AOE + 1)
-                    .add(EffectRaiseEarth.INSTANCE)
-                    .add(AugmentSensitive.INSTANCE)
-                    .add(AugmentAmplify.INSTANCE, 4)
-
-                    .withColor(nickColor);
-        }
+        public Spell nickAttackCSpell = getSpell("Nick", "AttackingC");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -1122,16 +1079,9 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         void performSpellAttack(LivingEntity entity, ParticleColor color){
-            final int[] AOE = {1};
-            int time = 50;
-
-            AdamsArsPlus.setInterval(() -> {
-                Spell spell = nickAttackCSpell(AOE[0]);
-                EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
-                resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
-
-                AOE[0] = AOE[0] + 1;
-            }, 10, time, () -> !this.entity.isAlive());
+            Spell spell = nickAttackCSpell;
+            EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
+            resolver.onResolveEffect(entity.level(), new EntityHitResult(entity));
 
             this.entity.attackCCooldown = random.nextInt(120) + 200;
         }
@@ -1194,28 +1144,17 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  NickColor = new ParticleColor(0, 255, 0);
 
-        public Spell NickCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
+        public Spell NickCastSpell = getSpell("Nick", "CastingA");
 
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyTwo.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectRaiseEarth.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 4)
-
-                .withColor(NickColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1284,7 +1223,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.NickEntity, 1.0F, NickCastSpell, NickColor);
+                        performCastAttack(this.NickEntity, NickCastSpell, NickColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -1339,24 +1278,7 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor NickColor = new ParticleColor(0, 150, 0);
 
-        public Spell NickDomainSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentExtract.INSTANCE)
-                .add(AugmentAccelerateTwo.INSTANCE)
-
-                .add(EffectGravity.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE)
-                .add(EffectSnare.INSTANCE)
-
-                .add(EffectCrush.INSTANCE)
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectCrush.INSTANCE)
-
-                .withColor(NickColor);
+        public Spell NickDomainSpell = getSpell("Nick", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));

@@ -6,6 +6,7 @@ import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectBlueFlame;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectDomain;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectEruption;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -61,6 +62,7 @@ import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.registry.ModEntities.RYAN_ENTITY;
 import static adamsmods.adamsarsplus.registry.ModPotions.FLAME_DEITY_EFFECT;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 
 
 public class RyanEntity extends Monster implements RangedAttackMob {
@@ -402,14 +404,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor ryanColor = new ParticleColor(255, 0, 0);
 
-        public Spell ryanAttackSpell = new Spell()
-                .add(EffectDispel.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(AugmentExtendTimeTwo.INSTANCE)
-                .add(EffectHex.INSTANCE)
-                .add(EffectEruption.INSTANCE)
-
-                .withColor(ryanColor);
+        public Spell ryanAttackSpell = getSpell("Ryan", "AttackingA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -447,7 +442,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                     this.mob.getLookControl().setLookAt(pEnemy.getX(), pEnemy.getY(), pEnemy.getZ());
                     if (this.canPerformAttack(pEnemy)) {
                         performAttack(pEnemy);
-                        performSpellAttack(this.mob, 1.0F, ryanAttackSpell, ryanColor, pEnemy);
+                        performSpellAttack(this.mob, ryanAttackSpell, ryanColor, pEnemy);
                     } else {
 
                     }
@@ -497,7 +492,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
 
         }
 
-        void performSpellAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color, LivingEntity enemy){
+        void performSpellAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
@@ -592,30 +587,17 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  ryanColor = new ParticleColor(255, 0, 0);
 
-        public Spell ryanCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectFlare.INSTANCE)
-                .add(AugmentAmplify.INSTANCE)
+        public Spell ryanCastSpell = getSpell("Ryan", "CastingA");
 
-                .add(EffectExplosion.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,8)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyTwo.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectEvaporate.INSTANCE)
-
-                .withColor(ryanColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -684,7 +666,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.ryanEntity, 1.0F, ryanCastSpell, ryanColor);
+                        performCastAttack(this.ryanEntity, ryanCastSpell, ryanColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -740,13 +722,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  ryanColor = new ParticleColor(255, 0, 0);
 
-        public Spell ryanCastSpell = new Spell()
-                .add(EffectBlueFlame.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(AugmentAmplify.INSTANCE, 3)
-                .add(AugmentExtendTime.INSTANCE, 4)
-
-                .withColor(ryanColor);
+        public Spell ryanCastSpell = getSpell("Ryan", "CastingB");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -760,6 +736,11 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(RyanEntity.this.random.nextInt(19) - 9, 8, RyanEntity.this.random.nextInt(19) - 9));
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 10, time, () -> !this.ryanEntity.isAlive());
@@ -932,24 +913,9 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  ryanColor = new ParticleColor(255, 0, 0);
 
-        public Spell ryanCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectFlare.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 4)
-                .add(EffectEruption.INSTANCE)
+        public Spell ryanCastSpell = getSpell("Ryan", "CastingC");
 
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyTwo.INSTANCE)
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectEvaporate.INSTANCE)
-
-                .withColor(ryanColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             this.ryanEntity.castCCooldown = random.nextInt(400) + 160;
 
@@ -965,6 +931,11 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
                 projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
                 projectileSpell.setPos(pos);
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 10, time, () -> !this.ryanEntity.isAlive());
@@ -1033,7 +1004,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.ryanEntity, 1.0F, ryanCastSpell, ryanColor);
+                        performCastAttack(this.ryanEntity, ryanCastSpell, ryanColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -1089,19 +1060,7 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor RyanColor = new ParticleColor(255, 0, 0);
 
-        public Spell RyanDomainSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentExtract.INSTANCE)
-                .add(AugmentAccelerateTwo.INSTANCE)
-
-                .add(EffectIgnite.INSTANCE)
-                .add(EffectFlare.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,8)
-
-                .withColor(RyanColor);
+        public Spell RyanDomainSpell = getSpell("Ryan", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));

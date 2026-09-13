@@ -7,6 +7,7 @@ import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectAnnihilate;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectDomain;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.EffectIceburst;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.FilterNotSelf;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -59,6 +60,7 @@ import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.registry.ModEntities.CADE_ENTITY;
 import static adamsmods.adamsarsplus.registry.ModPotions.WALKING_BLIZZARD_EFFECT;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 
 public class CadeEntity extends Monster implements RangedAttackMob {
 
@@ -425,19 +427,15 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor cadeColor = new ParticleColor(150, 150, 255);
 
-        public Spell cadeCastASpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-
-                .add(EffectFreeze.INSTANCE)
-                .add(EffectColdSnap.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,8)
-                .add(EffectFreeze.INSTANCE)
-
-                .withColor(cadeColor);
+        public Spell cadeCastASpell = getSpell("Cade", "CastingA");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -558,33 +556,15 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor cadeColor = new ParticleColor(150, 150, 255);
 
-        public Spell cadeCastBSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-
-                .add(EffectFreeze.INSTANCE)
-                .add(AugmentExtendTimeTwo.INSTANCE)
-                .add(EffectColdSnap.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,8)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyTwo.INSTANCE)
-                .add(EffectConjureWater.INSTANCE)
-                .add(AugmentPierce.INSTANCE,2)
-                .add(EffectFreeze.INSTANCE)
-                .add(AugmentPierce.INSTANCE,2)
-
-                .add(EffectDelay.INSTANCE)
-                .add(EffectIceburst.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-                .add(AugmentAOEThree.INSTANCE,2)
-
-                .withColor(cadeColor);
+        public Spell cadeCastBSpell = getSpell("Cade", "CastingB");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
 
@@ -711,23 +691,9 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor cadeColor = new ParticleColor(240, 240, 255);
 
-        public Spell cadeCastCSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
+        public Spell cadeCastCSpell = getSpell("Cade", "CastingC");
 
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectConjureWater.INSTANCE)
-                .add(AugmentPierce.INSTANCE,2)
-                .add(EffectFreeze.INSTANCE)
-                .add(AugmentPierce.INSTANCE,2)
-                .add(EffectBurst.INSTANCE)
-                .add(EffectFreeze.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE, 2)
-
-                .withColor(cadeColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             this.CadeEntity.castCCooldown = random.nextInt(300) + 300;
             int time = 100;
@@ -739,6 +705,11 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(CadeEntity.this.random.nextInt(19) - 9, 8, CadeEntity.this.random.nextInt(19) - 9));
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 10, time, () -> !this.CadeEntity.isAlive());
@@ -855,7 +826,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.CadeEntity, 1.0F, cadeCastCSpell, cadeColor);
+                        performCastAttack(this.CadeEntity, cadeCastCSpell, cadeColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -911,17 +882,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor cadeColor = new ParticleColor(240, 240, 255);
 
-        public Spell cadeCastDSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectIceburst.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 4)
-
-                .withColor(cadeColor);
+        public Spell cadeCastDSpell = getSpell("Cade", "CastingD");
 
         void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -935,6 +896,11 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(CadeEntity.this.random.nextInt(19) - 9, 8, CadeEntity.this.random.nextInt(19) - 9));
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 10, time, () -> !this.CadeEntity.isAlive());
@@ -1100,32 +1066,17 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor cadeColor = new ParticleColor(150, 150, 255);
 
-        public Spell cadeCastESpell = new Spell()
-                .add(AugmentPierce.INSTANCE, 8)
-                .add(AugmentDurationDown.INSTANCE, 2)
+        public Spell cadeCastESpell = getSpell("Cade", "CastingE");
 
-                .add(EffectDelay.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyTwo.INSTANCE)
-                .add(EffectConjureWater.INSTANCE)
-                .add(EffectFreeze.INSTANCE)
-
-                .add(EffectDelay.INSTANCE)
-                .add(EffectIceburst.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-                .add(AugmentAOEThree.INSTANCE,2)
-
-                .withColor(cadeColor);
-
-        void performCastAttack(LivingEntity entity, float p_82196_2_, Spell spell, ParticleColor color){
+        void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 0.3f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1194,7 +1145,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                     }
 
                     if(isTimeToAttack()) {
-                        performCastAttack(this.CadeEntity, 1.0F, cadeCastESpell, cadeColor);
+                        performCastAttack(this.CadeEntity, cadeCastESpell, cadeColor);
                         this.done = true;
                         resetAttackLoopCooldown();
                     }
@@ -1250,23 +1201,7 @@ public class CadeEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor CadeColor = new ParticleColor(150, 150, 255);
 
-        public Spell CadeDomainSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentExtract.INSTANCE)
-                .add(AugmentAccelerateTwo.INSTANCE)
-
-                .add(EffectFreeze.INSTANCE)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentAOE.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectConjureWater.INSTANCE)
-                .add(EffectFreeze.INSTANCE)
-
-                .withColor(CadeColor);
+        public Spell CadeDomainSpell = getSpell("Cade", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
