@@ -1,0 +1,309 @@
+{
+  "bossSpells": [
+    {
+      "name":  "Adam",
+      "attack":"Blink",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"Recover",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"Limitless",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"AttackingAA",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"AttackingAB",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"AttackingB",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingA",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingB_RY",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingB_CD",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingB_CM",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingB_NI",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingB_MT",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingB_JO",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingC",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"CastingD",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"DomainA",
+      "spell": ""
+    },
+    {
+      "name":  "Adam",
+      "attack":"DomainB",
+      "spell": ""
+    },
+    {
+      "name":  "Cade",
+      "attack":"CastingA",
+      "spell": "H4sIAAAAAAAA/+1VsW7bMBD9F85C4DQWEHhsaqRL0SBOpqIgKOpksaZIgjxZUAz/e4+qHEuOEiBuhwzlIvF4fPeO74nasWBrk7PFbp8wD1I5YIsfTPjAja23IOrFWreu5M7bXyBRaWDJxLKQEjR4gcCxsZMphQd4mt4trc55MMJNY1dOq6LlWBLCmRl98Z8Jc8KjkhoeVAVaGWp3N8ofNEorhRbKL4uCInF62PzdobImdCFvHVAUwgukPplj62C4+6Gbj3INNHytbUPkQ53dvYpJJ2X9EOvmEFD5CaQkgigMEiQlfErThK3jM2EZW1xez0hwVAa/qCAyDbQbfQ17GhR/g2BclyLgqvfNs4GOLy+oCK1FSyplCgzyRmHJFULFCGprdV1RsdnFNTFzCmUZJ2m67wwZrN7Cu0pVgGUbkGfayg3PPIjNsM7lxXxQZt5164XSR40rG7U9SPuNTHmiQWVz0DEY6dVenh4VVA7bo5B/EF471654JPgua+VggqIiFH5+nc/owESu6hA7u5qNB3UdnGhM773V3dfl/TLWPdexwdiGvo4NfFjLHhnGBGvuOzcps35b62mwrPYB/4lO6UimdCzT1Vimm8fPfy3Sh9anl2YVe/5/zZ5csxPrg79TzDAi3mnsVgupBDGQ59Pc/wZY7d7JCwgAAA=="
+    },
+    {
+      "name":  "Cade",
+      "attack":"CastingB",
+      "spell": "H4sIAAAAAAAA/+1W3W+bMBD/Vyae0wiakJI+tou2l2pV2z1NE3LIhbgxNrJNUhrxv+8MSQgEkiXqpu6DF8B3vq/fz3deWUokfGJdr7KOJSGgMVjX3ywilc9FsgCSXIcsjWd+LMUzBJoysDoNYhIEwEASDb6eSWhWmqLgtVkUCDbxFSdxs/UoZnSaHjB9XGOcSKUbJQq4opouWvZJIPPDPpeiJSf+nEjwl1gV2agRU5BBs9sDogNlPM/gBBhJGyUwnRrQA2iv3rEqrOXNMnGILqX0e8eKicQ4GDzRCBjlyNJVZUuRAy4K/kSD+SgP3PxHQlPBzRdSOL5DhuVc16lhesUEo+FMW1np60tstqrNXsBVUPuODXty19vPSxsPE5nQBLXtrtOxVEyW/Klw+Xj/efQwMn52zWx8+kVgqzLh/UAVF8spI3NTNpWM71tjw1Ml5K6x280CndRsIlmVJtxgjAouJhBiHq7bscb525SMcv2RKjJmgLunhCnIsloaKgYjXFnpHeWPxY/dRWvpHXkp/7EkL681DVzYVcmaQSpzz/KOpQRbUB6eg3fB6bfA26ng3bOrT//Pwz8HPidAjr/j2Xv4a5kY+E9C6XE9a7ZDp/zYCyhkRKl19zUYUR3MTHWvWlwWDaBW1QLivCs8/H6qQES1af24LIUmG2cvmyNR8BwjDtGfXQv9OM9s91cQ611zaodOcAqZIIqxfm2Wt+hW6lZeeNAikpnKkjkn0eAUBDgs/ZC9YxS2ARp5QJQ+BQbC8IzijWBMgWt/SfVMJNqnGiJT/YVgSWROQtdztwfe6bpnYk4i0LNUaX/MRDAvO8nGjdPt77SVfp6vJJQd7g8VF5HArpMfbwwvMderJtptoVx3mDZ+x1QS9kbzqGkgOc7w0h5eesPB3zyQjt9HLrB19qsj2qlfUHrDyuNV7yvGwmDvxjL4qWH4zibRRW+I2favHC8fSJ7XdT170DtlKrkVrrnVyvaqXLv9evMPTCiBRMGc/8+L2rxokO+MWaPBiWnN1oh9+MRIQAkGEZwfafYDsDSrI98QAAA="
+    },
+    {
+      "name":  "Cade",
+      "attack":"CastingC",
+      "spell": "H4sIAAAAAAAA/+1W3W/aMBD/X/JMUQJkQB/bMe2lWtV2T9MUmeQILsaObIePovzvOyeQEDB0Qd3UauOFxOf7/P1ydxtHiZRHzvUmazkSQpqAc/3DIVIFXKQLIOl1zNbJNEikeIZQUwZOyyImYQgMJNEQ6KkE+6VxKpW2qwvUWwqrTAFXVNOF3WYo+HMqIViia2m9kVCQoV35jGiCSbw01rKKJCiwp/1KQU4W8kxwsNLAI03nRUF/tpyESE1DBk94xihHfDc1vQgYWZtDwZ9oOBtNJoizeZ8LTQU3Twh+ckeSgiV6bThSM8FoPNVOVvn6lhhVtdMFPAV17NgAm7suHzsu0pBENMXbbttrOSohS/5UuHy8/zp6GBk/+2Z2PoMisE2V8HGgiovlhJGZqZ1Kx/cnYwsFE3Lf2O3ugEYHNpGBShNucMQLPiYQYx6+33LG+b8pGeX6M1VkzAC1J4QpyLKDNFQCRrhx1neUPxYvbhutre/IqnrHkqxeDm7gwf6VzA5SlXuWf+tKsAXl8SV4F7x9C7y9Gt5dt/7rfTz8c+BzAuT4ewP3CH8tUwN/I5Qet126bNfVw1FAMSNKBWMJZJZjRHU4NdXtn3BZNICDqhYQ513h4e9TBeZUm36Ox1JosnO22n0SBc8x4hj9uQehv84z1/8TxHrXnNqjEzQh0xgIBhNE+IczGIesqdJCsHSOXjzToUt+dfwT/ksO1KpbLRToFylPZcWvRmRpghOHZRCzd4xVGaCRh0TpJmAtKY+CcEpkDEFZdDtYXf9CQsA80eu63d6e3V6elySUne8WNZtzgT0o/9gxntRsUDafJWTbfnOigrnzNxpO9W1kO5W83tD1vE9e5+NNJ6/fLdjpbdeTzvDkevI78+mdDYcrH6dc3+8MBvmMuPJcv90fdoZek1Hh1zYSv76RdOuY336/+QfGhsBtE3P+354P2rNFvjfVzA1OTId0vkga0wgZhS398kCzX6T4KP2tDwAA"
+    },
+    {
+      "name":  "Cade",
+      "attack":"CastingD",
+      "spell": "H4sIAAAAAAAA/+1WTW/aQBD9Lz5ThDEmKcekSL2gRoGeqgotZjBb1rvW7hpwkf97Z9eAsTFNTaKKSMkl9n7MezNv/Iado0TC585gl7UcCQGNwRn8cIhUUy6SNZBkELI0Xk5jKX5BoCkDp1WzTYIAGEiiYaqXEuoPzRKpdP11gfc2onZPAVdU03V9TFgsDK0AXgh+kRSJYkYX6f7Ez5YTE4nxGExoBIxyrMeudG0OjKRmUfAJDVZDS8C8R0JTwc0TFisekTivqk5NTUshGA2X2skKrG+xuaoOdwFXQZ0Dm0JY6ONjt4OykTlN8HSn7bYcFZMNn+SQ46evw+ehwTkNc8Cc5sR2RcLnRBUXmwUjK1M6lcyeLnILBBPyNNjjYYHOKzEDTFQTbrTCAz4mEGIevt9yZva/KRnl+gtVZMYAby8IU5BllTRUDGZz56Qjysf5S6eN0dIR2RbvWJLt78oJXDg9ktWLVOSe2W9DCbamPLxG77w330Jvt6S31yn/9d6f/lZ42wBWf/e+c6a/lomRv5FK472rHe2teDgjFDKi1HQmgaysRlQHS1PduwuQuQFUqppLbF3h+f+3CkRUa7D1lkKTA9j28EnkfY6MQ8TrVKi/3Gf+R18ZSeEVXbUWLIkQxDUmvW8xt931L8Af26BU4WIGIyKyo7JosUb90kQrDptpyMTmZqU6EjT7AVG6iUwQxTq9JBA6rH+l/DVxeydxezYXSSj7u0mUYkYCrcd+48gnkUG1EDnmUaa9zVyomgV/k5nklWeSX55J3vvzjga/Sf7FPG5sInzqfW7f3/Vd384Ft+u1e77X9/pNxoPfQPHH7w+v1vtmvceSy0Uem5w//LjixzX7J2PMnOAksm0iAd0ROwo9/Hqi2R+Gs4Lo0Q4AAA=="
+    },
+    {
+      "name":  "Cade",
+      "attack":"CastingE",
+      "spell": "H4sIAAAAAAAA/+1WTW+bQBD9KxVnxwLbOIlvbRq1l6hRnJ6qCi0wtjdedtHuYkIs//fOgj8AQx3SqEqq+mL2c97Mezsza0uJhIfWZL3pWRICGoM1+WERqTwukhWQZDJnWbzwItALEYagBScarF7DlpiCDP7BpTCRRFPBQ5FyT6eieRMwkjWu+IlUunFFAVdU01WzWSKg1ZovgSybT0Uxo7Os9WQg+EMiwUuRRdm4YyYBnloi0eokzGYQaBpAu7enkG3X22OxQGAnVn/2rJhIxMHgnkbAKEc5rytHCh9wUvB7Giyvc+BmHAlDsvmKpYhvSFw8Cp2ZJ1G5gtH5Qlubg61vsTmqdmcBZ0EdGzZs56b3nxc2vjoS0gR3O30cqJik/L4wOb39en13beyUr9nZ9Apg64PDx0AVF+mMkaUJm0r821ZsgWBCli+72k3QsHYnCkhpwg3HuMEZDXrWfPvvW5OB65qYUa4/U0V8Bnh8RpiCzabmh4rBLK6t7IbyaTGwTQiyG/J4GDs96/GptgMnyls2zSwdnN/kuU0JtqJ8/hLCC1G/BuFOiXC7P7Srv9H7EwASngtg4Ob8Oxf2Ef9aJob+TixNt1VpX54OH0eAIIoxtIYdqoOFiet5i7Hi7dfiWZCbJ4S7vy8SiKg2mRinpdBkZ+xx9xgKhSPiOdqza9BPK8x237Ok3Nac0llT0EVRagnMdDqmWq7QOwg9LTylZaGelWBJBHnGdkuqQ5gnlFGJuRQPpmSyPOAIl8qD6jpJqAt7HFJvzkT6ZvPBHqBZD4jSXXgjDN83NhI+Ba69lGLLmmiPaoiqtDl71pwtay8QCTEtcaa05zMRLLctWdVMWR3j3GFJKPt9cqnYiASmrDw3IL7ENKhNqW/P5TY9tT2LmErCXqeMDd133rg8J8k8v3E5w0w7qtZyp97JDC8rv4tqY2NuGB+1NuNnZbg3VrjOnHF/MBwPzod5/boc9Qcj59J2u1Qxt9ImudXQDqtyu/r+6Y/F9mbzYQ6uIHlqfP5fI2o1omG9VFrNDk5MOrY+sg9fGAkoQRDBy5FufgFQJc8DMxEAAA=="
+    },
+    {
+      "name":  "Cade",
+      "attack":"DomainA",
+      "spell": "H4sIAAAAAAAA/+1XXW/aMBT9K5OfU5RQwgqvHdNeplWlb9MUmeSGunPsyHZIKcp/33X4Tg0tqGxUHS+JfO1zP8714WZGtCxEQvqzyiMKYpYD6f8kVOlIyGICtOiP+TS/j3IlHyA2jAPxHGYax8BBUQORuVfg3gRpihCJzCgT7g2PBkRiWLYPhcrjrehA0di8mEIpnVtSxH1yI48KpXfgSvcJDUIzwyZuayzFQ6EgKjEetS+YXx7JqTIs5nCHheNMIIOzrf3z2HBRilvQkk+YGA9qLuxiJg2Twr4hx/l3ms+bwUxtKzhwqrXDH7k9qpdnAVdBN70ndZ5Tu7x6DbHZaMIK3Oy3An/+Czo9Pwi6QdsjOqeluJtHMLz5NrgdWLebqMsQonmcs3URnsethSxTTn/bSutidLMz1FhyqTbBrpcLLGlgIj/aUGEpxw3tEDMa26dHRqQfXPm2gkyYL0zTEQc8bVQBVdXIAjJmLL/oQUlDl0Q82rL4HpnWT3tmjDn5lZuWdXpVfYktwzBcXOvV/V6/PMsFshxJqXbAr1jfKv9aDhARvTO17qiD2uMQIgWU0ZjL8gx4dNdqFaC1x1SbI2nYRWLtVlHG91/fLdhMJsDrDkPQQsXNmOduVxVdCMCOBGvnbyIBeOv/qgi8r975oEp9RiS9Vqgvgm6rHbQ7frfW64sgCFu97uerbviSbjcIH9pK/hfRRl0c9o3/HlvihGYazTkvdH8xW2KMr1BJN3qRl1QlUcqAJ28jdL0toeuEpxhvTkZm6NdcBr3Lmkzk9hmZKeV6N5t1dB9Y0s5p+Dzt/OiRieRFhvBB6xJjyZmJ722N2+GmZ8d9bZRXA0//2efKgSO5d2bt9r7Ufe+c6+hU2xjWJqhtM/JVyScQn4aG2k/k+PgMqj94jKVfCBEAAA=="
+    },
+    {
+      "name":  "Ryan",
+      "attack":"AttackingA",
+      "spell": "H4sIAAAAAAAA/5VSTWvDMAz9Lz6XkpWGjVy3sl3GStvbGMFNlFTg2MZW2oaS/z45Wb/Tw3yx0MfTe5IOwpta5yI5tCPhIEMLIvkW0vlUm3oLsk5K1dhNSqbONmI0EMnRW1CDISw1EgyGYE+gc8IKUtqZwZQN7IdLiwIyAldbQqPFz0hY6QgzBSuGU6hZwuGqrifPTqMX4I3aoi5nHUpwVqbDYcs6Yz+l7adBTZjFFc66dp5Ee2741VHwx1pgL/jb7jloj9QE98mcRjxumWPN2dF4Go+Et3KnV33P5fxjtpiFRpc4UCGx7IDjDMkj6X1AYLim+0NNyRjRTfGRcdrLOpxndi/TV1KptFCyCrvz9Xr+UFtmlHGXcK9HB+Y3qBkPiqQmhuSEScyaS5HEzHwdvjBx1PSGXq4VcHEhlYeW3+AqLjm23e2GvcLy75pPZ3027ggV6CAtZIWqSSfdVpHCmUTj5wdN+zsKQR36JuLdSJaT/VPzJO40P71EbfsLw4fW8oEDAAA="
+    },
+    {
+      "name":  "Ryan",
+      "attack":"CastingA",
+      "spell": "H4sIAAAAAAAA/+1V0W7aMBT9lcnPDAXaiI7XDW0v06rSt2mKHHMT3Dq2ZTtQhvj3XSclgZBEA7GqD+Mllu17fH3O8WFLrMrlgky3uwExwLgGMv1JqLGRVPkKaD5NxUYvI23UEzDHBZBByzJlDAQY6iBya9W6haeSu/bqRFDTgZtpwZNN6xq8aKEsV7KvMnJLA73YPTvi3FjXXqugp86CtNzxVQeqAfrc39H5FMKKauX5J78GRFPjOBPwyDMQXKKk26OS8l44qeQDWCVWXKazJEF9/WSmnCcVRyi6/k516Q638d5owdnVB/7QvtTuawFnwTZPXxTsbPx0NQzRfXTBc9w8GgYDYjVdy8fyxPn9t9nDzB9ziAIZdw6MRzHK0X3LL2QaeIBN8fU1KWIEjeJ9v1F5qW3N2OklMySQGZq4yGbq2bNv8/i+83ZMCWUOIT/vJ/iigcyQKkeldxhuGIdIQuq/AxIjDXe+acel+8ItjQVgtTM57PDXKkazz13xor26MH9949VjrwcnTUGmUZCuQyrFj9isswER8TFzU7vpLGuco4uEdZQKtX63glQN+nVGrTtHhljQ3xDZpVLlA+OOLb2lJ+GFuibcAAZMzEEeIo6G4wLRGcpFfwYcu00tQBSPD1vJDWtevrRRJc1rinQwVRx+lRyZBHWQBMPx3wTJOZ5Db2f/PgHCoDBceOq3hArbbbiyO7/4bnJ9HFwx2D+OJ8NPwd1NcFvk+ygc3tyORtfI+LfR9dIgOdR17vn7n66NdG1ZP/hT8jukp3BKZuLDV0WxA3Z5m7s/VVi+iDULAAA="
+    },
+    {
+      "name":  "Ryan",
+      "attack":"CastingB",
+      "spell": "H4sIAAAAAAAA/+1VTW/bMAz9Lzq7gWXERefrFmA7DCua3orBkG3a4SBLgiQnTYP891FuUqeJ+z30NF9skeLTI9+DvGFOd6pi2WYbMQslGmDZDRPW5Up3SxBd1si1WeTG6j9QepTAopE01DVlC9lBLUU7vkdoyP1Kj+daI7Fev5QfP/vWg6o8tgS/sADsd8SMsB5LCdcUlaioqc2jyoN2KEOc0c76FsJyX/zLeNTK9SGrDVAU3AnSbnPu1wYOq6/79aO9ClZ5I/WK2nBdcfkkZqmltodYX/cBrI4gSyLohfIESRuSNI1YE94RK1jGL2KS1aPy39CJQgJVe9vBlh6KP0Mw5Evh/HznjgebDB8nVGq0QEIVCESH6pdadmSFjE840THoy0VYTLe91ZyWSziFH4qSoSiepGnP2AqUg06tDvrs5fkpzPEcW12BDMFwXGfL43ahNX49iHGP8NRs7rC5E01o7E3+qEA5pFMo/PDJ45hGICrsXGhuSgyMWKmdY+aX32dXs3DQe30mxVJ8gsfuTUbvt5msZxdyWl31NkDVPC/qOE7RWef/iR7poRokTv/w6ZeY83OevEYdaNF76MdntRf7Fm5ZdpYkkynnF+l5xOioMx4nk4SnnAeEhhDjDwj9aRdKGvdap6f3SS2ke+WFotU8DPL/RXs0l5H8wf8p7FDhn5qxH41CRwTK97Pc/gWoJitI8gcAAA=="
+    },
+    {
+      "name":  "Ryan",
+      "attack":"CastingC",
+      "spell": "H4sIAAAAAAAA/+1VTW/bMAz9K4POaWAHdpD4NnTBdhlWNL0NgyHbjK1NFgVJTpoF+e+T5KT5crI17YYe5ottknp8Ip+oFdHYiIIkq3WPKMiZBJJ8JVTpVGAzB9okJV/KKq3BVFgUYFBQA6TXEcJKwc64Zpyqbg+tJWezZWoqBd0RMJtBbkA10jAUnSFZo7TphsduUA1CM8Pm3d5MAf1xme4Cu8nOqUT1mwp96xFJlWE5hwdWA2fCFn11EC8Vfre7Ztx7bPmYmvg6uN/t4i++ItqbFEqwVtAnSJvg1Cwl7K9+8P8HsQIWaclxYcnrJrs7i5kjR7WPdbs1sOIIMrcEDRWuOzZgEMc9Urp3j2QkCUeBlZ1hwnxgmmYc7GqjGljbx9ovEHT+nGoz3aj3Sca7jxMqGac/IdUVoiF2+Rx5U9sEYT+0/WAmr0gS9OO1Pwga+RyeA85ZWRnBRJlmyE3KaknzC2mGPo9RlPFdX2v0Ct+08zOVx3WvsQDujI5go/Lj8kAtzXLXvBbhXC19csfwWXIq/MFZOvPTZxgFtma0YI12extYApIuxEZg07tPk/uJS3StLHVNOXczpIa/rsw48MqMT4U5o1yfV+Y+RxeC4t6LyCricoO74dqJ9hrNifdbEwbtE0bjIAyH4R+1Cmpm7Pz1ukNDt1t4JMnNYNyPhnEURz1iU93Ew/4oGo1HkUMoLWLwgq7Do+So25H/NqfRjmHb8akr5f8xfTSmO/x7t9uRQFrdW4Zv5vyEe7Mt7AcvOzCBA1j692sckX8mhGun4oEQrrhV2wvtHPqmydYp3NhNyHv+7iNSSz2/XujrX5qIw2QTCwAA"
+    },
+    {
+      "name":  "Ryan",
+      "attack":"DomainA",
+      "spell": "H4sIAAAAAAAA/+1WTW/bMAz9K4PObmB7cZv6umXYZVjR9DYMhiLTjgZZEiQ5aRbkv49yvpzEydqgh62tD4FNkY/Ue6SUBbGqljlJF8uAGGBcA0l/EGpsJlU9BVqnpZjrSaaN+gXMcQEk6FimjIEAQx1kbmKg2wmKAiFyVVEuux0eHcjc8eocClWXr2ICQ5n76xZmqtOFl5K7buRCUHOiokoLXszP1bzn8TMgmhrHmYAHZEJwiZIsCM1pZTFWi9qmaw7RjPvhYtgQ6z8r5bhqFlAw/Y3qlbJu7nXdS13rGTV5VnAQOVnucn7XHsFuIACt0Hy1g3OQlru5N29f4xA7iOa8Ru+w9zHcf/oBsZrO5MOqktHd1+H90Odtw25qyFb1LnZEHNcv6JQim7Ye350skymhTBvn08bA8wM4hnt2VPrWQIc4ug1ISdIoIGP89Qxy6T5zS8cCMLSgwsISn05qm9L8mpL3YJWYclleItG4Nta9iDZJW5poLUnUvw2j6DqK/y9pkqSRJk5W2gzCI3WcqZ8gjmmkgdH6/NsehLuXo0rGgv6GDGWRnp6pEnWF8FEPGdTcsYlnd5C0E3cM7QGxK5Ex2xttFgmzrBRq9s82zLbAc01zInYryh47u6sUEfDi4GYn+LPUe708M2rdcyYTKo2tu7xwrlvRT7hP90IrlYPwRp+2NuxwVyvoLefrCT5BQZP8RWYYx/Z9ik921ys6aqHizkHDoFGObrbwSNKr/qB3PbiJYsTBVFdJ3Atvwn448AglIoZvSO+RJ/L9lD3gpWO9dTl5D0n9PxziwS222YcvAg0WS2GX17v8A5Ff8B51DgAA"
+    },
+    {
+      "name":  "Nick",
+      "attack":"Leap",
+      "spell": "H4sIAAAAAAAA/22OzQrCMBCE32XOOahQkDyDR28iYY3bGtj8kKRKKXl3Iz0JPc3AN8zMihLn8IRem0Jm6xJD30C5mBDnN9OsJ1nSyxSWEWoHCFPaBeSTuHEx9RNxV0iUq7PCV+dZXOBtMpDvDpetxEaJuQO4/uiv0sZQKoXaQz1wGgaF6acKD+jj+dDaF3Vz5SrKAAAA"
+    },
+    {
+      "name":  "Nick",
+      "attack":"AttackingA",
+      "spell": "H4sIAAAAAAAA/51SwU7DMAz9l5yrqQxNoF1hEhfEtHFDqMpSr0Rq4yhxNqqp/47dso2xciGXRLbf83uxDypicqWaH7pMBTDWg5q/KR1i4TDtQKd5Vbf+oyBM5kNlIxnYbsHQNmhDKcBoSZmCJouuxL0raI+jRVWKNJrQja/ttu2B75nyOpA1NbzaBmrrWO/hAjQo5SC6FUSsd9ZVi16jBBsUIfLyAf2z9oN1asX4Bc8mBRbUnRu+eIHGIxY4CvF39xJctNRK+PSc5vy3urSJq/PJ7Sy/OLeZil7v3esgYb18WqwW0vcnLTSWCILQBiR99PAphMze9rdgKubIf4GPBorB5eH8hdeuDTYeo7RiWWmz/NOowRrDT7KHY8CWV5wuknYyXS6YzmaZquTO1EbNb+5FLllHjzbqTQ2MppCg4zM6l7PCrt9ZGTGsv7f4tM7nx5WcRhsoYqMj71zoq5hnh3VquNXNhOfhLckK5ZO72R8ihiWTpNMCU4/oNPsz//+E7guaB6ZYjAMAAA=="
+    },
+    {
+      "name":  "Nick",
+      "attack":"AttackingBA",
+      "spell": "H4sIAAAAAAAA/91VS4+bMBD+K5XPaAVRU7W5diP1EnW1ya2q0AATx1pjW34soRH/vTYUSEhStWlXWq0v2J6Zbx7feDgQI50oyOLQRERjzhSSxTcC2qRCumcEt6C8VrvUSpfvSHRBUjCjkF8UcXDiitVvRIbLagv8MmThNFgmRVrISrycBnKob7TF7RZzaypQFjRFe2NlvkdEgbYs57hhJXImPDOHE/0uSn8pxYblT8vWcTiXMoQYdkpLtQLV8WvrwO4JBGd0Z0kz+vqqgqnpbdHfojl3LAyzrethO4t9A0HBnNeO75KIGAWV2HQu1w9flo/L4OcYxvcNhtYj9YqJdXeI7zxOvYL9ePZY+x8TDX9xrDIB7pNJu4wPYyXPK5AxmlJnAk3GZQ9Xc84ll/oY63N/wYoJZO4LaEEESK8wm88jQsM3IhlZJB9DtJYJe88MZDxkYLXDxq+LFA0BNu0TNZI/M0FvITtz2vwfsucnXMfdSt5/ipPkQzL7E+7/iiKN8ORzTnOmvcbrZWoS5wlh619zdhi44+YsLCyVr/I1N92zn9Szm8/tLHh8Kz2CJbMWW+a0tNCnsO+nxPD0qcf4lxkgsEqp/+u82s4aAhxbCs8a6opt1xlBKKAMwiV/dy8F+Mjy28NvfgKnL2KXOggAAA=="
+    },
+    {
+      "name":  "Nick",
+      "attack":"AttackingBB",
+      "spell": "H4sIAAAAAAAA/32QwQrCMAyGX0Vy7kGFgfSsb+BNZMQu2wo1LW06HWPvbocnoXjK4Qv/l/wLJJ+5A72sCiIZGwj0DTCmln2eCLMe3BzGVnw2I6gK6WwK5KpoiDhZmauM3kLctWKfVOWJMdYJ9T0ZSS8MgnEg+XfVXUHAKNY4uhaTs0zfXxmLV8PF7c6esUQY73wsDGxp4yfQeE6CvHnKwrFpFAzbVPAAfTjt1/UDMkq17EYBAAA="
+    },
+    {
+      "name":  "Nick",
+      "attack":"AttackingC",
+      "spell": "H4sIAAAAAAAA/81TTW/bMAz9K4XOQWEHc7H6NjQBdhlWtL0Ng8HIjCNMlgR9JDMC//dR9hKnidJDgQLVRRIpPj5Sj3vmdFA1K/f9jFnkwiArfzGwrlI6bBFC2cjObCqvA9+wWcKzCtb5pMehcsKLLSa9NbQGVdIFOh1C9srvdNKH6zVyb0E4RLA+zZVSSrHuKr+xmE4xcf49Y4aABJf4IlqUQlFr9q9CxtLJqNUTOi23QjXLgUc0ttoLreLJWG1+gBm77LvY4wROPyX8aWKoO8QiWdGdZ68Hql00H495Rt8ItQj0Or+lizOwUy9jyufH78unZcxzCoOt8B5thLHaw4HzX1ZmEaAb9hjTEEZ2FnwgXI1V7aeWXVbpeJB/Kr4B28Teu7B6vFob11LbU7yHg0HUZ7CcGuVBRQnSg2I+Yw0r5xntq3iNHRfKL4SDlUQKXoN02NNKfsUrkv0wFPFj8fn/mBznZTpcMGqBY+VacCQ4YYd/FZ6mhxp5dyXtUQGnxnHmPpO8ikld2W2ejSv/cp/l+V0+/1RqU7irGql3H6a0eVGMUisGpeVfswupeRuuK+1I8C2VXYkdlRGdCtro/CZvFloBMePvp9//A6au/OAOBgAA"
+    },
+    {
+      "name":  "Nick",
+      "attack":"CastingA",
+      "spell": "H4sIAAAAAAAA/+1VTY/aMBD9K1XOLEoWst1y3SL1grpauFVVNDhDcHHsyHYCKeK/d5xA+AqobPewVZtLkvF8PL83Hq89o3IZe4P1puNpZDxDb/DNA20iqfICIR8koszmUabVD2SWC/Q6LcvAGArUYDGyS9XqMs21se3BiqLmGttTG5SGW160r041wqI9a5oJPitb8Gg02I7ktRiZzs38OoqLscce3zteBtpyJnDCUxRckiDro7AaJBmVfEGjRMFlMpzNSB1nTJXlSrovkiwbQVZra0unbEuezb7g18yFml0skhXNafW4kqN05uYzpN6BmOfk7HcDv36C/ic/CB6C+45nMljKSY1g/Pxl+DJ0ZQ+zYsqtRe2yamVht4WVS+h3vLJ6u5iEcvgnwTv8Ub3J9Z7B801zOUNjMSYpTD59vrhNpoTSh7medgYen6RkxJkF6fqGHO5DYiNx74439QbBo0NrubSfuYGpoMoDq3Pc0NOqSgNwU51Ipy+Ot2e0Oaz7jzM0KTCMTApmHiXaeUVzhKKsdOaWzR2T4YXaTUccsbs/+VRvJoDrfbfd1Dq36CRxGSVCLd+tTg1At87A2FtEwkItUEczkImJwFpgC0d7oUSeUqGgG4SHcoXXeqHCp4GL6zPguElUjKI6bJQ01+x0c5hmdK4b6rdT5AITJuMaxJsMkiDwD0dJ/3dGh8kQK0LKEZfj+ueOpgUxWI5gtbXUhtXPMx8yHTn9wWxJS7oEeZ6+255tALr1f+L2uAt63fAx7PUfqkuk3yeFP/b8/ltcJX/XiFLU98Tj/9F9wkvL+sGN5zwkuJnsTVBr+DBSlhqVJv7rsW5+AXz3iFx1CwAA"
+    },
+    {
+      "name":  "Nick",
+      "attack":"DomainA",
+      "spell": "H4sIAAAAAAAA/+1WUW/aMBD+K1OeKUpYA4PXDWkv06q2b9MUHc4leHJsy3ZgCPHfd3YKBBq6waqp3ZaXJPb57rv7Pp+9jqyqZR5N1pteZJBxjdHkSwTGZlLVC4R6UoqVnmfaqG/IHBcY9TqmgTEUaMBh5uYGu42wKMhFrirgstvgu0OZO1495QXU5bMUwABzP01hqTpNSgML7lZPYM88+M55K8F0zzBT23k3pEoLXqxO4pnVxnYnY1Fa7vjiqYhfe5EG4zgTeE+oBZfE/TqCHCpLa7So7eSBLBqmwnExDQz630o5rsIEKUN/At1IyK28gA5C1noJJs8KjiKPNvuYn7X3YLcukEYx/LUX5yGPlR/efb6NSaqQ85qs4/4oPniSXmQ1LOV9A+Tu5uP0durDtr1uIWQN3PW+Do/hE3iNeWa1CvTZenZzEi1TQpm2v/fbAZ4fuWWUugPp2SODJKacSnqn171oFv59Mbl0H7iFmUBaXoCwuKGns8oHML2NkrdolVhwWV7CWiOt56ArbbOVbGm6HsdJMkwGr5KuQZoGugZpw9a7x2w5U59BlglU4d1DL9415f3HI0S0m9BkZU17i4PMGPGFvnALJWpqQZOknxA6zR2b+8IP21A6dvhRyRv6Ke5fJCOsuHMY+DXKwTaF794hbb9VePs1JfmIf0ODXBZoHangpepvB/BC7VXAMLMVWH8kBqtNS2qjE1F3Wjio6/5eQZEKAdzsdXaWaM5hSOIyK4VavliGdgD9PAPrzmoNlaYds7m0sexX/8KZf6gLlaMI+4vC1oYdZ9W43tX8oXGcKEEI/iytI5yuf/AMel3q+ic6/NUg7Y/GwyS+Do3+atiP49F4PEqfo9+/Nr7vfCH/d9mjunTMtw4nbyHBX6yiKaGco3xzb0Ayf8lkl8Pd/AAoWSZsgQ8AAA=="
+    },
+    {
+      "name":  "Camr",
+      "attack":"Blink",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"AttackingAA",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"AttackingAB",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"AttackingBA",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"AttackingBB",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"AttackingBC",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"CastingA",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"CastingB",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"CastingC",
+      "spell": ""
+    },
+    {
+      "name":  "Camr",
+      "attack":"DomainA",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"Recover",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"AttackingA",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"AttackingB",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"CastingA",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"CastingB",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"CastingC",
+      "spell": ""
+    },
+    {
+      "name":  "Matt",
+      "attack":"DomainA",
+      "spell": ""
+    },
+    {
+      "name":  "Josh",
+      "attack":"AttackingA",
+      "spell": ""
+    },
+    {
+      "name":  "Josh",
+      "attack":"CastingA",
+      "spell": ""
+    },
+    {
+      "name":  "Josh",
+      "attack":"CastingB",
+      "spell": ""
+    },
+    {
+      "name":  "Josh",
+      "attack":"CastingC",
+      "spell": ""
+    },
+    {
+      "name":  "Josh",
+      "attack":"DomainA",
+      "spell": ""
+    },
+    {
+      "name":  "Maho",
+      "attack":"AttackingBAA",
+      "spell": ""
+    },
+    {
+      "name":  "Maho",
+      "attack":"AttackingBBA",
+      "spell": ""
+    },
+    {
+      "name":  "Maho",
+      "attack":"CastingA",
+      "spell": ""
+    },
+    {
+      "name":  "Maho",
+      "attack":"AttackingC",
+      "spell": ""
+    }
+  ]
+}

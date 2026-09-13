@@ -33,6 +33,7 @@ public class AdamsArsPlus {
         modContainer.registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ConfigHandler.CLIENT_SPEC);
 
+        adamsmods.adamsarsplus.common.particle.ModDomainTimelines.REGISTER.register(modEventBus);
         ModRegistry.registerRegistries(modEventBus);
         ArsNouveauRegistry.init();
 

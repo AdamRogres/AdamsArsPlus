@@ -42,7 +42,8 @@ public class DomainShellTile extends ModdedTile implements ITickable, IDispellab
     protected void loadAdditional(CompoundTag compound, HolderLookup.Provider pRegistries) {
         super.loadAdditional(compound, pRegistries);
         this.age = compound.getDouble("age");
-        this.color = ParticleColorRegistry.from(compound.getCompound("lightColor"));
+        this.color = compound.contains("lightColor", 10) ? ParticleColorRegistry.from(compound.getCompound("lightColor")) : ParticleColor.defaultParticleColor();
+        this.refinement = compound.getDouble("refinement");
         this.isPermanent = compound.getBoolean("permanent");
         this.lengthModifier = compound.getDouble("modifier");
     }
@@ -51,6 +52,7 @@ public class DomainShellTile extends ModdedTile implements ITickable, IDispellab
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider pRegistries) {
         super.saveAdditional(tag, pRegistries);
         tag.putDouble("age", this.age);
+        tag.putDouble("refinement", this.refinement);
         tag.put("lightColor", this.color.serialize());
         tag.putBoolean("permanent", this.isPermanent);
         tag.putDouble("modifier", this.lengthModifier);

@@ -86,6 +86,16 @@ public class AdamClientHandler {
     }
 
     @SubscribeEvent
+    public static void initBlockColors(final RegisterColorHandlersEvent.Block event) {
+        event.register((state, view, pos, tint) -> {
+            if (view != null && pos != null && view.getBlockEntity(pos) instanceof adamsmods.adamsarsplus.common.blocks.DomainShellTile tile) {
+                return tile.color.getColor();
+            }
+            return -1;
+        }, ModBlocks.DOMAIN_SHELL_BLOCK.get());
+    }
+
+    @SubscribeEvent
     public static void initItemColors(final RegisterColorHandlersEvent.Item event) {
 
         // Cade Armor

@@ -46,11 +46,11 @@ public class EffectDomain extends AbstractEffect {
     @Override
     public void onResolve(HitResult rayTraceResult, Level world,@NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         super.onResolve(rayTraceResult, world, shooter, spellStats, spellContext, resolver);
-        if (!canUseDomian(shooter)) {
+        if (world.isClientSide || !canUseDomian(shooter)) {
             return;
         }
 
-        Vec3 hit = safelyGetHitPos(rayTraceResult);
+        Vec3 hit = EntityDomainSpell.alignToExistingDomain((ServerLevel) world, shooter.position(), safelyGetHitPos(rayTraceResult));
         EntityDomainSpell entityDomainSpell = new EntityDomainSpell(world, shooter);
         spellContext.setCanceled(true);
         Spell newSpell = spellContext.getRemainingSpell();
@@ -66,10 +66,22 @@ public class EffectDomain extends AbstractEffect {
         entityDomainSpell.shellblocks = 0;
         entityDomainSpell.refinement = spellStats.getAmpMultiplier();
 
-        entityDomainSpell.resolver().getNewResolver(newContext);
+        entityDomainSpell.setResolver(resolver.getNewResolver(newContext));
         entityDomainSpell.setPos(hit.x, hit.y, hit.z);
 
-        world.addFreshEntity(entityDomainSpell);
+        if (!world.addFreshEntity(entityDomainSpell)) {
+            return;
+        }
+        String spellName = spellContext.getSpell().name();
+        if (spellName == null || spellName.isBlank()) {
+            spellName = "Unnamed Spell";
+        }
+        net.minecraft.network.chat.Component announcement = net.minecraft.network.chat.Component.literal("Domain Expansion: " + spellName);
+        for (net.minecraft.server.level.ServerPlayer player : ((ServerLevel) world).players()) {
+            if (entityDomainSpell.containsPosition(player.position())) {
+                player.sendSystemMessage(announcement);
+            }
+        }
 
         int ticks = (int) (20.0 * (10.0 + spellStats.getDurationMultiplier()));
 
@@ -91,15 +103,31 @@ public class EffectDomain extends AbstractEffect {
                     if(!entityDomainSpell.getDome() || (entityDomainSpell.blockPosition().getY() - 2 <  p.getY())) {
                         //spellResolver.onResolveEffect(level(), new BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
                         if (world.isInWorldBounds(p) && BlockUtil.destroyRespectsClaim(this.getPlayer(shooter, (ServerLevel)world), world, p)) {
+                            // Aligned domains can share a shell surface. Count occupied
+                            // shell positions as well, so loss of that barrier ends the domain.
+                            if (world.getBlockEntity(p) instanceof DomainShellTile existing) {
+                                entityDomainSpell.shellblocks++;
+                                if (existing.refinement < entityDomainSpell.refinement) {
+                                    existing.refinement = entityDomainSpell.refinement;
+                                    existing.color = entityDomainSpell.getDomainColor();
+                                    existing.age = 0;
+                                    existing.lengthModifier = spellStats.getDurationMultiplier()
+                                            + EntityDomainSpell.INITIAL_CAST_DELAY_TICKS / 20.0;
+                                    existing.setChanged();
+                                    world.sendBlockUpdated(p, world.getBlockState(p), world.getBlockState(p), 2);
+                                }
+                                continue;
+                            }
                             BlockState state = world.getBlockState(p);
                             if (state.canBeReplaced() && world.isUnobstructed(((DomainShell) ModBlocks.DOMAIN_SHELL_BLOCK.get()).defaultBlockState(), p, CollisionContext.of(fakePlayer))) {
                                 world.setBlockAndUpdate(p, (BlockState)((DomainShell) ModBlocks.DOMAIN_SHELL_BLOCK.get()).defaultBlockState().setValue(DomainShell.TEMPORARY, true));
                                 BlockEntity var12 = world.getBlockEntity(p);
                                 if (var12 instanceof DomainShellTile) {
                                     DomainShellTile tile = (DomainShellTile)var12;
-                                    //tile.color = spellContext.getSpell().color(); // Will need to think of new implementation
-                                    tile.lengthModifier = spellStats.getDurationMultiplier();
+                                    tile.color = entityDomainSpell.getDomainColor();
+                                    tile.lengthModifier = spellStats.getDurationMultiplier() + EntityDomainSpell.INITIAL_CAST_DELAY_TICKS / 20.0;
                                     tile.refinement = spellStats.getAmpMultiplier();
+                                    tile.setChanged();
 
                                     world.sendBlockUpdated(p, world.getBlockState(p), world.getBlockState(p), 2);
 

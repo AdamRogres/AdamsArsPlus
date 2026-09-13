@@ -37,6 +37,9 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     public static final EntityDataAccessor<Boolean> DOME = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FILTER_SELF = SynchedEntityData.defineId(EntityDomainSpell.class, EntityDataSerializers.BOOLEAN);
 
+    // Reaction window before the first attack, in game ticks (20 ticks = 1 second).
+    public static final int INITIAL_CAST_DELAY_TICKS = 30;
+
     public double extendedTime;
     public int maxProcs = 100;
     public int totalProcs;
@@ -62,17 +65,94 @@ public class EntityDomainSpell extends EntityProjectileSpell {
 
     @Override
     public void tick() {
-        if (!level().isClientSide) {
-            boolean isOnGround = level().getBlockState(blockPosition()).blocksMotion();
-            this.setLanded(isOnGround);
-        }
-
         super.tick();
-        castSpells();
-
-        if(calcShell() > this.shellblocks / 2){
-            this.remove(RemovalReason.DISCARDED);
+        if (isRemoved() || level().isClientSide) {
+            return;
         }
+        // Counter-domains and broken shells take effect during the reaction window.
+        if (!getOpen() && calcShell() > this.shellblocks / 2) {
+            discard();
+            return;
+        }
+        castSpells();
+    }
+
+    public int getDomainRadius() { return 4 + Math.round(getAoe()); }
+
+    public boolean containsPosition(Vec3 point) {
+        double radius = getDomainRadius() + 0.5;
+        return adamsmods.adamsarsplus.util.DomainRules.contains(point.distanceToSqr(position()), radius, getDome(), point.y, blockPosition().getY());
+    }
+
+    public boolean isActiveDomain() {
+        return !isRemoved() && age <= getExpirationTime() && resolver() != null;
+    }
+
+    /** Prefer the oldest containing domain, with an entity ID tie-breaker. */
+    public static Vec3 alignToExistingDomain(net.minecraft.server.level.ServerLevel level, Vec3 castPosition, Vec3 hitPosition) {
+        EntityDomainSpell oldest = null;
+        // Domain radii vary, so a small search box around the caster can miss
+        // the center of a large containing domain. Inspect loaded entities.
+        for (Entity candidate : level.getAllEntities()) {
+            if (candidate instanceof EntityDomainSpell domain && domain.isActiveDomain()
+                    && (domain.containsPosition(castPosition) || domain.containsPosition(hitPosition))) {
+                if (oldest == null || domain.age > oldest.age
+                        || (domain.age == oldest.age && domain.getId() < oldest.getId())) {
+                    oldest = domain;
+                }
+            }
+        }
+        return oldest == null ? hitPosition : oldest.position();
+    }
+
+    public boolean isClashSuppressed() {
+        for (EntityDomainSpell other : level().getEntitiesOfClass(EntityDomainSpell.class,
+                getBoundingBox().inflate(getDomainRadius() + 0.5))) {
+            if (other != this && adamsmods.adamsarsplus.util.DomainRules.suppresses(
+                    other.isActiveDomain(), containsPosition(other.position()), refinement, other.refinement)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public com.hollingsworth.arsnouveau.client.particle.ParticleColor getDomainColor() {
+        return resolver().spell.particleTimeline().get(
+                adamsmods.adamsarsplus.common.particle.ModDomainTimelines.DOMAIN.get())
+                .settings.trailEffect.particleOptions().colorProp().color();
+    }
+
+    @Override
+    public void buildEmitters() {
+        if (resolver() == null) return;
+        var style = resolver().spell.particleTimeline().get(
+                adamsmods.adamsarsplus.common.particle.ModDomainTimelines.DOMAIN.get()).settings;
+        tickEmitter = new com.hollingsworth.arsnouveau.api.particle.ParticleEmitter(this, style.trailEffect);
+        onSpawnEmitter = new com.hollingsworth.arsnouveau.api.particle.ParticleEmitter(this, style.onResolvingEffect);
+        // The Domain style's sound plays once through the projectile's spawn hook.
+        castSound = style.resolveSound.sound;
+    }
+
+    @Override
+    public void playParticles() {
+        if (!level().isClientSide) return;
+        if (tickEmitter == null) buildEmitters();
+        if (tickEmitter == null) return;
+        // Spawn the selected particles throughout the interior, never at an
+        // uninitialized resolve emitter or at targets on the server.
+        for (int i = 0; i < 6; i++) {
+            Vec3 offset = new Vec3((random.nextDouble() * 2 - 1) * getDomainRadius(),
+                    (random.nextDouble() * 2 - 1) * getDomainRadius(),
+                    (random.nextDouble() * 2 - 1) * getDomainRadius());
+            Vec3 point = position().add(offset);
+            if (containsPosition(point) && level().getBlockState(BlockPos.containing(point)).isAir()) {
+                level().addParticle(tickEmitter.particleOptions, point.x, point.y, point.z, 0, 0.01, 0);
+                if (!playedSpawnParticle && onSpawnEmitter != null) {
+                    level().addParticle(onSpawnEmitter.particleOptions, point.x, point.y, point.z, 0, 0, 0);
+                }
+            }
+        }
+        playedSpawnParticle = true;
     }
 
     @Override
@@ -81,96 +161,40 @@ public class EntityDomainSpell extends EntityProjectileSpell {
 
     @Override
     public void tickNextPosition() {
-        if(true)
-            return;
-        if (!getLanded()) {
-            this.setDeltaMovement(0, -0.2, 0);
-        } else {
-            this.setDeltaMovement(0, 0, 0);
-        }
-        super.tickNextPosition();
+        // Domains remain anchored at the initial hit position.
     }
 
     public void castSpells() {
-        float aoe = getAoe();
-        int flatAoe = Math.round(aoe);
-        int radius = 4 + flatAoe;
-        Predicate<Double> Sphere = (distance) -> (distance <= radius + 0.5);
-
-        if (!level.isClientSide && age % Math.max(20 - 2 * getAccelerates(), 2) == 0) {
-            if (getOpen()) {
-                for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
-                    if (Sphere.test(BlockUtil.distanceFromCenter(p, blockPosition()))) {
-                        if(!getDome() || (blockPosition().getY() - 2 <  p.getY())) {
-                            if(level.getBlockState(p).getBlock() == Blocks.AIR){
-                                if(level.getRandom().nextIntBetweenInclusive(0, 100) > Math.min(5 * radius, 85)){
-                                    if (!level.isClientSide) {
-                                        resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new
-                                                BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
-                                    } else {
-                                        resolveEmitter.setPositionOffset(p.subtract(getOnPos()).getCenter());
-                                        resolveEmitter.tick(level);
-                                    }
-                                    if (!level.isClientSide) {
-                                        resolveSound.playSound(level, getX(), getY(), getZ());
-                                    }
-                                }
-                            } else {
-                                if(level.getRandom().nextIntBetweenInclusive(0, 100) > Math.min(3 * radius, 60)){
-                                    if (!level.isClientSide) {
-                                        resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new
-                                                BlockHitResult(new Vec3(p.getX(), p.getY(), p.getZ()), Direction.UP, p, false));
-                                    } else {
-                                        resolveEmitter.setPositionOffset(p.subtract(getOnPos()).getCenter());
-                                        resolveEmitter.tick(level);
-                                    }
-                                    if (!level.isClientSide) {
-                                        resolveSound.playSound(level, getX(), getY(), getZ());
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            int i = 0;
-            for (Entity entity : level().getEntities(null, new AABB(this.blockPosition()).inflate(radius,radius,radius))) {
-                if (entity.equals(this) || entity.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST))
-                    continue;
-                if (entity instanceof LivingEntity){
-                    if(((LivingEntity) entity).hasEffect(SIMPLE_DOMAIN_EFFECT)){
-                        continue;
-                    }
-                } else {
-                    continue;
-                }
-
-                if(!getDome() || (blockPosition().getY() - 2 < entity.getBlockY())) {
-                    if (!getFilter() || !(resolver().spellContext.getUnwrappedCaster().equals(entity))) {
-                        if (!level.isClientSide) {
-                            resolver().getNewResolver(resolver().spellContext.clone().makeChildContext()).onResolveEffect(level, new EntityHitResult(entity));
-                        }
-                        resolveEmitter.setPositionOffset(entity.blockPosition().subtract(getOnPos()).getCenter());
-                        if (level.isClientSide) {
-                            resolveEmitter.tick(level);
-                        }
-                        if (!level.isClientSide) {
-                            resolveSound.playSound(level, getX(), getY(), getZ());
-                        }
-                    }
-                }
-
-                i++;
-                if (i > MAX_DOMAIN_ENTITIES.get())
-                    break;
-            }
-
-            totalProcs += i;
-            if (totalProcs >= maxProcs)
-                this.remove(RemovalReason.DISCARDED);
+        if (level().isClientSide || isRemoved() || resolver() == null
+                || !adamsmods.adamsarsplus.util.DomainRules.isCastTick(age, INITIAL_CAST_DELAY_TICKS, getAccelerates())) {
+            return;
         }
+        if (isClashSuppressed()) return;
+        int radius = getDomainRadius();
+        if (getOpen()) {
+            for (BlockPos p : BlockPos.withinManhattan(blockPosition(), radius, radius, radius)) {
+                if (containsPosition(p.getCenter())) {
+                    int threshold = level().getBlockState(p).isAir() ? Math.min(5 * radius, 85) : Math.min(3 * radius, 60);
+                    if (random.nextInt(101) > threshold) {
+                        resolver().getNewResolver(resolver().spellContext.clone().makeChildContext())
+                                .onResolveEffect(level(), new BlockHitResult(p.getCenter(), Direction.UP, p, false));
+                    }
+                }
+            }
+        }
+        int count = 0;
+        for (LivingEntity target : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(radius + 0.5))) {
+            if (count >= MAX_DOMAIN_ENTITIES.get() || totalProcs >= maxProcs) break;
+            if (!target.isAlive() || !containsPosition(target.position())
+                    || target.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST)
+                    || target.hasEffect(SIMPLE_DOMAIN_EFFECT)
+                    || (getFilter() && target.equals(resolver().spellContext.getUnwrappedCaster()))) continue;
+            resolver().getNewResolver(resolver().spellContext.clone().makeChildContext())
+                    .onResolveEffect(level(), new EntityHitResult(target));
+            count++;
+            totalProcs++;
+        }
+        if (totalProcs >= maxProcs) discard();
     }
 
     public int calcShell(){
@@ -203,12 +227,12 @@ public class EntityDomainSpell extends EntityProjectileSpell {
 
     @Override
     public int getExpirationTime() {
-        return (int) (100 + extendedTime * 20);
+        return (int) (INITIAL_CAST_DELAY_TICKS + 100 + extendedTime * 20);
     }
 
     @Override
     public int getParticleDelay() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -286,6 +310,14 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        tag.putFloat("domainAoe", entityData.get(AOE));
+        tag.putInt("domainAge", age);
+        tag.putInt("domainMaxProcs", maxProcs);
+        tag.putInt("domainAccelerates", getAccelerates());
+        tag.putDouble("domainDuration", extendedTime);
+        tag.putDouble("domainRefinement", refinement);
+        tag.putInt("domainShellBlocks", shellblocks);
+        tag.putInt("domainProcs", totalProcs);
         tag.putBoolean("open", getOpen());
         tag.putBoolean("dome", getDome());
         tag.putBoolean("selfFiltered", getFilter());
@@ -294,6 +326,14 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     @Override
     public void load(CompoundTag compound) {
         super.load(compound);
+        setAoe(compound.getFloat("domainAoe"));
+        age = Math.max(0, compound.getInt("domainAge"));
+        if (compound.contains("domainMaxProcs")) maxProcs = Math.max(1, compound.getInt("domainMaxProcs"));
+        setAccelerates(compound.getInt("domainAccelerates"));
+        extendedTime = compound.getDouble("domainDuration");
+        refinement = compound.getDouble("domainRefinement");
+        shellblocks = compound.getInt("domainShellBlocks");
+        totalProcs = compound.getInt("domainProcs");
         setOpen(compound.getBoolean("open"));
         setDome(compound.getBoolean("dome"));
         setFilter(compound.getBoolean("selfFiltered"));

@@ -259,3 +259,11 @@ tasks.named('test') {
 tasks.named('check') {
     dependsOn 'verifyCommunityMages'
 }
+// Verify domain reaction timing and targeting bounds without launching a client.
+tasks.register('verifyDomainRules', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.util.DomainRulesTest'
+}
+tasks.named('test') { exclude '**/DomainRulesTest.class' }
+tasks.named('check') { dependsOn 'verifyDomainRules' }

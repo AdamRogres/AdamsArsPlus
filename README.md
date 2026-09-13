@@ -16,7 +16,6 @@ Todo:
 - Fix Config options
 - Add Tag provider
 
-- Domain rework:
 - Boss improvements:
   - Adam no gravity fix
   - Smarter use of domains
