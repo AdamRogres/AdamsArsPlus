@@ -16,6 +16,12 @@ Todo:
 - Fix Config options
 - Add Tag provider
 
+- Leap fatigue not default
+- Ten Shadows better targetting
+- Ten Shadows multiple summons
+- Generals Wheel Visual Render
+- Generals Wheel better function
+
 - Boss improvements:
   - Adam no gravity fix
   - Smarter use of domains

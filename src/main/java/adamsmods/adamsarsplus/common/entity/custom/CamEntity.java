@@ -5,6 +5,7 @@ import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
 import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.method_glyph.PropagateDetonate;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -39,6 +40,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -54,6 +56,7 @@ import java.util.function.Supplier;
 import static adamsmods.adamsarsplus.registry.ModEntities.CAM_ENTITY;
 import static adamsmods.adamsarsplus.registry.ModPotions.LEAP_FATIGUE_EFFECT;
 import static adamsmods.adamsarsplus.registry.ModPotions.LIGHTNING_STEPS_EFFECT;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 
 public class CamEntity extends Monster implements RangedAttackMob {
 
@@ -344,8 +347,16 @@ public class CamEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, new Class[0])).setAlertOthers(new Class[0]));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, false));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, IronGolem.class, false));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, RyanEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, CadeEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, NickEntity.class, false));
+      //this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, CamEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, MattEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, JoshEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AdamEntity.class, false));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Villager.class, false));
 
     }
 
@@ -374,11 +385,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
     private ParticleColor camColor = new ParticleColor(255, 255, 255);
 
-    public Spell camBlinkSpell = new Spell()
-            .add(EffectBlink.INSTANCE)
-
-            .withColor(camColor);
-
+    public Spell camBlinkSpell = getSpell("Camr", "Blink");
 
     @Override
     public void performRangedAttack(LivingEntity entity, float p_82196_2_) {
@@ -500,12 +507,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor CamColor = new ParticleColor(255, 255, 255);
 
-        public Spell CamAttackSpell = new Spell()
-                .add(EffectDismantle.INSTANCE)
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 3)
-
-                .withColor(CamColor);
+        public Spell CamAttackSpell = getSpell("Camr", "AttackingAA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -599,7 +601,6 @@ public class CamEntity extends Monster implements RangedAttackMob {
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
 
             resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
-
         }
 
         public void stop() {
@@ -683,11 +684,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor CamColor = new ParticleColor(255, 255, 255);
 
-        public Spell camAttackABSpell = new Spell()
-                .add(EffectLightning.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,8)
-
-                .withColor(CamColor);
+        public Spell camAttackABSpell = getSpell("Camr", "AttackingAB");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -863,24 +860,9 @@ public class CamEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor camColor = new ParticleColor(255, 255, 255);
 
-        public Spell camAttackB1Spell = new Spell()
-                .add(EffectBlink.INSTANCE)
-
-                .withColor(camColor);
-
-        public Spell camAttackB2Spell = new Spell()
-                .add(EffectLaunch.INSTANCE)
-
-                .add(EffectDelay.INSTANCE)
-                .add(EffectWindshear.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 9)
-
-                .withColor(camColor);
-
-        public Spell camAttackB3Spell = new Spell()
-                .add(EffectKnockback.INSTANCE)
-
-                .withColor(camColor);
+        public Spell camAttackB1Spell = getSpell("Camr", "AttackingBA");
+        public Spell camAttackB2Spell = getSpell("Camr", "AttackingBB");
+        public Spell camAttackB3Spell = getSpell("Camr", "AttackingBC");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -1043,32 +1025,17 @@ public class CamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor camColor = new ParticleColor(255, 255, 255);
 
-        public Spell camCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-                .add(AugmentPierce.INSTANCE,3)
-                .add(AugmentDurationDown.INSTANCE,1)
-
-                .add(EffectLightning.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,6)
-
-                .add(EffectDelay.INSTANCE)
-                .add(AugmentDurationDown.INSTANCE)
-
-                .add(EffectDivineSmite.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,6)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(EffectBreak.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE)
-
-                .withColor(camColor);
+        public Spell camCastSpell = getSpell("Camr", "CastingA");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1187,13 +1154,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor camColor = new ParticleColor(255, 255, 255);
 
-        public Spell camCastSpell = new Spell()
-                .add(AugmentAccelerateTwo.INSTANCE)
-
-                .add(EffectLightning.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,6)
-
-                .withColor(camColor);
+        public Spell camCastSpell = getSpell("Camr", "CastingB");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -1211,6 +1172,11 @@ public class CamEntity extends Monster implements RangedAttackMob {
                 EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
                 projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
                 projectileSpell.setPos(pos);
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 15, time, () -> !this.CamEntity.isAlive());
@@ -1326,18 +1292,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor camColor = new ParticleColor(255, 255, 255);
 
-        public Spell camCastSpell = new Spell()
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(AugmentAOE.INSTANCE)
-
-                .add(PropagateDetonate.INSTANCE)
-                .add(AugmentAccelerate.INSTANCE)
-                .add(EffectDismantle.INSTANCE)
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,2)
-
-                .withColor(camColor);
+        public Spell camCastSpell = getSpell("Camr", "CastingC");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -1463,17 +1418,7 @@ public class CamEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor CamColor = new ParticleColor(255, 255, 255);
 
-        public Spell CamDomainSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentExtract.INSTANCE)
-
-                .add(EffectLightning.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,6)
-
-                .withColor(CamColor);
+        public Spell CamDomainSpell = getSpell("Camr", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));

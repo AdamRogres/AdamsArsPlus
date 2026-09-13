@@ -107,7 +107,7 @@ public class ModEntities {
                         .fireImmune()
                         .setShouldReceiveVelocityUpdates(true)
                         .noSave()
-                        .setUpdateInterval(120));
+                        .setUpdateInterval(1));
 
         BLADE_PROJ = registerEntity(
                 AdamsLibEntityNames.BLADE,

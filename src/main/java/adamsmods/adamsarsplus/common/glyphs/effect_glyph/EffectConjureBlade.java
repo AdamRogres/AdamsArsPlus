@@ -47,6 +47,7 @@ public class EffectConjureBlade extends AbstractEffect {
     }
 
     public void summonBlade(Level world, HitResult rayTraceResult, @Nullable LivingEntity shooter, SpellContext spellContext, SpellStats stats){
+        if (world.isClientSide || shooter == null) return;
         double aoe = stats.getAoeMultiplier();
         int numSplits = 1 + stats.getBuffCount(AugmentSplit.INSTANCE);
 

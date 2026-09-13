@@ -9,7 +9,7 @@ import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import com.hollingsworth.arsnouveau.common.entity.IFollowingSummon;
 import com.hollingsworth.arsnouveau.common.entity.goal.FollowSummonerGoal;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
-import com.hollingsworth.arsnouveau.setup.registry.ModEntities;
+import adamsmods.adamsarsplus.registry.ModEntities;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -47,16 +47,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.hollingsworth.arsnouveau.common.entity.SummonSkeleton.OWNER_UNIQUE_ID;
+
 
 public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISummon {
+    public static final net.minecraft.network.syncher.EntityDataAccessor<Optional<UUID>> OWNER_UNIQUE_ID =
+            SynchedEntityData.defineId(SummonSkeleton_m.class, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UUID);
     private final RangedBowAttackGoal<SummonSkeleton_m> bowGoal = new RangedBowAttackGoal(this, (double)1.0F, 20, 15.0F);
     private final MeleeAttackGoal meleeGoal;
     private LivingEntity owner;
     private @Nullable BlockPos boundOrigin;
     private boolean limitedLifespan;
     private int limitedLifeTicks;
-    private SpellContext spell;
+    private Spell spell = new Spell();
 
     class NamelessClass_1 extends MeleeAttackGoal {
         // Reach in blocks (entity-position distance). Edit independently for this goal.
@@ -80,7 +82,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
                 this.mob.swing(InteractionHand.MAIN_HAND);
                 this.mob.doHurtTarget(target);
 
-                performSpellAttack(this.mob, spell.getSpell(), target);
+                performSpellAttack(this.mob, spell, target);
             }
 
         }
@@ -100,32 +102,39 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     }
 
     public SummonSkeleton_m(Level level, LivingEntity owner, ItemStack item, SpellContext spell) {
-        super((EntityType) ModEntities.SUMMON_SKELETON.get(), level);
-
-        this.meleeGoal = new NamelessClass_1(this, 2.2, true);
+        this(ModEntities.SUMMON_SKELETON_M.get(), level);
+        this.spell = spell.getSpell();
         this.setWeapon(item);
         this.owner = owner;
         this.limitedLifespan = true;
         this.setOwnerID(owner.getUUID());
-        this.spell = spell;
+
     }
 
     public SummonSkeleton_m(EntityType<? extends Skeleton> entityType, Level level) {
         super(entityType, level);
         this.meleeGoal = new NamelessClass_1(this, 2.2, true);
+        this.reassessWeaponGoal();
     }
 
-    void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy){
+    void performSpellAttack(LivingEntity entity, Spell spell, LivingEntity enemy) {
+        if (entity.level().isClientSide || spell.isEmpty()) return;
+        var style = spell.particleTimeline().get(
+                adamsmods.adamsarsplus.common.particle.ModDomainTimelines.UNDEAD_MAGE.get()).settings;
+        // A fresh emitter on each melee cast sends the selected effect to nearby clients.
+        var emitter = new com.hollingsworth.arsnouveau.api.particle.ParticleEmitter(enemy, style.onResolvingEffect);
+        emitter.tick(entity.level());
+        style.resolveSound.sound.playSound(entity.level(), enemy.getX(), enemy.getY(), enemy.getZ());
         EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)));
-
         resolver.onResolveEffect(entity.level(), new EntityHitResult(enemy));
     }
 
     public EntityType<?> getType() {
-        return (EntityType)ModEntities.SUMMON_SKELETON.get();
+        return (EntityType)ModEntities.SUMMON_SKELETON_M.get();
     }
 
-    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+    @Override
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn, MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn) {
         this.populateDefaultEquipmentSlots(this.getRandom(), difficultyIn);
         this.populateDefaultEquipmentEnchantments(worldIn, this.getRandom(), difficultyIn);
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
@@ -174,11 +183,20 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         this.setItemSlot(EquipmentSlot.LEGS, ItemsRegistry.ARCANIST_LEGGINGS.asItem().getDefaultInstance());
         this.setItemSlot(EquipmentSlot.FEET, ItemsRegistry.ARCANIST_BOOTS.asItem().getDefaultInstance());
 
+        var style = this.spell.particleTimeline().get(
+                adamsmods.adamsarsplus.common.particle.ModDomainTimelines.UNDEAD_MAGE.get()).settings;
+        var dye = adamsmods.adamsarsplus.util.SpellArmorColor.closestDyeColor(
+                style.onResolvingEffect.particleOptions().colorProp().color().getColor());
+        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+            getItemBySlot(slot).set(net.minecraft.core.component.DataComponents.BASE_COLOR, dye);
+            setDropChance(slot, 0.0F);
+        }
+        setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         this.reassessWeaponGoal();
     }
 
     public void reassessWeaponGoal() {
-        if (this.level() instanceof ServerLevel && this.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY) {
+        if (this.level() instanceof ServerLevel && this.meleeGoal != null && this.bowGoal != null) {
             this.goalSelector.removeGoal(this.meleeGoal);
             this.goalSelector.removeGoal(this.bowGoal);
             ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, (item) -> item instanceof BowItem));
@@ -207,7 +225,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
 
     public void tick() {
         super.tick();
-        if (--this.limitedLifeTicks <= 0) {
+        if (!level().isClientSide && this.limitedLifespan && --this.limitedLifeTicks <= 0) {
             this.limitedLifeTicks = 20;
             this.hurt(this.level().damageSources().starve(), 20.0F);
         }
@@ -260,6 +278,14 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
 
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.spell = new Spell();
+        if (compound.contains("MageSpell", 8)) {
+            try {
+                this.spell = Spell.fromBinaryBase64(compound.getString("MageSpell"));
+            } catch (RuntimeException exception) {
+                com.mojang.logging.LogUtils.getLogger().warn("Unable to load undead mage spell", exception);
+            }
+        }
         if (compound.contains("BoundX")) {
             this.boundOrigin = new BlockPos(compound.getInt("BoundX"), compound.getInt("BoundY"), compound.getInt("BoundZ"));
         }
@@ -269,7 +295,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
         }
 
         UUID s;
-        if (compound.contains("OwnerUUID", 8)) {
+        if (compound.hasUUID("OwnerUUID")) {
             s = compound.getUUID("OwnerUUID");
         } else {
             String s1 = compound.getString("Owner");
@@ -286,13 +312,20 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     }
 
     public void setLimitedLife(int lifeTicks) {
+        this.limitedLifespan = true;
         this.limitedLifeTicks = lifeTicks;
     }
 
     public LivingEntity getOwnerFromID() {
         try {
             UUID uuid = this.getOwnerUUID();
-            return uuid == null ? null : this.level().getPlayerByUUID(uuid);
+            if (uuid == null) return null;
+            if (owner != null && owner.isAlive() && uuid.equals(owner.getUUID())) return owner;
+            if (level() instanceof ServerLevel server && server.getEntity(uuid) instanceof LivingEntity summoner) {
+                this.owner = summoner;
+                return summoner;
+            }
+            return this.level().getPlayerByUUID(uuid);
         } catch (IllegalArgumentException var21) {
             return null;
         }
@@ -305,6 +338,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
 
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putString("MageSpell", spell.toBinaryBase64());
         if (this.boundOrigin != null) {
             compound.putInt("BoundX", this.boundOrigin.getX());
             compound.putInt("BoundY", this.boundOrigin.getY());
@@ -337,7 +371,7 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     }
 
     public void setTicksLeft(int ticks) {
-        this.limitedLifeTicks = ticks;
+        setLimitedLife(ticks);
     }
 
     public @Nullable UUID getOwnerUUID() {

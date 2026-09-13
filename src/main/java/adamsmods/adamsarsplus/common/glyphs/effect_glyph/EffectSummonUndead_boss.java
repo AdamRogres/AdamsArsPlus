@@ -42,6 +42,7 @@ public class EffectSummonUndead_boss extends AbstractEffect {
 
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
 
+        if (world.isClientSide || shooter == null) return;
         spellContext.setCanceled(true);
         if (spellContext.getCurrentIndex() >= spellContext.getSpell().size())
             return;
@@ -65,7 +66,7 @@ public class EffectSummonUndead_boss extends AbstractEffect {
 
                     SummonSkeleton_m undeadentity = new SummonSkeleton_m(world, shooter, weapon, newContext);
                     undeadentity.moveTo(blockpos, 0.0F, 0.0F);
-                    undeadentity.finalizeSpawn((ServerLevelAccessor)world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData)null, (CompoundTag)null);
+                    undeadentity.finalizeSpawn((ServerLevelAccessor)world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData)null);
                     undeadentity.setOwner(shooter);
                     undeadentity.setLimitedLife(ticks);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, undeadentity);

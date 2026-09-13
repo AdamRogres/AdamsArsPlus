@@ -42,7 +42,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
     public double amp;
 
     public BladeProjectile(Level world, ItemStack item, Entity shooter, double Amp){
-        super(ModEntities.BLADE_PROJ.get(), world);
+        this(ModEntities.BLADE_PROJ.get(), world);
 
         this.setOwner(shooter);
         this.setItem(item);
@@ -54,6 +54,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     public BladeProjectile(EntityType<? extends AbstractArrow> type, Level worldIn) {
         super(type, worldIn);
+        this.pickup = AbstractArrow.Pickup.DISALLOWED;
     }
 
     @Override
@@ -77,70 +78,17 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         }
     }
 
-    protected void onHitEntity(EntityHitResult pResult) {
-        Entity entity = pResult.getEntity();
-        if(entity instanceof LivingEntity){
-            LivingEntity livingTarget = (LivingEntity) entity;
-
-
-
-            if(this.doHurtTarget((ServerLevel) pResult.getEntity().level, livingTarget, (LivingEntity) this.getOwner())){
-                this.getItem().getItem().hurtEnemy(this.getItem(), livingTarget, (LivingEntity) this.getOwner());
-            }
+    @Override
+    protected void onHitEntity(EntityHitResult result) {
+        if (!(level() instanceof ServerLevel server) || !(result.getEntity() instanceof LivingEntity target)) {
+            return;
+        }
+        LivingEntity attacker = getOwner() instanceof LivingEntity living ? living : null;
+        if (doHurtTarget(server, target, attacker) && attacker != null) {
+            ItemStack weapon = getItem();
+            weapon.getItem().hurtEnemy(weapon, target, attacker);
         }
     }
-
-    /*
-    public boolean doHurtTarget(Entity target, LivingEntity attacker) {
-        float f = 2;
-
-        f += (float) this.amp;
-
-        for (AttributeModifier modifier : this.getItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE))
-        {
-            f += (float) modifier.amount();
-        }
-        float f1 = 0;
-        for (AttributeModifier modifier : this.getItem().getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_KNOCKBACK))
-        {
-            f1 += (float) modifier.amount();
-        }
-
-        if (target instanceof LivingEntity) {
-            f += EnchantmentHelper.getDamageBonus(this.getItem(), ((LivingEntity)target).getMobType());
-            f1 += (float)this.getItem().getEnchantmentLevel(Enchantments.KNOCKBACK);
-        }
-
-        int i = this.getItem().getEnchantmentLevel(Enchantments.FIRE_ASPECT);
-        if (i > 0) {
-            target.setSecondsOnFire(i * 4);
-        }
-
-        boolean flag;
-        if(this.getOwner() == null){
-            flag = target.hurt(this.damageSources().arrow(this, this), f);
-        } else {
-            flag = target.hurt(attacker.damageSources().mobAttack(attacker), f);
-            attacker.setLastHurtMob(target);
-        }
-
-        if (flag) {
-            if (f1 > 0.0F && target instanceof LivingEntity) {
-                ((LivingEntity)target).knockback((double)(f1 * 0.5F), (double)Mth.sin(this.getYRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(this.getYRot() * ((float)Math.PI / 180F))));
-                this.setDeltaMovement(this.getDeltaMovement().multiply(0.6, (double)1.0F, 0.6));
-            }
-
-            if (target instanceof Player) {
-                Player player = (Player)target;
-                maybeDisableShield(player, this.getItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY, attacker);
-            }
-
-            this.doEnchantDamageEffects(attacker, target);
-        }
-
-        return flag;
-    }
-    */
 
     public boolean doHurtTarget(ServerLevel level, Entity target, LivingEntity attacker) {
         float f = 2;
@@ -152,17 +100,17 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         if (modifiers != null) {
             for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
                 if (entry.slot().test(EquipmentSlot.MAINHAND)) {
-                    if (entry.attribute().value().equals(Attributes.ATTACK_DAMAGE)) {
+                    if (entry.attribute().equals(Attributes.ATTACK_DAMAGE)) {
                         f += (float) entry.modifier().amount();
                     }
-                    if (entry.attribute().value().equals(Attributes.ATTACK_KNOCKBACK)) {
+                    if (entry.attribute().equals(Attributes.ATTACK_KNOCKBACK)) {
                         f1 += (float) entry.modifier().amount();
                     }
                 }
             }
         }
 
-        ItemEnchantments enchantments = this.getItem().get(DataComponents.ENCHANTMENTS);
+        ItemEnchantments enchantments = this.getItem().getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
 
         Registry<Enchantment> enchantmentRegistry = level.registryAccess()
                 .registryOrThrow(Registries.ENCHANTMENT);
@@ -178,7 +126,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
         }
 
         boolean flag;
-        if (this.getOwner() == null) {
+        if (attacker == null) {
             flag = target.hurt(this.damageSources().arrow(this, this), f);
         } else {
             flag = target.hurt(attacker.damageSources().mobAttack(attacker), f);
@@ -199,7 +147,7 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
                 maybeDisableShield(player, this.getItem(), player.isUsingItem() ? player.getUseItem() : ItemStack.EMPTY, attacker);
             }
 
-            DamageSource damageSource = this.getOwner() == null
+            DamageSource damageSource = attacker == null
                     ? this.damageSources().arrow(this, this)
                     : attacker.damageSources().mobAttack(attacker);
             EnchantmentHelper.doPostAttackEffectsWithItemSource(level, target, damageSource, this.getItem());
@@ -224,6 +172,8 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
         super.addAdditionalSaveData(pCompound);
+        pCompound.putInt("BladeAge", age);
+        pCompound.putDouble("BladeAmplification", amp);
 
         ItemStack stack = this.getItemRaw();
         if (!stack.isEmpty()) {
@@ -233,6 +183,9 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     public void readAdditionalSaveData(CompoundTag pCompound) {
         super.readAdditionalSaveData(pCompound);
+        this.pickup = AbstractArrow.Pickup.DISALLOWED;
+        this.age = pCompound.getInt("BladeAge");
+        this.amp = pCompound.getDouble("BladeAmplification");
 
         ItemStack stack = ItemStack.parseOptional(this.level().registryAccess(), pCompound.getCompound("Item"));
         this.setItem(stack);
@@ -245,14 +198,13 @@ public class BladeProjectile extends AbstractArrow implements ItemSupplier {
 
     @Override
     protected ItemStack getDefaultPickupItem() {
-        return null;
+        // AbstractArrow serializes this stack even when pickup is disabled.
+        return new ItemStack(IRON_SWORD);
     }
 
-    public void setItem(ItemStack pStack) {
-        if (!pStack.is(this.getDefaultItem())) {
-            this.getEntityData().set(DATA_ITEM_STACK, pStack.copyWithCount(1));
-        }
-
+    public void setItem(ItemStack stack) {
+        this.getEntityData().set(DATA_ITEM_STACK,
+                stack.isEmpty() ? new ItemStack(IRON_SWORD) : stack.copyWithCount(1));
     }
 
     protected Item getDefaultItem() {

@@ -267,3 +267,11 @@ tasks.register('verifyDomainRules', JavaExec) {
 }
 tasks.named('test') { exclude '**/DomainRulesTest.class' }
 tasks.named('check') { dependsOn 'verifyDomainRules' }
+
+tasks.register('verifySpellArmorColor', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.util.SpellArmorColorTest'
+}
+tasks.named('test') { exclude '**/SpellArmorColorTest.class' }
+tasks.named('check') { dependsOn 'verifySpellArmorColor' }

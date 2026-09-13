@@ -22,6 +22,22 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 public class MeteorProjectile extends EntityProjectileSpell {
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> HAS_GRAVITY =
+            SynchedEntityData.defineId(MeteorProjectile.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+
+    @Override
+    public MeteorProjectile setGravity(boolean gravity) {
+        super.setGravity(gravity);
+        entityData.set(HAS_GRAVITY, gravity);
+        return this;
+    }
+
+    @Override
+    public boolean isNoGravity() {
+        // Both sides must simulate the same trajectory between position updates.
+        return !entityData.get(HAS_GRAVITY);
+    }
+
 
     public int iTime = 0;
     public double accelerates = 0;
@@ -89,6 +105,7 @@ public class MeteorProjectile extends EntityProjectileSpell {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
         super.defineSynchedData(pBuilder);
+        pBuilder.define(HAS_GRAVITY, false);
     }
 
 }

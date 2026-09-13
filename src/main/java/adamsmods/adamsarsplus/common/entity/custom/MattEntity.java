@@ -4,6 +4,7 @@ import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
 import adamsmods.adamsarsplus.common.glyphs.augment_glyph.*;
 import adamsmods.adamsarsplus.common.glyphs.effect_glyph.*;
+import adamsmods.adamsarsplus.util.BossSpells;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
 import com.hollingsworth.arsnouveau.api.spell.SpellContext;
@@ -40,6 +41,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -54,6 +56,7 @@ import java.util.EnumSet;
 import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.registry.ModEntities.MATT_ENTITY;
+import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
 
 public class MattEntity extends Monster implements RangedAttackMob {
 
@@ -247,12 +250,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
 
     private ParticleColor mattColor = new ParticleColor(255, 150, 0);
 
-    public Spell mattRecoverSpell = new Spell()
-            .add(EffectDispel.INSTANCE)
-            .add(EffectHeal.INSTANCE)
-            .add(AugmentAmplify.INSTANCE,3)
-
-            .withColor(mattColor);
+    public Spell mattRecoverSpell = getSpell("Matt", "Recover");
 
     public void performSpellSelf(LivingEntity entity, Spell spell, ParticleColor color){
         EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -397,8 +395,16 @@ public class MattEntity extends Monster implements RangedAttackMob {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(2, (new HurtByTargetGoal(this, new Class[0])).setAlertOthers(new Class[0]));
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal(this, Player.class, false));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, IronGolem.class, false));
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, RyanEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, CadeEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, NickEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, CamEntity.class, false));
+      //this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, MattEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, JoshEntity.class, false));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AdamEntity.class, false));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Villager.class, false));
 
     }
 
@@ -538,12 +544,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor MattColor = new ParticleColor(255, 255, 0);
 
-        public Spell MattAttackSpell = new Spell()
-                .add(EffectConjureBlade.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE, 2)
-
-                .withColor(MattColor);
+        public Spell MattAttackSpell = getSpell("Matt", "AttackingA");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -709,17 +710,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
 
         private ParticleColor MattColor = new ParticleColor(255, 255, 0);
 
-        public Spell MattAttackSpell = new Spell()
-                .add(EffectWither.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-                .add(EffectHarm.INSTANCE)
-                .add(AugmentAmplify.INSTANCE,3)
-                .add(AugmentExtendTimeTwo.INSTANCE)
-
-                .add(EffectHex.INSTANCE)
-                .add(AugmentExtendTimeTwo.INSTANCE)
-
-                .withColor(MattColor);
+        public Spell MattAttackSpell = getSpell("Matt", "AttackingB");
 
         public boolean canUse() {
             return (Boolean)this.canUse.get() && this.mob.getTarget() != null;
@@ -921,23 +912,17 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  MattColor = new ParticleColor(255, 255, 0);
 
-        public Spell MattCastSpell = new Spell()
-                .add(EffectConjureBlade.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 4)
-                .add(AugmentAmplifyThree.INSTANCE, 16)
-
-                .add(EffectBurst.INSTANCE)
-                .add(AugmentSensitive.INSTANCE)
-                .add(AugmentAOE.INSTANCE, 2)
-                .add(AugmentAmplifyThree.INSTANCE, 1)
-
-                .withColor(MattColor);
+        public Spell MattCastSpell = getSpell("Matt", "CastingA");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
             EntityProjectileSpell projectileSpell = new EntityProjectileSpell(entity.level(), resolver);
 
             projectileSpell.shoot(entity, entity.getXRot(), entity.getYHeadRot(), 0.0F, 1.0f, 0.8f);
+
+            if (!spell.isEmpty()) {
+                BossSpells.applyStyle(projectileSpell, spell);
+            }
 
             entity.level().addFreshEntity(projectileSpell);
 
@@ -1055,23 +1040,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  MattColor = new ParticleColor(255, 255, 0);
 
-        public Spell MattCastSpell = new Spell()
-                .add(EffectDelay.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE, 2)
-
-                .add(EffectSummonUndead_boss.INSTANCE)
-                .add(AugmentSplit.INSTANCE, 2)
-                .add(AugmentAmplify.INSTANCE,4)
-
-                .add(EffectWither.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE, 2)
-                .add(EffectHex.INSTANCE)
-                .add(AugmentExtendTime.INSTANCE, 2)
-
-                .add(EffectFangs.INSTANCE)
-                .add(AugmentAmplifyThree.INSTANCE)
-
-                .withColor(MattColor);
+        public Spell MattCastSpell = getSpell("Matt", "CastingB");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color, LivingEntity enemy){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -1198,14 +1167,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor  MattColor = new ParticleColor(255, 255, 0);
 
-        public Spell MattCastSpell = new Spell()
-                .add(EffectMeteorSwarm.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE)
-
-                .add(EffectDivineSmite.INSTANCE)
-                .add(AugmentAmplify.INSTANCE, 4)
-
-                .withColor(MattColor);
+        public Spell MattCastSpell = getSpell("Matt", "CastingC");
 
         void performCastAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));
@@ -1219,6 +1181,11 @@ public class MattEntity extends Monster implements RangedAttackMob {
                 DetonateProjectile projectileSpell = new DetonateProjectile(entity.level(), resolver);
                 projectileSpell.shoot(entity, 90, 0, 0.0F, 0.5f, 0.8f);
                 projectileSpell.setPos(pos.add(MattEntity.this.random.nextInt(19) - 9, 0, MattEntity.this.random.nextInt(19) - 9));
+
+                if (!spell.isEmpty()) {
+                    BossSpells.applyStyle(projectileSpell, spell);
+                }
+
                 entity.level().addFreshEntity(projectileSpell);
 
             }, 10, time, () -> !this.MattEntity.isAlive());
@@ -1389,22 +1356,7 @@ public class MattEntity extends Monster implements RangedAttackMob {
         }
         private ParticleColor MattColor = new ParticleColor(255, 255, 0);
 
-        public Spell MattDomainSpell = new Spell()
-                .add(AugmentAccelerateThree.INSTANCE)
-                .add(EffectDomain.INSTANCE)
-                .add(AugmentExtendTimeThree.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentExtract.INSTANCE)
-                .add(AugmentAccelerateThree.INSTANCE)
-
-                .add(EffectConjureBlade.INSTANCE)
-                .add(AugmentAOEThree.INSTANCE, 2)
-                .add(AugmentAmplifyThree.INSTANCE, 16)
-
-                .add(EffectHex.INSTANCE)
-                .add(AugmentExtendTimeTwo.INSTANCE)
-
-                .withColor(MattColor);
+        public Spell MattDomainSpell = getSpell("Matt", "DomainA");
 
         void performDomainAttack(LivingEntity entity, Spell spell, ParticleColor color){
             EntitySpellResolver resolver = new EntitySpellResolver(new SpellContext(entity.level(), spell, entity, new LivingCaster(entity)).withColors(color));

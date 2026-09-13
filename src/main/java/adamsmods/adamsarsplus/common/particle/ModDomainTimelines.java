@@ -11,5 +11,7 @@ public final class ModDomainTimelines {
             ParticleTimelineRegistry.PARTICLE_TIMELINE_REGISTRY_KEY, AdamsArsPlus.MODID);
     public static final DeferredHolder<IParticleTimelineType<?>, DomainTimeline.Type> DOMAIN =
             REGISTER.register("domain", DomainTimeline.Type::new);
+    public static final DeferredHolder<IParticleTimelineType<?>, UndeadMageTimeline.Type> UNDEAD_MAGE =
+            REGISTER.register("undead_mage", UndeadMageTimeline.Type::new);
     private ModDomainTimelines() {}
 }
