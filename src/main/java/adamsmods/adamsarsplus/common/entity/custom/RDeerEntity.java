@@ -1,6 +1,8 @@
 package adamsmods.adamsarsplus.common.entity.custom;
 
 import adamsmods.adamsarsplus.registry.ModEntities;
+import adamsmods.adamsarsplus.common.entity.ai.TenShadowsTargeting;
+import adamsmods.adamsarsplus.common.entity.ai.TargetOwnerThreatGoal;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -360,14 +362,15 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
 
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this, new Class[]{RDeerEntity.class}) {
+        this.targetSelector.addGoal(3, TenShadowsTargeting.unownedOnly(this, new HurtByTargetGoal(this, new Class[]{RDeerEntity.class}) {
             protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
                 return pPotentialTarget != null && super.canAttack(pPotentialTarget, pTargetPredicate) && !pPotentialTarget.getUUID().equals(RDeerEntity.this.getOwnerUUID()) && !pPotentialTarget.getUUID().equals(RDeerEntity.this.getUUID());
             }
-        });
-        this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Villager.class, true));
+        }));
+        this.targetSelector.addGoal(1, TenShadowsTargeting.copyOwner(this, new CopyOwnerTargetGoal(this)));
+        this.targetSelector.addGoal(2, new TargetOwnerThreatGoal(this));
+        this.targetSelector.addGoal(2, TenShadowsTargeting.unownedOnly(this, new NearestAttackableTargetGoal(this, Player.class, true)));
+        this.targetSelector.addGoal(4, TenShadowsTargeting.unownedOnly(this, new NearestAttackableTargetGoal(this, Villager.class, true)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

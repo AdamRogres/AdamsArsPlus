@@ -283,3 +283,11 @@ tasks.register('verifyLimitlessRules', JavaExec) {
 }
 tasks.named('test') { exclude '**/LimitlessRulesTest.class' }
 tasks.named('check') { dependsOn 'verifyLimitlessRules' }
+
+tasks.register('verifyDismantleRules', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.util.DismantleRulesTest'
+}
+tasks.named('test') { exclude '**/DismantleRulesTest.class' }
+tasks.named('check') { dependsOn 'verifyDismantleRules' }

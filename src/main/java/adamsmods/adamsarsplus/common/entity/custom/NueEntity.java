@@ -2,6 +2,8 @@ package adamsmods.adamsarsplus.common.entity.custom;
 
 import adamsmods.adamsarsplus.common.entity.DetonateProjectile;
 import adamsmods.adamsarsplus.registry.ModEntities;
+import adamsmods.adamsarsplus.common.entity.ai.TenShadowsTargeting;
+import adamsmods.adamsarsplus.common.entity.ai.TargetOwnerThreatGoal;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.EntitySpellResolver;
 import com.hollingsworth.arsnouveau.api.spell.Spell;
@@ -366,10 +368,11 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
         this.goalSelector.addGoal(3, new NueFollowSummonerGoal());
         this.goalSelector.addGoal(4, new NueCircleAroundAnchorGoal());
 
-        this.targetSelector.addGoal(1, new NueAttackPlayerTargetGoal());
-        this.targetSelector.addGoal(1, new CopyOwnerTargetGoalFlying<>(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Villager.class, true));
+        this.targetSelector.addGoal(1, TenShadowsTargeting.unownedOnly(this, new NueAttackPlayerTargetGoal()));
+        this.targetSelector.addGoal(1, TenShadowsTargeting.copyOwner(this, new CopyOwnerTargetGoalFlying<>(this)));
+        this.targetSelector.addGoal(2, new TargetOwnerThreatGoal(this));
+        this.targetSelector.addGoal(2, TenShadowsTargeting.unownedOnly(this, new NearestAttackableTargetGoal(this, Player.class, true)));
+        this.targetSelector.addGoal(4, TenShadowsTargeting.unownedOnly(this, new NearestAttackableTargetGoal(this, Villager.class, true)));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
