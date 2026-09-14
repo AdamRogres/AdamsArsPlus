@@ -39,19 +39,20 @@ public class ImmortalPerk extends Perk implements ITickablePerk {
 
     @Override
     public void tick(ItemStack itemStack, Level level, LivingEntity player, PerkInstance perkInstance) {
-        MobEffectInstance effectInstance = (player).getEffect(MANA_HEALTH_EFFECT);
+        if (level.isClientSide() || level.getGameTime() % 40L != 0L) return;
 
-        int amp = Math.min(effectInstance != null ? effectInstance.getAmplifier() : -1,(int)Math.floor((player.getAbsorptionAmount() / 2)));
+        MobEffectInstance effect = player.getEffect(MANA_HEALTH_EFFECT);
+        // Effect amplifiers are zero-based: amplifier 0 grants the first heart.
+        int hearts = Math.min(effect != null ? effect.getAmplifier() + 1 : 0,
+                (int) Math.floor(player.getAbsorptionAmount() / 2.0F));
+        hearts = Math.max(0, Math.min(10, hearts));
+        var mana = CapabilityRegistry.getMana(player);
+        if (mana.getCurrentMana() < 250.0) return;
 
-        if (player.level().getGameTime() % 40L == 0L) {
-
-            if (CapabilityRegistry.getMana(player).getCurrentMana() > (double)250.0F) {
-                if(amp != 10) {
-                    CapabilityRegistry.getMana(player).removeMana((double) 250.0F);
-                }
-                (player).removeEffect(MANA_HEALTH_EFFECT);
-                (player).addEffect(new MobEffectInstance(MANA_HEALTH_EFFECT, 300, Math.min(10, amp + 1), false, false));
-            }
-        }
+        if (hearts < 10) mana.removeMana(250.0);
+        int nextHearts = Math.min(10, hearts + 1);
+        // Replace rather than merge so damage can lower the current shield tier.
+        player.removeEffect(MANA_HEALTH_EFFECT);
+        player.addEffect(new MobEffectInstance(MANA_HEALTH_EFFECT, 300, nextHearts - 1, false, false));
     }
 }

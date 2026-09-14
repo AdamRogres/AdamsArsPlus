@@ -10,14 +10,14 @@ import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.setup.registry.ModPotions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
+
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
+
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import org.jetbrains.annotations.NotNull;
+
+
 
 import static adamsmods.adamsarsplus.registry.ModPotions.ERUPTION_EFFECT;
 
@@ -40,20 +40,19 @@ public class DraconicHexPerk extends Perk implements IEffectResolvePerk {
     public String getName() {
         return Component.translatable("item.adamsarsplus.thread_draconic").getString();
     }
-    public void onPreResolve(HitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver, AbstractEffect effect, PerkInstance perkInstance) {
-        if (effect instanceof IDamageEffect damageEffect) {
-            if (rayTraceResult instanceof EntityHitResult entityHitResult) {
-                Entity var12 = entityHitResult.getEntity();
-                if (var12 instanceof LivingEntity livingEntity) {
-                    if (damageEffect.canDamage(shooter, spellStats, spellContext, resolver, entityHitResult.getEntity()) && shooter != entityHitResult.getEntity()) {
-                        livingEntity.addEffect(new MobEffectInstance(ModPotions.HEX_EFFECT, perkInstance.getSlot().value() * 10 * 20, perkInstance.getSlot().value() - 4));
-                        livingEntity.addEffect(new MobEffectInstance(ERUPTION_EFFECT, perkInstance.getSlot().value() * 10 * 20, 0));
-                    }
-                }
-            }
-        }
-    }
+    @Override
+    public void onEffectPreResolve(com.hollingsworth.arsnouveau.api.event.EffectResolveEvent.Pre event,
+                                   PerkInstance perkInstance) {
+        if (event.world.isClientSide() || event.isCanceled() || event.shooter == null) return;
+        if (!(event.resolveEffect instanceof IDamageEffect damageEffect)
+                || !(event.rayTraceResult instanceof EntityHitResult hit)
+                || !(hit.getEntity() instanceof LivingEntity target)
+                || target == event.shooter || !target.isAlive()) return;
+        if (!damageEffect.canDamage(event.shooter, event.spellStats, event.context, event.resolver, target)) return;
 
-    public void onPostResolve(HitResult rayTraceResult, Level world, @NotNull LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver, AbstractEffect effect, PerkInstance perkInstance) {
+        int tier = perkInstance.getSlot().value();
+        int duration = tier * 10 * 20;
+        target.addEffect(new MobEffectInstance(ModPotions.HEX_EFFECT, duration, Math.max(0, tier - 4)), event.shooter);
+        target.addEffect(new MobEffectInstance(ERUPTION_EFFECT, duration, 0), event.shooter);
     }
 }

@@ -118,10 +118,10 @@ public class ArsProviders {
             recipes.add(get(AugmentDurationDownTwo.INSTANCE).withItem(AugmentDurationDown.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(MANA_DIAMOND.get(), 4).withItem(ELEMENTAL_SOUL.get()));
             recipes.add(get(AugmentOpenDomain.INSTANCE).withItem(VOID_SOUL.get(), 8).withItem(NETHER_STAR));
             recipes.add(get(SpellEfficiency.INSTANCE).withItem(MANA_DIAMOND.get(), 8).withItem(NETHER_STAR));
-            recipes.add(get(EffectDomain.INSTANCE).withItem(TRUE_ELEMENTAL_SOUL.get(),4).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
+            recipes.add(get(EffectDomain.INSTANCE).withItem(ELEMENTAL_SOUL.get(),4).withItem(NETHER_STAR).withItem(DRAGON_BREATH,4));
             recipes.add(get(EffectSwapTarget.INSTANCE).withItem(EMERALD_BLOCK).withItem(EffectExchange.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(ENDER_EYE, 2).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
             recipes.add(get(FilterNotSelf.INSTANCE).withItem(MethodSelf.INSTANCE.glyphItem.getDefaultInstance().getItem()).withItem(ItemsRegistry.MANIPULATION_ESSENCE));
-            recipes.add(get(EffectSimpleDomain.INSTANCE).withItem(ELEMENTAL_SOUL.get(),4).withItem(MANA_DIAMOND.get(),4).withItem(ItemsRegistry.CONJURATION_ESSENCE));
+            recipes.add(get(EffectSimpleDomain.INSTANCE).withIngredient(Ingredient.of(AdamsItemTagsProvider.ELEMENTAL_A), 4).withItem(MANA_DIAMOND.get(),4).withItem(ItemsRegistry.CONJURATION_ESSENCE));
 
             recipes.add(get(EffectEruption.INSTANCE).withItem(FLAME_SOUL.get(),3).withItem(ItemsRegistry.FIRE_ESSENCE,2).withItem(FLINT_AND_STEEL));
             recipes.add(get(EffectIceburst.INSTANCE).withItem(FROST_SOUL.get(),3).withItem(ItemsRegistry.WATER_ESSENCE,2).withItem(BLUE_ICE));

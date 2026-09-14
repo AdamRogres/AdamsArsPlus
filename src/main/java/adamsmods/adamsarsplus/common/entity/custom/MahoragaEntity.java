@@ -702,6 +702,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Mob.class, true));
     }
 
+    // Bosses survive distance despawning, including older saves without PersistenceRequired.
+    @Override
+    public boolean requiresCustomPersistence() {
+        return true;
+    }
+
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 500D)

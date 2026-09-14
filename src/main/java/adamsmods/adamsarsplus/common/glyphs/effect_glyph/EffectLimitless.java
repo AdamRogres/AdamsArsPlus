@@ -205,6 +205,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 entity.setDeltaMovement(strength * -0.5 * absDifference(radius, xRatio), strength * -0.5 * absDifference(radius, yRatio), strength * -0.5 * absDifference(radius, zRatio));
             }
 
+            entity.setDeltaMovement(limitVelocity(entity, entity.getDeltaMovement()));
             entity.hasImpulse = true;
             entity.hurtMarked = true;
     }
@@ -217,7 +218,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
 
         //Target non-living entities like arrows and spell projectiles
         for(Entity entity : world.getEntities(shooter, (new AABB(center)).inflate((double)radius, (double)radius, (double)radius))) {
-            if (Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center)) && (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !spellContext.getUnwrappedCaster().equals(entity))) {
+            if (!(entity instanceof LivingEntity) && Sphere.test(BlockUtil.distanceFromCenter(entity.blockPosition(), center)) && (spellStats.hasBuff(AugmentSensitive.INSTANCE) || !spellContext.getUnwrappedCaster().equals(entity))) {
                 if (spellStats.hasBuff(AugmentPierce.INSTANCE)) {
                     this.knockback(entity, (double)center.getX(), (double)center.getY(), (double)center.getZ(), (float)amp, radius);
                 } else {
@@ -250,6 +251,17 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
         }
     }
 
+    private Vec3 limitVelocity(Entity entity, Vec3 velocity) {
+        double limit = adamsmods.adamsarsplus.util.LimitlessRules.MAX_SPEED;
+        if (entity instanceof net.minecraft.world.entity.projectile.AbstractArrow arrow) {
+            limit = adamsmods.adamsarsplus.util.LimitlessRules.speedLimit(arrow.getBaseDamage(), arrow.isCritArrow());
+            entity.getPersistentData().putBoolean(adamsmods.adamsarsplus.event.LimitlessEvents.ACCELERATED_ARROW, true);
+        }
+        double length = velocity.length();
+        if (!Double.isFinite(length)) return Vec3.ZERO;
+        return length > limit ? velocity.scale(limit / length) : velocity;
+    }
+
     private void applyFreezeOrScale(Entity entity, double amp) {
         Vec3 current = entity.getDeltaMovement();
         CompoundTag pdata = entity.getPersistentData();
@@ -271,7 +283,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 }
             }
         } else if (!pdata.getBoolean("adams_limitless_frozen") && !savedVelocities.containsKey(entity.getUUID())) {
-            entity.setDeltaMovement(current.scale(amp));
+            entity.setDeltaMovement(limitVelocity(entity, current.scale(amp)));
         }
 
         entity.hurtMarked = true;
@@ -290,7 +302,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 if (savedVelocities.containsKey(id)) {
                     Vec3 prev = (Vec3)savedVelocities.remove(id);
                     if (prev != null) {
-                        e.setDeltaMovement(prev);
+                        e.setDeltaMovement(limitVelocity(e, prev));
                         e.hurtMarked = true;
                         e.getPersistentData().remove("adams_limitless_prev_vx");
                         e.getPersistentData().remove("adams_limitless_prev_vy");
@@ -330,7 +342,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 }
 
                 if (prev != null) {
-                    entity.setDeltaMovement(prev);
+                    entity.setDeltaMovement(limitVelocity(entity, prev));
                     entity.hurtMarked = true;
                     if (entity instanceof Projectile) {
                         try {
@@ -355,7 +367,7 @@ public class EffectLimitless extends AbstractEffect implements IDamageEffect {
                 if (savedVelocities.containsKey(id)) {
                     Vec3 prev = (Vec3)savedVelocities.remove(id);
                     if (prev != null) {
-                        e.setDeltaMovement(prev);
+                        e.setDeltaMovement(limitVelocity(e, prev));
                         e.hurtMarked = true;
                         e.getPersistentData().remove("adams_limitless_prev_vx");
                         e.getPersistentData().remove("adams_limitless_prev_vy");

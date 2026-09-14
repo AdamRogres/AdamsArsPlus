@@ -4,6 +4,8 @@ import adamsmods.adamsarsplus.AdamsArsPlus;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.EventBusSubscriber;
 
@@ -15,6 +17,8 @@ public class ManaHealthEffect extends MobEffect {
 
     public ManaHealthEffect() {
         super(MobEffectCategory.BENEFICIAL, 13565951);
+        addAttributeModifier(Attributes.MAX_ABSORPTION, AdamsArsPlus.prefix("effect.mana_health"),
+                2.0, AttributeModifier.Operation.ADD_VALUE);
     }
     
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
@@ -23,7 +27,7 @@ public class ManaHealthEffect extends MobEffect {
 
     public void onEffectStarted(LivingEntity entity, int amplifier) {
         super.onEffectStarted(entity, amplifier);
-        entity.setAbsorptionAmount(Math.max(entity.getAbsorptionAmount(), (float)(2 * (amplifier))));
+        entity.setAbsorptionAmount(Math.max(entity.getAbsorptionAmount(), (float)(2 * (amplifier + 1))));
     }
 
     public boolean shouldApplyEffectTickThisTick(int p_295629_, int p_295734_) {

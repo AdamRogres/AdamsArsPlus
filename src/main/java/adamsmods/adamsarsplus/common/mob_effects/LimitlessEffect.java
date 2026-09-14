@@ -8,7 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public class LimitlessEffect extends MobEffect {
 
     public LimitlessEffect() {
-        super(MobEffectCategory.NEUTRAL, 2039587);
+        super(MobEffectCategory.BENEFICIAL, 2039587);
     }
 
 }

@@ -1,6 +1,8 @@
 package adamsmods.adamsarsplus.common.rituals;
 
 import adamsmods.adamsarsplus.AdamsArsPlus;
+import static adamsmods.adamsarsplus.ConfigHandler.Common.MAGE_SUMMON_STRUCTURE_BYPASS;
+import static adamsmods.adamsarsplus.ConfigHandler.Common.MAGE_SUMMON_BYPASS_EYES;
 import adamsmods.adamsarsplus.common.entity.custom.*;
 import adamsmods.adamsarsplus.datagen.AdamsStructureTagProvider;
 import com.hollingsworth.arsnouveau.api.ritual.AbstractRitual;
@@ -63,8 +65,8 @@ public class RitualMageSummon extends AbstractRitual {
                 if (this.getWorld() instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) this.getWorld();
                     BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.IP_TAG, this.getPos(), 100, false);
-                    if (structurePos != null){
-                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.IP_TAG)) {
+                    if (structurePos != null  || isRyanSpawnNS()){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.IP_TAG) || isRyanSpawnNS()) {
                             RyanEntity boss = new RyanEntity(this.getWorld());
                             this.summon(boss, this.getPos().above());
 
@@ -99,8 +101,8 @@ public class RitualMageSummon extends AbstractRitual {
                 if (this.getWorld() instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) this.getWorld();
                     BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.FL_TAG, this.getPos(), 100, false);
-                    if (structurePos != null){
-                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.FL_TAG)) {
+                    if (structurePos != null || isCadeSpawnNS()){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.FL_TAG) || isCadeSpawnNS()) {
                             CadeEntity boss = new CadeEntity(this.getWorld());
                             this.summon(boss, this.getPos().above());
 
@@ -135,8 +137,8 @@ public class RitualMageSummon extends AbstractRitual {
                 if (this.getWorld() instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) this.getWorld();
                     BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.OB_TAG, this.getPos(), 100, false);
-                    if (structurePos != null){
-                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.OB_TAG)) {
+                    if (structurePos != null || isNickSpawnNS()){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.OB_TAG) || isNickSpawnNS()) {
                             NickEntity boss = new NickEntity(this.getWorld());
                             this.summon(boss, this.getPos().above());
 
@@ -171,8 +173,8 @@ public class RitualMageSummon extends AbstractRitual {
                 if (this.getWorld() instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) this.getWorld();
                     BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.NR_TAG, this.getPos(), 100, false);
-                    if (structurePos != null){
-                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.NR_TAG)) {
+                    if (structurePos != null || isCamrSpawnNS()){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.NR_TAG) || isCamrSpawnNS()) {
                             CamEntity boss = new CamEntity(this.getWorld());
                             this.summon(boss, this.getPos().above());
 
@@ -207,8 +209,8 @@ public class RitualMageSummon extends AbstractRitual {
                 if (this.getWorld() instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) this.getWorld();
                     BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.HM_TAG, this.getPos(), 100, false);
-                    if (structurePos != null){
-                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.HM_TAG)) {
+                    if (structurePos != null || isMattSpawnNS()){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.HM_TAG) || isMattSpawnNS()) {
                             MattEntity boss = new MattEntity(this.getWorld());
                             this.summon(boss, this.getPos().above());
 
@@ -260,8 +262,8 @@ public class RitualMageSummon extends AbstractRitual {
                 if (this.getWorld() instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel) this.getWorld();
                     BlockPos structurePos = serverLevel.findNearestMapStructure(AdamsStructureTagProvider.VF_TAG, this.getPos(), 100, false);
-                    if (structurePos != null){
-                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.VF_TAG)) {
+                    if (structurePos != null || isAdamSpawnNS()){
+                        if(checkDistance(this.getPos(), serverLevel, AdamsStructureTagProvider.VF_TAG) || isAdamSpawnNS()) {
                             AdamEntity boss = new AdamEntity(this.getWorld());
                             this.summon(boss, this.getPos().above());
 
@@ -300,21 +302,66 @@ public class RitualMageSummon extends AbstractRitual {
     public boolean isRyanSpawn() {
         return this.didConsumeItem(EYE_OF_FLAME.get());
     }
+    public boolean isRyanSpawnNS() {
+        int Eyes = 0;
+        for (ItemStack i : getConsumedItems()) {
+            if (i.is(EYE_OF_FLAME.get())) {
+                Eyes += i.getCount();
+            }
+        }
+        return MAGE_SUMMON_STRUCTURE_BYPASS.get() && Eyes >= MAGE_SUMMON_BYPASS_EYES.get();
+    }
 
     public boolean isCadeSpawn() {
         return this.didConsumeItem(EYE_OF_FROST.get());
+    }
+    public boolean isCadeSpawnNS() {
+        int Eyes = 0;
+        for (ItemStack i : getConsumedItems()) {
+            if (i.is(EYE_OF_FROST.get())) {
+                Eyes += i.getCount();
+            }
+        }
+        return MAGE_SUMMON_STRUCTURE_BYPASS.get() && Eyes >= MAGE_SUMMON_BYPASS_EYES.get();
     }
 
     public boolean isNickSpawn() {
         return this.didConsumeItem(EYE_OF_EARTH.get());
     }
+    public boolean isNickSpawnNS() {
+        int Eyes = 0;
+        for (ItemStack i : getConsumedItems()) {
+            if (i.is(EYE_OF_EARTH.get())) {
+                Eyes += i.getCount();
+            }
+        }
+        return MAGE_SUMMON_STRUCTURE_BYPASS.get() && Eyes >= MAGE_SUMMON_BYPASS_EYES.get();
+    }
 
     public boolean isCamrSpawn() {
         return this.didConsumeItem(EYE_OF_LIGHTNING.get());
     }
+    public boolean isCamrSpawnNS() {
+        int Eyes = 0;
+        for (ItemStack i : getConsumedItems()) {
+            if (i.is(EYE_OF_LIGHTNING.get())) {
+                Eyes += i.getCount();
+            }
+        }
+        return MAGE_SUMMON_STRUCTURE_BYPASS.get() && Eyes >= MAGE_SUMMON_BYPASS_EYES.get();
+    }
 
     public boolean isMattSpawn() {
         return this.didConsumeItem(EYE_OF_HOLY.get());
+    }
+    public boolean isMattSpawnNS() {
+        int Eyes = 0;
+        for (ItemStack i : getConsumedItems()) {
+            if (i.is(EYE_OF_HOLY.get())) {
+                Eyes += i.getCount();
+            }
+        }
+        return MAGE_SUMMON_STRUCTURE_BYPASS.get() && Eyes >= MAGE_SUMMON_BYPASS_EYES.get();
     }
 
     public boolean isJoshSpawn() {
@@ -323,6 +370,15 @@ public class RitualMageSummon extends AbstractRitual {
 
     public boolean isAdamSpawn() {
         return this.didConsumeItem(EYE_OF_VOID.get());
+    }
+    public boolean isAdamSpawnNS() {
+        int Eyes = 0;
+        for (ItemStack i : getConsumedItems()) {
+            if (i.is(EYE_OF_VOID.get())) {
+                Eyes += i.getCount();
+            }
+        }
+        return MAGE_SUMMON_STRUCTURE_BYPASS.get() && Eyes >= MAGE_SUMMON_BYPASS_EYES.get();
     }
 
     public void summon(Mob mob, BlockPos pos) {

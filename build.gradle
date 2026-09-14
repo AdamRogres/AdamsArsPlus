@@ -275,3 +275,11 @@ tasks.register('verifySpellArmorColor', JavaExec) {
 }
 tasks.named('test') { exclude '**/SpellArmorColorTest.class' }
 tasks.named('check') { dependsOn 'verifySpellArmorColor' }
+
+tasks.register('verifyLimitlessRules', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.util.LimitlessRulesTest'
+}
+tasks.named('test') { exclude '**/LimitlessRulesTest.class' }
+tasks.named('check') { dependsOn 'verifyLimitlessRules' }

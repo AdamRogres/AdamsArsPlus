@@ -32,6 +32,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -57,6 +58,7 @@ import java.util.function.Supplier;
 
 import static adamsmods.adamsarsplus.registry.ModEntities.NICK_ENTITY;
 import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
+import static net.minecraft.world.effect.MobEffects.REGENERATION;
 
 public class NickEntity extends Monster implements RangedAttackMob {
 
@@ -145,6 +147,10 @@ public class NickEntity extends Monster implements RangedAttackMob {
         }
 
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+
+        if(this.hasEffect(REGENERATION)){
+            this.addEffect(new MobEffectInstance(REGENERATION, 20, 0, false, false));
+        }
     }
 
     private void setupAnimationStates() {
@@ -343,6 +349,12 @@ public class NickEntity extends Monster implements RangedAttackMob {
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AdamEntity.class, false));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Villager.class, false));
 
+    }
+
+    // Bosses survive distance despawning, including older saves without PersistenceRequired.
+    @Override
+    public boolean requiresCustomPersistence() {
+        return true;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

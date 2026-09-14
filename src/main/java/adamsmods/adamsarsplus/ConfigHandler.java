@@ -50,6 +50,9 @@ public class ConfigHandler {
         public static ModConfigSpec.IntValue      ADAM_SPELL_DAMAGE;
         public static ModConfigSpec.IntValue      ADAM_WARDING;
 
+        public static ModConfigSpec.BooleanValue MAGE_SUMMON_STRUCTURE_BYPASS;
+        public static ModConfigSpec.IntValue MAGE_SUMMON_BYPASS_EYES;
+
         public Common(ModConfigSpec.Builder builder) {
 
             builder.push("Configs for Adams Ars Plus");
@@ -66,6 +69,14 @@ public class ConfigHandler {
 
             builder.pop();
 
+            builder.push("Mage Summon Ritual");
+            MAGE_SUMMON_STRUCTURE_BYPASS = builder.comment("Allow enough matching elemental eyes to bypass the nearby archmage structure requirement.",
+                    "When false, the matching structure is always required regardless of eye count.")
+                    .define("allowStructureBypass", true);
+            MAGE_SUMMON_BYPASS_EYES = builder.comment("Total matching elemental eyes consumed to bypass the structure requirement.",
+                    "Applies to Flame, Frost, Earth, Lightning, Holy and Void eyes. Different eye types do not combine.")
+                    .defineInRange("structureBypassEyes", 12, 1, Integer.MAX_VALUE);
+            builder.pop();
             builder.push("Armor Configs");
             ArmorAttributeConfig.define(builder);
 

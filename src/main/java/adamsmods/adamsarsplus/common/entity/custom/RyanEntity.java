@@ -64,6 +64,7 @@ import java.util.function.Supplier;
 import static adamsmods.adamsarsplus.registry.ModEntities.RYAN_ENTITY;
 import static adamsmods.adamsarsplus.registry.ModPotions.FLAME_DEITY_EFFECT;
 import static adamsmods.adamsarsplus.util.BossSpells.getSpell;
+import static net.minecraft.world.effect.MobEffects.REGENERATION;
 
 
 public class RyanEntity extends Monster implements RangedAttackMob {
@@ -140,6 +141,10 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         }
 
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+
+        if(this.hasEffect(REGENERATION)){
+            this.addEffect(new MobEffectInstance(REGENERATION, 20, 0, false, false));
+        }
     }
 
     private void setupAnimationStates() {
@@ -289,6 +294,12 @@ public class RyanEntity extends Monster implements RangedAttackMob {
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, JoshEntity.class, false));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AdamEntity.class, false));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Villager.class, false));
+    }
+
+    // Bosses survive distance despawning, including older saves without PersistenceRequired.
+    @Override
+    public boolean requiresCustomPersistence() {
+        return true;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

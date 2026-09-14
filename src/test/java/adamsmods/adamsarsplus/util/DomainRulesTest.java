@@ -28,6 +28,15 @@ public class DomainRulesTest {
         require(DomainRules.suppresses(true, true, 0, 0));
         require(!DomainRules.suppresses(false, true, 1, 2)); // resume after removal
         require(!DomainRules.suppresses(true, false, 1, 2)); // outside the radius
-        System.out.println("PASS: domain reaction delay, acceleration limits, repeat intervals, spherical bounds dome exclusion, and equal/stronger domain clashes.");
+        require(DomainRules.simpleDomainDuration(100, 0) == 100);
+        require(DomainRules.simpleDomainDuration(100, 1) == 80);
+        require(DomainRules.simpleDomainDuration(100, 3) == 40);
+        require(DomainRules.simpleDomainDuration(40, 2) == 0);
+        require(DomainRules.simpleDomainDuration(4, 2) == 0);
+        require(DomainRules.simpleDomainDuration(-1, 10) == -1); // infinite effects remain infinite
+        require(DomainRules.simpleDomainDuration(100, -1) == 100);
+        require(DomainRules.simpleDomainDuration(100, 0.5) == 90);
+        require(DomainRules.simpleDomainDuration(100, Double.MAX_VALUE) == 0);
+        System.out.println("PASS: domain reaction delay, acceleration limits, repeat intervals, spherical bounds dome exclusion, equal/stronger domain clashes, and Simple Domain duration erosion.");
     }
 }

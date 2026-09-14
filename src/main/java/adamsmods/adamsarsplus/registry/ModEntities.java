@@ -147,38 +147,45 @@ public class ModEntities {
         RYAN_ENTITY = registerEntity(
                 AdamsLibEntityNames.RYAN,
                 EntityType.Builder.<RyanEntity>of(RyanEntity::new, MobCategory.MONSTER)
-                        .sized(0.7f, 1.9f));
+                        .sized(0.7f, 1.9f)
+                        .clientTrackingRange(10));
 
         CADE_ENTITY = registerEntity(
                 AdamsLibEntityNames.CADE,
                 EntityType.Builder.<CadeEntity>of(CadeEntity::new, MobCategory.MONSTER)
-                        .sized(0.6f, 1.7f));
+                        .sized(0.6f, 1.7f)
+                        .clientTrackingRange(10));
 
         NICK_ENTITY = registerEntity(
                 AdamsLibEntityNames.NICK,
                 EntityType.Builder.<NickEntity>of(NickEntity::new, MobCategory.MONSTER)
-                        .sized(0.9f, 2.3f));
+                        .sized(0.9f, 2.3f)
+                        .clientTrackingRange(10));
 
         CAM_ENTITY = registerEntity(
                 AdamsLibEntityNames.CAM,
                 EntityType.Builder.<CamEntity>of(CamEntity::new, MobCategory.MONSTER)
-                        .sized(0.7f, 2.0f));
+                        .sized(0.7f, 2.0f)
+                        .clientTrackingRange(10));
 
         MATT_ENTITY = registerEntity(
                 AdamsLibEntityNames.MATT,
                 EntityType.Builder.<MattEntity>of(MattEntity::new, MobCategory.MONSTER)
-                        .sized(0.8f, 2.2f));
+                        .sized(0.8f, 2.2f)
+                        .clientTrackingRange(10));
 
         JOSH_ENTITY = registerEntity(
                 AdamsLibEntityNames.JOSH,
                 EntityType.Builder.<JoshEntity>of(JoshEntity::new, MobCategory.MONSTER)
                         .sized(1.7f, 3.7f)
+                        .clientTrackingRange(10)
                         .fireImmune());
 
         ADAM_ENTITY = registerEntity(
                 AdamsLibEntityNames.ADAM,
                 EntityType.Builder.<AdamEntity>of(AdamEntity::new, MobCategory.MONSTER)
-                        .sized(0.6f, 1.8f));
+                        .sized(0.6f, 1.8f)
+                        .clientTrackingRange(10));
 
         // Mages
         MAGE_ENTITY = registerEntity(

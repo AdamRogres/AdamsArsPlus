@@ -176,25 +176,50 @@ public class EntityDomainSpell extends EntityProjectileSpell {
                 if (containsPosition(p.getCenter())) {
                     int threshold = level().getBlockState(p).isAir() ? Math.min(5 * radius, 85) : Math.min(3 * radius, 60);
                     if (random.nextInt(101) > threshold) {
-                        resolver().getNewResolver(resolver().spellContext.clone().makeChildContext())
-                                .onResolveEffect(level(), new BlockHitResult(p.getCenter(), Direction.UP, p, false));
+                        resolveDomainHit(new BlockHitResult(p.getCenter(), Direction.UP, p, false));
                     }
                 }
             }
         }
         int count = 0;
         for (LivingEntity target : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(radius + 0.5))) {
-            if (count >= MAX_DOMAIN_ENTITIES.get() || totalProcs >= maxProcs) break;
             if (!target.isAlive() || !containsPosition(target.position())
                     || target.getType().is(AdamsEntityTags.DOMAIN_BLACKLIST)
-                    || target.hasEffect(SIMPLE_DOMAIN_EFFECT)
                     || (getFilter() && target.equals(resolver().spellContext.getUnwrappedCaster()))) continue;
-            resolver().getNewResolver(resolver().spellContext.clone().makeChildContext())
-                    .onResolveEffect(level(), new EntityHitResult(target));
+            var simpleDomain = target.getEffect(SIMPLE_DOMAIN_EFFECT);
+            if (simpleDomain != null) {
+                int remaining = adamsmods.adamsarsplus.util.DomainRules.simpleDomainDuration(
+                        simpleDomain.getDuration(), refinement);
+                if (remaining != simpleDomain.getDuration()) {
+                    if (remaining == 0) {
+                        target.removeEffect(SIMPLE_DOMAIN_EFFECT);
+                    } else {
+                        // Mutate the existing instance to preserve its flags, cures and hidden effects.
+                        simpleDomain.duration = remaining;
+                        ((net.minecraft.server.level.ServerLevel) level()).getChunkSource().broadcastAndSend(target,
+                                new net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket(
+                                        target.getId(), simpleDomain, false));
+                    }
+                }
+                // Simple Domain absorbs this cast, including the cast that exhausts it.
+                continue;
+            }
+            // Protected targets still lose duration even when the hit limit has been reached.
+            if (count >= MAX_DOMAIN_ENTITIES.get() || totalProcs >= maxProcs) continue;
+            resolveDomainHit(new EntityHitResult(target));
             count++;
             totalProcs++;
         }
         if (totalProcs >= maxProcs) discard();
+    }
+
+    private void resolveDomainHit(HitResult hit) {
+        var context = resolver().spellContext.clone().makeChildContext();
+        // Copy before tagging because makeChildContext can share its parent's tag.
+        context.tag = context.tag.copy();
+        context.tag.putBoolean(adamsmods.adamsarsplus.util.DomainDamage.KEY, true);
+        var child = resolver().getNewResolver(context);
+        adamsmods.adamsarsplus.util.DomainDamage.resolve(() -> child.onResolveEffect(level(), hit));
     }
 
     public int calcShell(){

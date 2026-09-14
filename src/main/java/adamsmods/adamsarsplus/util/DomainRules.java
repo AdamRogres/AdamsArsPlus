@@ -12,6 +12,13 @@ public final class DomainRules {
         return active && inRange && otherAmplification >= ownAmplification;
     }
 
+    /** Finite Simple Domains lose twenty ticks per amplification; fractional ticks round down. */
+    public static int simpleDomainDuration(int duration, double amplification) {
+        if (duration <= 0 || !(amplification > 0)) return duration;
+        int reduction = (int) Math.min(Integer.MAX_VALUE, 20.0 * amplification);
+        return Math.max(0, duration - reduction);
+    }
+
     public static boolean contains(double distanceSquared, double radius, boolean dome, double y, int centerY) {
         return distanceSquared <= radius * radius && (!dome || y > centerY - 2);
     }

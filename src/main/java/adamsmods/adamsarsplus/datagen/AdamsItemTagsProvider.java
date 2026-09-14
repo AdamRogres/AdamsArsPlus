@@ -40,6 +40,10 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
     public static final TagKey<Item> MAGE_RITUAL = ItemTags.create(AdamsArsPlus.prefix("mage_r"));
     public static final TagKey<Item> TS_RITUAL = ItemTags.create(AdamsArsPlus.prefix("ts_r"));
 
+    public static final TagKey<Item> ELEMENTAL_A = ItemTags.create(AdamsArsPlus.prefix("ele_a"));
+    public static final TagKey<Item> ELEMENTAL_B = ItemTags.create(AdamsArsPlus.prefix("ele_b"));
+
+
     public AdamsItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
         super(output, Registries.ITEM, future, (item) -> item.builtInRegistryHolder().key(), MODID, helper);
     }
@@ -107,6 +111,8 @@ public class AdamsItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
 
         tag(MAGE_RITUAL).add(EYE_OF_FLAME.get(), EYE_OF_FROST.get(), EYE_OF_EARTH.get(), EYE_OF_LIGHTNING.get(), EYE_OF_HOLY.get(), EYE_OF_VOID.get(), MANIPULATION_ESSENCE.get());
         tag(TS_RITUAL).add(MANA_DIAMOND.get());
+        tag(ELEMENTAL_A).add(FROST_SOUL.get(), FLAME_SOUL.get(), EARTH_SOUL.get());
+        tag(ELEMENTAL_B).add(HERO_SOUL.get(), LIGHTNING_SOUL.get());
     }
 
     @Override
