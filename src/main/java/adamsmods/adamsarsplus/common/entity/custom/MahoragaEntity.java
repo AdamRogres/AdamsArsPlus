@@ -104,8 +104,35 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
     public int rangedAttackCooldown;
 
     public int adaptCooldown;
+    public int adaptTotalCooldown = 300;
     public int adaptPoints;
     public int adaptPointsTotal;
+    public double offensiveAdaptationBonus;
+    public double nextOffensiveAdaptationBonus = 4.0;
+
+    public void adaptOffense() {
+        var attack = getAttribute(Attributes.ATTACK_DAMAGE);
+        var spell = getAttribute(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS);
+        if (level().isClientSide() || !isAlive() || attack == null || spell == null || !canAdaptCheck(this)) return;
+        offensiveAdaptationBonus = Math.min(Double.MAX_VALUE, offensiveAdaptationBonus + nextOffensiveAdaptationBonus);
+        nextOffensiveAdaptationBonus = Math.min(Double.MAX_VALUE, nextOffensiveAdaptationBonus * 2.0);
+        applyOffensiveAdaptation();
+    }
+
+    private void applyOffensiveAdaptation() {
+        var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("adamsarsplus", "mahoraga_offensive_adaptation");
+        for (var attribute : java.util.List.of(Attributes.ATTACK_DAMAGE,
+                com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS)) {
+            var instance = getAttribute(attribute);
+            if (instance != null) {
+                instance.removeModifier(id);
+                if (offensiveAdaptationBonus > 0) instance.addPermanentModifier(
+                        new net.minecraft.world.entity.ai.attributes.AttributeModifier(id, offensiveAdaptationBonus,
+                                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE));
+            }
+        }
+    }
+
 
     public int regenCount = 0;
     public DamageType[] adaptedDamageTypes = {null, null, null, null, null, null, null, null};
@@ -154,7 +181,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         this.rangedAttackCooldown = 0;
         this.attackCCooldown = 0;
 
-        this.adaptCooldown = 400;
+        this.adaptCooldown = adaptTotalCooldown;
         this.adaptPoints = 0;
         this.adaptPointsTotal = 0;
     }
@@ -177,7 +204,7 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         this.rangedAttackCooldown = 0;
         this.attackCCooldown = 0;
 
-        this.adaptCooldown = 400;
+        this.adaptCooldown = adaptTotalCooldown;
         this.adaptPoints = 0;
         this.adaptPointsTotal = 0;
     }
@@ -296,10 +323,12 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         effectAdaptCheck(this);
 
         if (this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
+            if (!this.level().isClientSide()) adamsmods.adamsarsplus.util.TenShadowsState.migrateLegacy(this.getSummoner());
+            if (!this.level().isClientSide && this.isSummon && !adamsmods.adamsarsplus.util.TenShadowsState.active(this, this.getSummoner(), 4)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
+                return;
             }
         }
 
@@ -336,13 +365,13 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
             if(this.adaptCooldown > 0){
                 this.adaptCooldown--;
 
-                if(this.adaptCooldown < 390){
+                if(this.adaptCooldown < (adaptTotalCooldown - 10)){
                     this.setWheel(false);
                 }
             } else {
                 this.adaptPoints++;
                 this.adaptPointsTotal++;
-                this.adaptCooldown = 400;
+                this.adaptCooldown = adaptTotalCooldown;
 
                 this.setWheel(true);
                 this.playSound(SoundEvents.IRON_DOOR_OPEN, 1.5F, 1F);
@@ -622,6 +651,9 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
         compound.putInt("attackB2_CD", attackB2Cooldown);
         compound.putInt("adapt_CD", adaptCooldown);
         compound.putInt("adaptPoints", adaptPointsTotal);
+        compound.putInt("availableAdaptPoints", adaptPoints);
+        compound.putDouble("offensiveAdaptationBonus", offensiveAdaptationBonus);
+        compound.putDouble("nextOffensiveAdaptationBonus", nextOffensiveAdaptationBonus);
         compound.putInt("attackC_CD", attackCCooldown);
 
         if (this.getOwnerUUID() == null) {
@@ -645,7 +677,14 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
 
         this.adaptCooldown = compound.getInt("adapt_CD");
         this.adaptPointsTotal = compound.getInt("adaptPoints");
-        this.adaptPoints = this.adaptPointsTotal;
+        this.adaptPoints = compound.contains("availableAdaptPoints")
+                ? Math.max(0, compound.getInt("availableAdaptPoints")) : this.adaptPointsTotal;
+        this.offensiveAdaptationBonus = compound.getDouble("offensiveAdaptationBonus");
+        if (!Double.isFinite(offensiveAdaptationBonus) || offensiveAdaptationBonus < 0) offensiveAdaptationBonus = 0;
+        this.nextOffensiveAdaptationBonus = compound.contains("nextOffensiveAdaptationBonus")
+                ? compound.getDouble("nextOffensiveAdaptationBonus") : 4.0;
+        if (!Double.isFinite(nextOffensiveAdaptationBonus) || nextOffensiveAdaptationBonus < 4) nextOffensiveAdaptationBonus = 4;
+        applyOffensiveAdaptation();
 
         if (this.hasCustomName()) {
             this.bossEvent.setName(this.getDisplayName());

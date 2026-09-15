@@ -193,6 +193,12 @@
 	"effect.adamsarsplus.holy_legion": 					"Holy Legion",
 	"effect.adamsarsplus.abyssal_domination": 			"Abyssal Domination",
 
+	"effect.adamsarsplus.ten_shadows_divine_dogs": 		"Ten Shadows: Divine Dogs",
+	"effect.adamsarsplus.ten_shadows_nue": 				"Ten Shadows: Nue",
+	"effect.adamsarsplus.ten_shadows_rabbit_escape": 	"Ten Shadows: Rabbit Escape",
+	"effect.adamsarsplus.ten_shadows_round_deer": 		"Ten Shadows: Round Deer",
+	"effect.adamsarsplus.ten_shadows_mahoraga": 		"Ten Shadows: Mahoraga",
+
 	"entity.adamsarsplus.ryan": 						"Ryan: Flame Archmage",
 	"entity.adamsarsplus.cade": 						"Cade: Frost Archmage",
 	"entity.adamsarsplus.nick": 						"Nick: Earth Archmage",
@@ -346,5 +352,4 @@
 	"adamsarsplus.page.matt_hood_a": 					"Using the culmination of the elements composing the heavenly and material plane you've discovered how to awaken the latent potential within your hero armor and upgrade it to Tier 5.",
 	"adamsarsplus.page.adam_hood": 						"Taking your Ascendant mage armor you've discovered how to augment it with the elemental void souls you've obtained to push your magecraft to a level beyond what should be possible.",
 	"adamsarsplus.page.adam_hood_a": 					"Using the elements of the void plane you've discovered how to awaken the latent potential within your void armor and upgrade it to Tier 6."
-
 }

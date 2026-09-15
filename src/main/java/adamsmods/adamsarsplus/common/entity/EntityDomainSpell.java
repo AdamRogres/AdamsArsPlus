@@ -40,6 +40,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     // Reaction window before the first attack, in game ticks (20 ticks = 1 second).
     public static final int INITIAL_CAST_DELAY_TICKS = 30;
 
+    public static final int BASE_ACTIVE_DURATION_TICKS = 100;
     public double extendedTime;
     public int maxProcs = 100;
     public int totalProcs;
@@ -252,7 +253,7 @@ public class EntityDomainSpell extends EntityProjectileSpell {
 
     @Override
     public int getExpirationTime() {
-        return (int) (INITIAL_CAST_DELAY_TICKS + 100 + extendedTime * 20);
+        return (int) (INITIAL_CAST_DELAY_TICKS + BASE_ACTIVE_DURATION_TICKS + extendedTime * 20);
     }
 
     @Override

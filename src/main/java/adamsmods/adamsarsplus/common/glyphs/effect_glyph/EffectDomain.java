@@ -83,7 +83,9 @@ public class EffectDomain extends AbstractEffect {
             }
         }
 
-        int ticks = (int) (20.0 * (10.0 + spellStats.getDurationMultiplier()));
+        int ticks = adamsmods.adamsarsplus.util.DomainRules.burnoutDuration(
+                entityDomainSpell.getExpirationTime(),
+                EntityDomainSpell.INITIAL_CAST_DELAY_TICKS + EntityDomainSpell.BASE_ACTIVE_DURATION_TICKS);
 
         if (DOMAIN_BURNOUT.get()) {
             shooter.addEffect(new MobEffectInstance(DOMAIN_BURNOUT_EFFECT, ticks));

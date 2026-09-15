@@ -1,6 +1,7 @@
 package adamsmods.adamsarsplus.common.glyphs.effect_glyph;
 
 import adamsmods.adamsarsplus.common.capability.TSrankCap;
+import adamsmods.adamsarsplus.util.TenShadowsState;
 import adamsmods.adamsarsplus.common.entity.custom.*;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.spell.augment.AugmentAmplify;
@@ -43,12 +44,23 @@ public class EffectTenShadows extends AbstractEffect{
 
     public void onResolve(HitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
 
-        if (canSummonTS(shooter)) {
+        if (world.isClientSide() || shooter == null) return;
+        TenShadowsState.migrateLegacy(shooter);
+        int rank = Math.max(0, Math.min(4, tenShadowsRank(shooter, spellStats)));
+        if (shooter.hasEffect(TenShadowsState.effect(rank))) {
+            TenShadowsState.dismiss(shooter, rank);
+            return;
+        }
+        if (TenShadowsState.coolingDown(shooter, rank)) return;
+        int duration = -1;
+        TenShadowsState.activate(shooter, rank, duration);
+        if (!shooter.hasEffect(TenShadowsState.effect(rank))) return;
+        {
             Vec3 vector3d = this.safelyGetHitPos(rayTraceResult);
             BlockPos pos = BlockPos.containing(vector3d);
             BlockPos blockpos = pos.offset(-2 + shooter.getRandom().nextInt(5), 2, -2 + shooter.getRandom().nextInt(5));
 
-            switch(tenShadowsRank(shooter, spellStats)){
+            switch(rank){
                 case 4 -> {
                     // Mahoraga
                     MahoragaEntity tsentity = new MahoragaEntity(world, shooter, true);
@@ -56,11 +68,9 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+                    if (tsentity.isAddedToLevel()) TenShadowsState.track(shooter, tsentity, rank);
 
-                    int duration = 1200 + (int)(spellStats.getDurationMultiplier() * 300);
 
-                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, duration));
-                    shooter.addEffect(new MobEffectInstance(ModPotions.SUMMONING_SICKNESS_EFFECT, duration * 2));
                 }
                 case 3 -> {
                     // Round Deer
@@ -69,8 +79,9 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+                    if (tsentity.isAddedToLevel()) TenShadowsState.track(shooter, tsentity, rank);
 
-                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
+
                 }
                 case 2 -> {
                     // Rabbit Escape
@@ -79,8 +90,9 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+                    if (tsentity.isAddedToLevel()) TenShadowsState.track(shooter, tsentity, rank);
 
-                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
+
                 }
                 case 1 -> {
                     // Nue
@@ -89,8 +101,9 @@ public class EffectTenShadows extends AbstractEffect{
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+                    if (tsentity.isAddedToLevel()) TenShadowsState.track(shooter, tsentity, rank);
 
-                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
+
                 }
                 default -> {
                     // Divine Dogs
@@ -102,33 +115,13 @@ public class EffectTenShadows extends AbstractEffect{
                         tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
                         tsentity.setOwner(shooter);
                         this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
+                    if (tsentity.isAddedToLevel()) TenShadowsState.track(shooter, tsentity, rank);
                     }
-                    shooter.addEffect(new MobEffectInstance(TENSHADOWS_EFFECT, -1));
+
                 }
             }
-        } else if(shooter.hasEffect(TENSHADOWS_EFFECT)){
-            shooter.removeEffect(TENSHADOWS_EFFECT);
-            shooter.addEffect(new MobEffectInstance(ModPotions.SUMMONING_SICKNESS_EFFECT, 200));
+            TenShadowsState.finishSummoning(shooter, rank, duration);
         }
-    }
-
-    public boolean canSummonTS(LivingEntity playerEntity) {
-        boolean var10000;
-        label25: {
-            if (this.isRealPlayer(playerEntity)) {
-                if (playerEntity.getEffect(ModPotions.SUMMONING_SICKNESS_EFFECT) == null && playerEntity.getEffect(TENSHADOWS_EFFECT) == null) {
-                    break label25;
-                }
-            } else {
-                break label25;
-            }
-
-            var10000 = false;
-            return var10000;
-        }
-
-        var10000 = true;
-        return var10000;
     }
 
     public int tenShadowsRank(LivingEntity entity, SpellStats spell){
@@ -177,7 +170,7 @@ public class EffectTenShadows extends AbstractEffect{
     }
 
     public String getBookDescription() {
-        return "Summons forth various shikigami from the well's unknown abyss. Additional shikigami can be tamed through a ritual.";
+        return "Summons the shikigami selected by Amplify. Cast the same selection again to dismiss only that group. Different groups can remain active together. Additional shikigami can be tamed through a ritual.";
     }
 
     public @NotNull Set<SpellSchool> getSchools() {

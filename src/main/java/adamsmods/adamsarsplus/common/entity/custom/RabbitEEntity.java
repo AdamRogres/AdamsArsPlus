@@ -145,10 +145,12 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
         super.tick();
 
         if (this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
+            if (!this.level().isClientSide()) adamsmods.adamsarsplus.util.TenShadowsState.migrateLegacy(this.getSummoner());
+            if (!this.level().isClientSide && this.isSummon && !adamsmods.adamsarsplus.util.TenShadowsState.active(this, this.getSummoner(), 2)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
+                return;
             }
         }
 
@@ -174,6 +176,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
             tsentity.finalizeSpawn((ServerLevelAccessor) this.level(), this.level().getCurrentDifficultyAt(this.blockPosition()), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null);
             tsentity.setTicksLeft(this.level().random.nextInt(100, 200));
 
+            adamsmods.adamsarsplus.util.TenShadowsState.inheritSession(this, tsentity);
             this.summon(tsentity, this.blockPosition());
             this.summonCooldown = this.level().random.nextInt(10,20);
         }

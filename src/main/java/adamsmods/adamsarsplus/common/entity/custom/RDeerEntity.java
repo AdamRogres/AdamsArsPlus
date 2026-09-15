@@ -121,10 +121,12 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
         super.tick();
 
         if (this.getSummoner() != null) {
-            if (!this.level().isClientSide && this.isSummon && !this.getSummoner().hasEffect(TENSHADOWS_EFFECT)) {
+            if (!this.level().isClientSide()) adamsmods.adamsarsplus.util.TenShadowsState.migrateLegacy(this.getSummoner());
+            if (!this.level().isClientSide && this.isSummon && !adamsmods.adamsarsplus.util.TenShadowsState.active(this, this.getSummoner(), 3)) {
                 spawnShadowPoof((ServerLevel) this.level(), this.blockPosition());
                 this.remove(RemovalReason.DISCARDED);
                 this.onSummonDeath(this.level(), (DamageSource) null, true);
+                return;
             }
         }
 

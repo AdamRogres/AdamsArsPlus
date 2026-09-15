@@ -28,6 +28,11 @@ public class ModPotions {
     public static final DeferredHolder<MobEffect, MobEffect> MANA_HEALTH_EFFECT;
     public static final DeferredHolder<MobEffect, MobEffect> ICEBURST_EFFECT;
     public static final DeferredHolder<MobEffect, MobEffect> TENSHADOWS_EFFECT;
+    public static final DeferredHolder<MobEffect, MobEffect> TS_DIVINE_DOGS_EFFECT;
+    public static final DeferredHolder<MobEffect, MobEffect> TS_NUE_EFFECT;
+    public static final DeferredHolder<MobEffect, MobEffect> TS_RABBIT_ESCAPE_EFFECT;
+    public static final DeferredHolder<MobEffect, MobEffect> TS_ROUND_DEER_EFFECT;
+    public static final DeferredHolder<MobEffect, MobEffect> TS_MAHORAGA_EFFECT;
     public static final DeferredHolder<MobEffect, MobEffect> DISRUPTION_EFFECT;
     public static final DeferredHolder<MobEffect, MobEffect> SOUL_RIME_EFFECT;
     public static final DeferredHolder<MobEffect, MobEffect> CLOUD_STEPS_EFFECT;
@@ -58,6 +63,11 @@ public class ModPotions {
          MANA_HEALTH_EFFECT = EFFECTS.register(MANA_HEALTH, ManaHealthEffect::new);
          ICEBURST_EFFECT = EFFECTS.register(ICEBURST, IceBurstEffect::new);
          TENSHADOWS_EFFECT = EFFECTS.register(TENSHADOWS, TenShadowsEffect::new);
+         TS_DIVINE_DOGS_EFFECT = EFFECTS.register("ten_shadows_divine_dogs", TenShadowsEffect::new);
+         TS_NUE_EFFECT = EFFECTS.register("ten_shadows_nue", TenShadowsEffect::new);
+         TS_RABBIT_ESCAPE_EFFECT = EFFECTS.register("ten_shadows_rabbit_escape", TenShadowsEffect::new);
+         TS_ROUND_DEER_EFFECT = EFFECTS.register("ten_shadows_round_deer", TenShadowsEffect::new);
+         TS_MAHORAGA_EFFECT = EFFECTS.register("ten_shadows_mahoraga", TenShadowsEffect::new);
          DISRUPTION_EFFECT = EFFECTS.register(DISRUPTION, DisruptionEffect::new);
          SOUL_RIME_EFFECT = EFFECTS.register(SOUL_RIME, SoulRimeEffect::new);
          CLOUD_STEPS_EFFECT = EFFECTS.register(CLOUD_STEPS, CloudStepsEffect::new);

@@ -37,6 +37,14 @@ public class DomainRulesTest {
         require(DomainRules.simpleDomainDuration(100, -1) == 100);
         require(DomainRules.simpleDomainDuration(100, 0.5) == 90);
         require(DomainRules.simpleDomainDuration(100, Double.MAX_VALUE) == 0);
+        require(DomainRules.burnoutDuration(130, 130) == 195);
+        require(DomainRules.burnoutDuration(150, 130) == 235);
+        require(DomainRules.burnoutDuration(110, 130) == 155);
+        require(DomainRules.burnoutDuration(90, 130) == 115);
+        require(DomainRules.burnoutDuration(50, 130) == 50);
+        require(DomainRules.burnoutDuration(1, 130) == 1);
+        require(DomainRules.burnoutDuration(-20, 130) == 1);
+        require(DomainRules.burnoutDuration(Integer.MAX_VALUE, 130) == Integer.MAX_VALUE);
         System.out.println("PASS: domain reaction delay, acceleration limits, repeat intervals, spherical bounds dome exclusion, equal/stronger domain clashes, and Simple Domain duration erosion.");
     }
 }

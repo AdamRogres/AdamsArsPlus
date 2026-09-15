@@ -19,6 +19,12 @@ public final class DomainRules {
         return Math.max(0, duration - reduction);
     }
 
+    /** Extra cooldown starts at half the base lifetime and changes by the duration augment delta. */
+    public static int burnoutDuration(int lifetime, int baseLifetime) {
+        long domainTicks = Math.max(1, lifetime);
+        long extra = Math.max(0L, (long) Math.ceil(baseLifetime * 0.5) + (long) lifetime - baseLifetime);
+        return (int) Math.min(Integer.MAX_VALUE, domainTicks + extra);
+    }
     public static boolean contains(double distanceSquared, double radius, boolean dome, double y, int centerY) {
         return distanceSquared <= radius * radius && (!dome || y > centerY - 2);
     }
