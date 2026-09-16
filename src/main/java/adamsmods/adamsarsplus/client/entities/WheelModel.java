@@ -22,13 +22,21 @@ public class WheelModel extends Model {
 		this.wheel = this.waist.getChild("wheel");
 	}
 
+    public static net.minecraft.client.model.geom.builders.LayerDefinition createBodyLayer() {
+        return net.minecraft.client.model.geom.builders.LayerDefinition.create(createMesh(), 128, 128);
+    }
+
+    public void setWheelRotation(float radians) {
+        wheel.yRot = radians;
+    }
+
 	public static MeshDefinition createMesh() {
 		var meshdefinition = new MeshDefinition();
 		var partdefinition = meshdefinition.getRoot();
 
-		partdefinition.addOrReplaceChild("waist", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+		var waist = partdefinition.addOrReplaceChild("waist", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		partdefinition.addOrReplaceChild("wheel", CubeListBuilder.create().texOffs(0, 20).addBox(-6.0F, -0.5F, -6.0F, 12.0F, 1.0F, 12.0F, new CubeDeformation(0.0F))
+		waist.addOrReplaceChild("wheel", CubeListBuilder.create().texOffs(0, 20).addBox(-6.0F, -0.5F, -6.0F, 12.0F, 1.0F, 12.0F, new CubeDeformation(0.0F))
 		.texOffs(16, 72).addBox(-1.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.3F))
 		.texOffs(48, 20).addBox(-1.0F, -1.0F, -8.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.3F))
 		.texOffs(48, 24).addBox(-1.0F, -1.0F, 6.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.3F))

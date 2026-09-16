@@ -685,6 +685,8 @@ public class MahoragaEntity extends Monster implements IFollowingSummon, ISummon
                 ? compound.getDouble("nextOffensiveAdaptationBonus") : 4.0;
         if (!Double.isFinite(nextOffensiveAdaptationBonus) || nextOffensiveAdaptationBonus < 4) nextOffensiveAdaptationBonus = 4;
         applyOffensiveAdaptation();
+        adamsmods.adamsarsplus.util.WheelAdaptation.applyInherited(this,
+                getPersistentData().getString("adamsarsplus_inherited_damage_type"));
 
         if (this.hasCustomName()) {
             this.bossEvent.setName(this.getDisplayName());

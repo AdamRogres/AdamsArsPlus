@@ -1295,7 +1295,9 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                     --this.seeTime;
                 }
 
-                if (!(d0 > (double)this.attackRadiusSqr) && this.seeTime >= 20) {
+                boolean targetInDomain = adamsmods.adamsarsplus.util.BossDomainRange.containsTarget(
+                        this.CadeEntity, livingentity, CadeDomainSpell);
+                if (targetInDomain && this.seeTime >= 20) {
                     this.CadeEntity.getNavigation().stop();
                     ++this.strafingTime;
                 } else {
@@ -1328,7 +1330,8 @@ public class CadeEntity extends Monster implements RangedAttackMob {
                     this.CadeEntity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
                 }
 
-                if (this.seeTime >= 20 && !this.hasAnimated) {
+                if (!targetInDomain) this.hasAnimated = false;
+                if (targetInDomain && this.seeTime >= 20 && !this.hasAnimated) {
                     this.hasAnimated = true;
                 }
 

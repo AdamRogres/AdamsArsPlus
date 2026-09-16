@@ -64,11 +64,15 @@ public class EffectTenShadows extends AbstractEffect{
                 case 4 -> {
                     // Mahoraga
                     MahoragaEntity tsentity = new MahoragaEntity(world, shooter, true);
+                    adamsmods.adamsarsplus.util.WheelAdaptation.inherit(shooter, tsentity);
                     tsentity.moveTo(blockpos, 0.0F, 0.0F);
                     tsentity.finalizeSpawn((ServerLevelAccessor) world, world.getCurrentDifficultyAt(blockpos), MobSpawnType.MOB_SUMMONED, (SpawnGroupData) null, (CompoundTag) null);
                     tsentity.setOwner(shooter);
                     this.summonLivingEntity(rayTraceResult, world, shooter, spellStats, spellContext, resolver, tsentity);
-                    if (tsentity.isAddedToLevel()) TenShadowsState.track(shooter, tsentity, rank);
+                    if (tsentity.isAddedToLevel()) {
+                        TenShadowsState.track(shooter, tsentity, rank);
+                        adamsmods.adamsarsplus.util.WheelAdaptation.consume(shooter);
+                    }
 
 
                 }

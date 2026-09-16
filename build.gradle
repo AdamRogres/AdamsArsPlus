@@ -291,3 +291,11 @@ tasks.register('verifyDismantleRules', JavaExec) {
 }
 tasks.named('test') { exclude '**/DismantleRulesTest.class' }
 tasks.named('check') { dependsOn 'verifyDismantleRules' }
+
+tasks.register('verifyWheelAdaptation', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.output + sourceSets.main.output + sourceSets.main.compileClasspath
+    mainClass = 'adamsmods.adamsarsplus.util.WheelAdaptationTest'
+}
+tasks.named('test') { exclude '**/WheelAdaptationTest.class' }
+tasks.named('check') { dependsOn 'verifyWheelAdaptation' }

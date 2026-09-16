@@ -81,6 +81,8 @@ public class AdamClientHandler {
     public static void init(final FMLClientSetupEvent evt) {
 
         evt.enqueueWork(() -> {
+            top.theillusivec4.curios.api.client.CuriosRendererRegistry.register(ModItems.GENERALS_WHEEL.get(),
+                    adamsmods.adamsarsplus.client.curio.GeneralsWheelRenderer::new);
 
         });
     }

@@ -33,6 +33,7 @@ public class GeneralsWheel extends ArsNouveauCurio {
 
     public void curioTick(SlotContext slotContext, ItemStack stack) {
         LivingEntity wearer = slotContext.entity();
+        adamsmods.adamsarsplus.util.WheelAdaptation.tick(wearer, stack);
         if(wearer instanceof Player player && player.hasEffect(SUMMONING_SICKNESS_EFFECT)){
             Level var6 = slotContext.entity().level();
             if (var6 instanceof ServerLevel) {
