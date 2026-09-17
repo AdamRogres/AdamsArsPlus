@@ -47,13 +47,6 @@ public class AdamsEvents {
     }
 
     @SubscribeEvent
-    public static void newMaxManaCalc(MaxManaCalcEvent event) {
-        if(!(event.getEntity().getEffect(EARTHEN_HEART_EFFECT) == null)){
-            event.setMax(event.getMax() / 2);
-        }
-    }
-
-    @SubscribeEvent
     public static void weaponAttackDisruption(AttackEntityEvent event){
         if(event.getEntity().hasEffect(ABYSSAL_DOMINATION_EFFECT)){
             if(event.getTarget() instanceof LivingEntity living){

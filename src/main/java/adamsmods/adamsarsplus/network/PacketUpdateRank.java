@@ -2,7 +2,6 @@ package adamsmods.adamsarsplus.network;
 
 import adamsmods.adamsarsplus.AdamsArsPlus;
 import adamsmods.adamsarsplus.common.capability.TSrankCap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -37,7 +36,8 @@ public record PacketUpdateRank(int tier, float reserved) implements CustomPacket
     // Called on the client thread automatically by NeoForge
     public static void handle(PacketUpdateRank packet, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            var player = Minecraft.getInstance().player;
+            // Use the common Player type so packet registration also loads on dedicated servers.
+            var player = ctx.player();
             if (player != null) {
                 TSrankCap rank = getTsTier(player);
                 rank.setTsTier(packet.tier());

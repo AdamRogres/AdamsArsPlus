@@ -92,10 +92,9 @@ public class EntityDomainSpell extends EntityProjectileSpell {
     /** Prefer the oldest containing domain, with an entity ID tie-breaker. */
     public static Vec3 alignToExistingDomain(net.minecraft.server.level.ServerLevel level, Vec3 castPosition, Vec3 hitPosition) {
         EntityDomainSpell oldest = null;
-        // Domain radii vary, so a small search box around the caster can miss
-        // the center of a large containing domain. Inspect loaded entities.
-        for (Entity candidate : level.getAllEntities()) {
-            if (candidate instanceof EntityDomainSpell domain && domain.isActiveDomain()
+        // Search only loaded domains, retaining support for arbitrarily large radii.
+        for (EntityDomainSpell domain : adamsmods.adamsarsplus.util.LoadedDomains.in(level)) {
+            if (domain.isAddedToLevel() && domain.isActiveDomain()
                     && (domain.containsPosition(castPosition) || domain.containsPosition(hitPosition))) {
                 if (oldest == null || domain.age > oldest.age
                         || (domain.age == oldest.age && domain.getId() < oldest.getId())) {

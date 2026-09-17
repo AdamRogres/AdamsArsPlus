@@ -57,6 +57,7 @@ public final class TenShadowsState {
     }
     public static void track(LivingEntity owner, Mob summon, int rank) {
         summon.getPersistentData().putUUID(SESSION, owner.getPersistentData().getUUID(key(rank)));
+        summon.getPersistentData().putBoolean("adamsarsplus_session_player_owned", owner instanceof net.minecraft.world.entity.player.Player);
         owner.getPersistentData().putInt(key(rank) + "_members", owner.getPersistentData().getInt(key(rank) + "_members") + 1);
     }
     public static void finishSummoning(LivingEntity owner, int rank, int duration) {
@@ -82,6 +83,8 @@ public final class TenShadowsState {
     public static void inheritSession(Mob parent, Mob copy) {
         if (parent.getPersistentData().hasUUID(SESSION)) {
             copy.getPersistentData().putUUID(SESSION, parent.getPersistentData().getUUID(SESSION));
+            if (parent.getPersistentData().contains("adamsarsplus_session_player_owned"))
+                copy.getPersistentData().putBoolean("adamsarsplus_session_player_owned", parent.getPersistentData().getBoolean("adamsarsplus_session_player_owned"));
         }
     }
     private static int rank(LivingEntity entity) {
@@ -110,6 +113,59 @@ public final class TenShadowsState {
         }
         owner.removeEffect(ModPotions.TENSHADOWS_EFFECT);
     }
+    /** Dismiss on departure rather than leave an unattended summon fighting in loaded chunks. */
+    private static void resetPlayer(net.minecraft.world.entity.player.Player player) {
+        if (!(player.level() instanceof ServerLevel level)) return;
+        for (int rank = 0; rank <= 4; rank++) {
+            if (player.hasEffect(effect(rank)) || player.getPersistentData().getInt(key(rank) + "_members") > 0) {
+                dismiss(player, rank);
+            }
+        }
+        player.removeEffect(ModPotions.TENSHADOWS_EFFECT);
+        // This scan only runs on player lifecycle events, never every tick.
+        for (ServerLevel dimension : level.getServer().getAllLevels()) {
+            var remove = new java.util.ArrayList<Mob>();
+            for (var entity : dimension.getAllEntities()) {
+                if (entity instanceof Mob mob && entity instanceof ISummon summon
+                        && rank(mob) >= 0 && player.getUUID().equals(summon.getOwnerUUID())) remove.add(mob);
+            }
+            remove.forEach(Mob::discard);
+        }
+    }
+
+    @SubscribeEvent
+    public static void loggedOut(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        resetPlayer(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void changedDimension(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent event) {
+        resetPlayer(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void loggedIn(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent event) {
+        // Reconcile older saves and sessions interrupted by a server crash/restart.
+        resetPlayer(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void validateSummon(net.neoforged.neoforge.event.tick.EntityTickEvent.Pre event) {
+        if (!(event.getEntity() instanceof Mob mob) || !(mob instanceof ISummon summon)
+                || !(mob.level() instanceof ServerLevel level) || rank(mob) < 0) return;
+        // Only manage tracked player summons; leave ritual bosses and NPC-owned summons alone.
+        if (!mob.getPersistentData().hasUUID(SESSION) || summon.getOwnerUUID() == null) return;
+        boolean playerOwned = mob.getPersistentData().contains("adamsarsplus_session_player_owned")
+                ? mob.getPersistentData().getBoolean("adamsarsplus_session_player_owned")
+                : adamsmods.adamsarsplus.common.entity.ai.TenShadowsTargeting.playerOwned(mob);
+        if (!playerOwned) return;
+        var owner = level.getServer().getPlayerList().getPlayer(summon.getOwnerUUID());
+        if (owner == null || owner.level() != level || !active(mob, owner, rank(mob))) {
+            mob.discard();
+            event.setCanceled(true);
+        }
+    }
+
     @SubscribeEvent
     public static void died(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Mob mob) || !(mob instanceof ISummon summon)

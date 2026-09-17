@@ -45,22 +45,34 @@ public final class WheelAdaptation {
         });
     }
 
+    private static void migrateTimers(CompoundTag state) {
+        if (state.getBoolean("equippedTimers")) return;
+        CompoundTag pending = state.getCompound("pending");
+        // Legacy deadlines cannot distinguish offline time: restart only unfinished timers.
+        for (String type : pending.getAllKeys()) pending.putLong(type, ADAPTATION_TICKS);
+        state.put("pending", pending);
+        state.putBoolean("equippedTimers", true);
+    }
+
     // Hits of an already pending type do not postpone completion.
     public static boolean record(CompoundTag state, String type, long now) {
+        migrateTimers(state);
         CompoundTag pending = state.getCompound("pending");
         if (type.equals(state.getString("saved")) || pending.contains(type)) return false;
-        pending.putLong(type, now + ADAPTATION_TICKS);
+        pending.putLong(type, ADAPTATION_TICKS);
         state.put("pending", pending);
         return true;
     }
 
     public static boolean complete(CompoundTag state, long now) {
+        migrateTimers(state);
         CompoundTag pending = state.getCompound("pending");
         String latest = null;
         long latestTime = Long.MIN_VALUE;
         for (String type : new ArrayList<>(pending.getAllKeys())) {
-            long deadline = pending.getLong(type);
-            if (deadline > now) continue;
+            long deadline = pending.getLong(type) - 1;
+            pending.putLong(type, deadline);
+            if (deadline > 0) continue;
             // Stable tie-breaker for damage types recorded during the same tick.
             if (deadline > latestTime || (deadline == latestTime && (latest == null || type.compareTo(latest) > 0))) {
                 latest = type;
@@ -68,6 +80,7 @@ public final class WheelAdaptation {
             }
             pending.remove(type);
         }
+        state.put("pending", pending);
         if (latest == null) return false;
         state.put("pending", pending);
         state.putString("saved", latest);
@@ -94,8 +107,10 @@ public final class WheelAdaptation {
             return;
         }
         CompoundTag state = state(stack);
-        if (complete(state, wearer.level().getGameTime())) {
-            save(stack, state);
+        if (state.getCompound("pending").isEmpty()) return;
+        boolean completed = complete(state, wearer.level().getGameTime());
+        save(stack, state);
+        if (completed) {
             wearer.level().playSound(null, wearer.getX(), wearer.getY(), wearer.getZ(),
                     SoundEvents.IRON_DOOR_OPEN, SoundSource.PLAYERS, 1.5F, 1.0F);
         }

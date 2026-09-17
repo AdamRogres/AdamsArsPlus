@@ -5,22 +5,27 @@ public final class WheelAdaptationTest {
     public static void main(String[] args) {
         CompoundTag state = new CompoundTag();
         check(WheelAdaptation.record(state, "minecraft:arrow", 0));
+        for (int tick = 1; tick <= 100; tick++) check(!WheelAdaptation.complete(state, tick));
         check(!WheelAdaptation.record(state, "minecraft:arrow", 100));
         check(WheelAdaptation.record(state, "minecraft:mob_attack", 100));
-        check(!WheelAdaptation.complete(state, 599));
-        check(WheelAdaptation.complete(state, 600));
+        state = state.copy(); // Unequip/logout/reload: elapsed world time must not count.
+        check(!WheelAdaptation.complete(state, 1000000));
+        for (int tick = 102; tick < 600; tick++) check(!WheelAdaptation.complete(state, 1000000 + tick));
+        check(WheelAdaptation.complete(state, 1000600));
         check(state.getString("saved").equals("minecraft:arrow"));
-        check(!WheelAdaptation.record(state, "minecraft:arrow", 601));
-        state = state.copy(); // Saved item state retains the other pending timer.
-        check(!WheelAdaptation.complete(state, 699));
-        check(WheelAdaptation.complete(state, 700));
+        check(!WheelAdaptation.record(state, "minecraft:arrow", 1000601));
+        for (int tick = 601; tick < 700; tick++) check(!WheelAdaptation.complete(state, 1000000 + tick));
+        check(WheelAdaptation.complete(state, 1000700));
         check(state.getString("saved").equals("minecraft:mob_attack"));
         check(state.getCompound("pending").isEmpty());
-        check(!WheelAdaptation.complete(state, 701));
-        check(WheelAdaptation.record(state, "minecraft:arrow", 800));
-        check(WheelAdaptation.record(state, "minecraft:magic", 900));
-        check(WheelAdaptation.complete(state, 2000));
-        check(state.getString("saved").equals("minecraft:magic"));
-        System.out.println("PASS: wheel 600-tick timer, repeated hits, independent timers, saved replacement and overdue completion.");
+        CompoundTag old = new CompoundTag();
+        CompoundTag pending = new CompoundTag();
+        pending.putLong("minecraft:magic", 5);
+        old.put("pending", pending);
+        old.putString("saved", "minecraft:arrow");
+        check(!WheelAdaptation.complete(old, 1000000));
+        check(old.getCompound("pending").getLong("minecraft:magic") == 599);
+        check(old.getString("saved").equals("minecraft:arrow"));
+        System.out.println("PASS: 600 equipped ticks, offline pause, repeated hits, overlapping timers and legacy migration.");
     }
 }
