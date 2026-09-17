@@ -159,14 +159,66 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
     protected void registerGoals() {
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 3.0F, 1.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-        this.goalSelector.addGoal(2, new FollowSummonerGoal(this, this.owner, (double) 1.0F, 9.0F, 3.0F));
+        this.goalSelector.addGoal(2, new FollowSummonerGoal(this, this.owner, 1.0F, 9.0F, 3.0F) {
+            private boolean shouldFollow() {
+                LivingEntity summoner = SummonSkeleton_m.this.getSummoner();
+                LivingEntity target = SummonSkeleton_m.this.getTarget();
+                // Turrets cast through fake players; they are not mobile owners to follow.
+                return summoner != null && summoner.isAlive()
+                        && !(summoner instanceof net.neoforged.neoforge.common.util.FakePlayer)
+                        && summoner.level() == SummonSkeleton_m.this.level()
+                        && (target == null || !target.isAlive());
+            }
+
+            @Override
+            public boolean canUse() {
+                return shouldFollow() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return shouldFollow() && super.canContinueToUse();
+            }
+        });
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, (double) 1.0F));
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this, new Class[]{SummonSkeleton_m.class}) {
             protected boolean canAttack(@Nullable LivingEntity pPotentialTarget, TargetingConditions pTargetPredicate) {
                 return pPotentialTarget != null && super.canAttack(pPotentialTarget, pTargetPredicate) && !pPotentialTarget.getUUID().equals(SummonSkeleton_m.this.getOwnerUUID());
             }
         });
-        this.targetSelector.addGoal(1, new CopyOwnerTargetGoal(this));
+        this.targetSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.target.TargetGoal(this, false) {
+            private LivingEntity candidate;
+
+            private boolean valid(LivingEntity target) {
+                return target != null && target.isAlive() && target != SummonSkeleton_m.this
+                        && target != getSummoner() && !SummonSkeleton_m.this.isAlliedTo(target)
+                        && SummonSkeleton_m.this.canAttack(target)
+                        && (!(target instanceof Player player) || (!player.isCreative() && !player.isSpectator()));
+            }
+
+            @Override
+            public boolean canUse() {
+                candidate = null;
+                LivingEntity summoner = getSummoner();
+                if (summoner == null || summoner instanceof net.neoforged.neoforge.common.util.FakePlayer) return false;
+                if (summoner instanceof Mob ownerMob && valid(ownerMob.getTarget())) candidate = ownerMob.getTarget();
+                else if (valid(summoner.getLastHurtMob())) candidate = summoner.getLastHurtMob();
+                else if (valid(summoner.getLastHurtByMob())) candidate = summoner.getLastHurtByMob();
+                // Never mutate the current target while merely checking whether this goal can start.
+                return candidate != null;
+            }
+
+            @Override
+            public void start() {
+                SummonSkeleton_m.this.setTarget(candidate);
+                super.start();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return valid(SummonSkeleton_m.this.getTarget()) && super.canContinueToUse();
+            }
+        });
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, IronGolem.class, true));
     }
@@ -202,9 +254,9 @@ public class SummonSkeleton_m extends Skeleton implements IFollowingSummon, ISum
             ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, (item) -> item instanceof BowItem));
             if (itemstack.is(Items.BOW)) {
                 this.bowGoal.setMinAttackInterval(20);
-                this.goalSelector.addGoal(4, this.bowGoal);
+                this.goalSelector.addGoal(1, this.bowGoal);
             } else {
-                this.goalSelector.addGoal(4, this.meleeGoal);
+                this.goalSelector.addGoal(1, this.meleeGoal);
             }
         }
     }
