@@ -71,7 +71,9 @@ public class AArmorRecipe extends EnchantingApparatusRecipe implements ITextOutp
 
         ArmorPerkHolder perkHolder = PerkUtil.getPerkHolder(input.catalyst());
         if (perkHolder instanceof ArmorPerkHolder armorPerkHolder) {
-            armorPerkHolder.setTier(this.outTier - 1);
+            // Perk holders are immutable: write the upgraded copy onto the crafted stack.
+            result.set(com.hollingsworth.arsnouveau.setup.registry.DataComponentRegistry.ARMOR_PERKS,
+                    armorPerkHolder.setTier(this.outTier - 1));
         }
 
         return result;
