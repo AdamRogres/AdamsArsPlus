@@ -232,12 +232,10 @@ public class NueEntity extends FlyingMob implements IFollowingSummon, ISummon {
             if(this.attackersList[0] instanceof Player player){
                 if (getTsTier(player).tsTier >= 0) {
                     getTsTier(player).setTsTier(Math.max(1, getTsTier(player).tsTier));
-                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.nue_tamed"));
                 } else {
                     PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
                 }
-
-                PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.nue_tamed"));
             }
         }
         // Ritual Failed

@@ -216,7 +216,7 @@ public class RDeerEntity extends Monster implements IFollowingSummon, ISummon {
             if (this.attackersList[0] instanceof Player player) {
                 if (getTsTier(player).tsTier >= 2) {
                     getTsTier(player).setTsTier(Math.max(3, getTsTier(player).tsTier));
-                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.deer_tamed"));
                 } else {
                     PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
                 }

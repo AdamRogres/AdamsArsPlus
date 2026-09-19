@@ -237,7 +237,7 @@ public class RabbitEEntity extends Monster implements IFollowingSummon, ISummon 
             if (this.attackersList[0] instanceof Player player) {
                 if (getTsTier(player).tsTier >= 1) {
                     getTsTier(player).setTsTier(Math.max(2, getTsTier(player).tsTier));
-                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.maho_tamed"));
+                    PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.rabbit_tamed"));
                 } else {
                     PortUtil.sendMessageNoSpam(player, Component.translatable("adamsarsplus.tenshadows.tame_failed"));
                 }
