@@ -41,7 +41,7 @@ public class RitualMageSummon extends AbstractRitual {
 
         if (this.getWorld().getGameTime() % 60L == 0L && !this.getWorld().isClientSide) {
             // Summon Mages
-            if (!this.isRyanSpawn() && !this.isCadeSpawn() && !this.isNickSpawn() && !this.isCamrSpawn() && !this.isMattSpawn() && !this.isAdamSpawn()) {
+            if (!this.isRyanSpawn() && !this.isCadeSpawn() && !this.isNickSpawn() && !this.isCamrSpawn() && !this.isMattSpawn() && !this.isAdamSpawn() && !this.isJoshSpawn()) {
 
                 BlockPos summonPos = this.getPos().above().east(this.rand.nextInt(3) - this.rand.nextInt(6)).north(this.rand.nextInt(3) - this.rand.nextInt(6));
                 Object var10000;
